@@ -1,0 +1,10 @@
+{
+	entry = {
+		bundle = AeuriaLSPreferences;
+		cell = PSLinkCell;
+		detail = "AeuriaLSPreferencesListController";
+		icon = "AeuriaLSPreferences.png";
+		isController = 1;
+		label = "Aeuria LS";
+	};
+}

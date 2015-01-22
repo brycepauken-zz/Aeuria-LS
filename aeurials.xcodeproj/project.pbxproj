@@ -6,11 +6,112 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXFileReference section */
+		0230EC001A704D2E00AA9C8B /* ALSCustomLockScreenMask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenMask.h; sourceTree = "<group>"; };
+		0230EC011A704D2E00AA9C8B /* ALSCustomLockScreenMask.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreenMask.x; sourceTree = "<group>"; };
+		02D96A861A6F735F00095C83 /* SBLockScreenViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBLockScreenViewController.h; sourceTree = "<group>"; };
+		02D96A871A6F735F00095C83 /* SBLockScreenViewController.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBLockScreenViewController.x; sourceTree = "<group>"; };
+		02D96A8B1A6F739000095C83 /* fakeroot */ = {isa = PBXFileReference; lastKnownFileType = text; path = fakeroot; sourceTree = "<group>"; };
+		02D96A8C1A6F739000095C83 /* last_package */ = {isa = PBXFileReference; lastKnownFileType = text; path = last_package; sourceTree = "<group>"; };
+		02D96A8E1A6F739000095C83 /* com.kingfish.homeonlyiconspreferences-0.0.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = "com.kingfish.homeonlyiconspreferences-0.0.1"; sourceTree = "<group>"; };
+		02D96A8F1A6F739000095C83 /* AeuriaLSPreferencesListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AeuriaLSPreferencesListController.h; sourceTree = "<group>"; };
+		02D96A901A6F739000095C83 /* AeuriaLSPreferencesListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AeuriaLSPreferencesListController.m; sourceTree = "<group>"; };
+		02D96A911A6F739000095C83 /* ALSPContainerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPContainerView.h; sourceTree = "<group>"; };
+		02D96A921A6F739000095C83 /* ALSPContainerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPContainerView.m; sourceTree = "<group>"; };
+		02D96A931A6F739000095C83 /* ALSPMainView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPMainView.h; sourceTree = "<group>"; };
+		02D96A941A6F739000095C83 /* ALSPMainView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPMainView.m; sourceTree = "<group>"; };
+		02D96A951A6F739000095C83 /* ALSPPreferenceManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPPreferenceManager.h; sourceTree = "<group>"; };
+		02D96A961A6F739000095C83 /* ALSPPreferenceManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPPreferenceManager.m; sourceTree = "<group>"; };
+		02D96A971A6F739000095C83 /* ALSPThemeTableCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPThemeTableCell.h; sourceTree = "<group>"; };
+		02D96A981A6F739000095C83 /* ALSPThemeTableCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPThemeTableCell.m; sourceTree = "<group>"; };
+		02D96A991A6F739000095C83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		02D96A9B1A6F739000095C83 /* AeuriaLSPreferences.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AeuriaLSPreferences.png; sourceTree = "<group>"; };
+		02D96A9C1A6F739000095C83 /* AeuriaLSPreferences@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AeuriaLSPreferences@2x.png"; sourceTree = "<group>"; };
+		02D96A9D1A6F739000095C83 /* Checkmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Checkmark.png; sourceTree = "<group>"; };
+		02D96A9E1A6F739000095C83 /* Checkmark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Checkmark@2x.png"; sourceTree = "<group>"; };
+		02D96A9F1A6F739000095C83 /* Snowflake.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Snowflake.png; sourceTree = "<group>"; };
+		02D96AA01A6F739000095C83 /* Snowflake@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Snowflake@2x.png"; sourceTree = "<group>"; };
+		02D96AA11A6F751200095C83 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; name = Makefile; path = Resources/Makefile; sourceTree = "<group>"; };
+		02D96AA31A6F862A00095C83 /* SBWallpaperImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBWallpaperImage.h; sourceTree = "<group>"; };
+		02D96AA41A6F8F8700095C83 /* ALSCustomLockScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreen.h; sourceTree = "<group>"; };
+		02D96AA51A6F8F8700095C83 /* ALSCustomLockScreen.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreen.x; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
 /* Begin PBXGroup section */
 		02D96A751A6F6EE700095C83 = {
 			isa = PBXGroup;
 			children = (
+				02D96AA11A6F751200095C83 /* Makefile */,
+				02D96A891A6F739000095C83 /* Preferences */,
+				02D96A801A6F735F00095C83 /* Tweak */,
 			);
+			sourceTree = "<group>";
+		};
+		02D96A801A6F735F00095C83 /* Tweak */ = {
+			isa = PBXGroup;
+			children = (
+				02D96AA41A6F8F8700095C83 /* ALSCustomLockScreen.h */,
+				02D96AA51A6F8F8700095C83 /* ALSCustomLockScreen.x */,
+				0230EC001A704D2E00AA9C8B /* ALSCustomLockScreenMask.h */,
+				0230EC011A704D2E00AA9C8B /* ALSCustomLockScreenMask.x */,
+				02D96A861A6F735F00095C83 /* SBLockScreenViewController.h */,
+				02D96A871A6F735F00095C83 /* SBLockScreenViewController.x */,
+				02D96AA31A6F862A00095C83 /* SBWallpaperImage.h */,
+			);
+			name = Tweak;
+			path = Resources/Tweak;
+			sourceTree = "<group>";
+		};
+		02D96A891A6F739000095C83 /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				02D96A8A1A6F739000095C83 /* .theos */,
+				02D96A8F1A6F739000095C83 /* AeuriaLSPreferencesListController.h */,
+				02D96A901A6F739000095C83 /* AeuriaLSPreferencesListController.m */,
+				02D96A911A6F739000095C83 /* ALSPContainerView.h */,
+				02D96A921A6F739000095C83 /* ALSPContainerView.m */,
+				02D96A931A6F739000095C83 /* ALSPMainView.h */,
+				02D96A941A6F739000095C83 /* ALSPMainView.m */,
+				02D96A951A6F739000095C83 /* ALSPPreferenceManager.h */,
+				02D96A961A6F739000095C83 /* ALSPPreferenceManager.m */,
+				02D96A971A6F739000095C83 /* ALSPThemeTableCell.h */,
+				02D96A981A6F739000095C83 /* ALSPThemeTableCell.m */,
+				02D96A991A6F739000095C83 /* Info.plist */,
+				02D96A9A1A6F739000095C83 /* Resources */,
+			);
+			name = Preferences;
+			path = Resources/Preferences;
+			sourceTree = "<group>";
+		};
+		02D96A8A1A6F739000095C83 /* .theos */ = {
+			isa = PBXGroup;
+			children = (
+				02D96A8B1A6F739000095C83 /* fakeroot */,
+				02D96A8C1A6F739000095C83 /* last_package */,
+				02D96A8D1A6F739000095C83 /* packages */,
+			);
+			path = .theos;
+			sourceTree = "<group>";
+		};
+		02D96A8D1A6F739000095C83 /* packages */ = {
+			isa = PBXGroup;
+			children = (
+				02D96A8E1A6F739000095C83 /* com.kingfish.homeonlyiconspreferences-0.0.1 */,
+			);
+			path = packages;
+			sourceTree = "<group>";
+		};
+		02D96A9A1A6F739000095C83 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				02D96A9B1A6F739000095C83 /* AeuriaLSPreferences.png */,
+				02D96A9C1A6F739000095C83 /* AeuriaLSPreferences@2x.png */,
+				02D96A9D1A6F739000095C83 /* Checkmark.png */,
+				02D96A9E1A6F739000095C83 /* Checkmark@2x.png */,
+				02D96A9F1A6F739000095C83 /* Snowflake.png */,
+				02D96AA01A6F739000095C83 /* Snowflake@2x.png */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -18,15 +119,16 @@
 /* Begin PBXLegacyTarget section */
 		02D96A7A1A6F6EE700095C83 /* aeurials */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "$(ACTION)";
+			buildArgumentsString = "";
 			buildConfigurationList = 02D96A7D1A6F6EE700095C83 /* Build configuration list for PBXLegacyTarget "aeurials" */;
 			buildPhases = (
 			);
-			buildToolPath = /usr/bin/make;
+			buildToolPath = $SRCROOT/Resources/build.sh;
+			buildWorkingDirectory = $SRCROOT/Resources/;
 			dependencies = (
 			);
 			name = aeurials;
-			passBuildSettingsInEnvironment = 1;
+			passBuildSettingsInEnvironment = 0;
 			productName = aeurials;
 		};
 /* End PBXLegacyTarget section */
@@ -174,6 +276,7 @@
 				02D96A7F1A6F6EE700095C83 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

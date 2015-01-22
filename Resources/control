@@ -1,0 +1,9 @@
+Package: com.kingfish.aeurials
+Name: Aeuria LS
+Depends: mobilesubstrate
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Aeuria LS
+Maintainer: Kingfi.sh <contact@kingfi.sh>
+Author: Bryce Pauken <brycepauken@gmail.com>
+Section: Tweaks
