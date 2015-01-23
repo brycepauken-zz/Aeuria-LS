@@ -48,9 +48,6 @@
         CGPoint cornerPoint = CGPointMake(textSize.width/2, textSize.height+verticalOffset);
         CGFloat outsideCircle = cornerPoint.x*cornerPoint.x+cornerPoint.y+cornerPoint.y - radiusSquared;
         
-        //UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Font Size" message:[NSString stringWithFormat:@"%i %i %i",minSize,midSize,maxSize] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        //[alert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
-        
         if(outsideCircle>0) {
             maxSize = midSize-1;
         }
@@ -68,12 +65,6 @@
  Returns the size of the text with the given font.
  */
 + (CGSize)sizeOfText:(NSString *)text withFont:(UIFont *)font {
-    //CGSize size = [text sizeWithAttributes:@{NSFontAttributeName:font}];
-    //return CGSizeMake(ceilf(size.width), ceilf(size.height));
-    
-    //CGRect textRect = [text boundingRectWithSize:CGSizeMake(MAXFLOAT, MAXFLOAT) options:NSStringDrawingUsesDeviceMetrics attributes:@{NSFontAttributeName:font} context:nil];
-    //return CGSizeMake(ceilf(textRect.size.width), ceilf(textRect.size.height));
-    
     NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:text attributes:@{(__bridge NSString *)kCTFontAttributeName:font}];
     CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attributedString);
     CGRect bounds = CTLineGetBoundsWithOptions(line, kCTLineBoundsUseGlyphPathBounds);

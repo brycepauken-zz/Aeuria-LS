@@ -15,6 +15,6 @@
 - (CGFloat)largeCircleMaxRadius;
 - (CGFloat)middleButtonVisiblePercentage;
 - (void)setScrollPercentage:(CGFloat)percentage;
-- (void)updateMaskWithLargeRadius:(CGFloat)largeRadius smallRadius:(CGFloat)smallRadius axesButtonsRadii:(CGFloat)axesButtonsRadii diagonalButtonsRadii:(CGFloat)diagonalButtonsRadii;
+- (void)updateMaskWithLargeRadius:(CGFloat)largeRadius smallRadius:(CGFloat)smallRadius axesButtonsRadii:(CGFloat)axesButtonsRadii diagonalButtonsRadii:(CGFloat)diagonalButtonsRadii zeroButtonRadius:(CGFloat)zeroButtonRadius;
 
 @end

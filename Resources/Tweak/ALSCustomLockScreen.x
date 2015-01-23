@@ -2,12 +2,14 @@
 
 #import "ALSClockView.h"
 #import "ALSCustomLockScreenMask.h"
+#import "ALSKeypadButton.h"
 #import "SBWallpaperImage.h"
 
 @interface ALSCustomLockScreen()
 
 @property (nonatomic, strong) ALSClockView *clockView;
 @property (nonatomic, strong) UIColor *color;
+@property (nonatomic, strong) NSMutableArray *keypadButtons;
 @property (nonatomic, strong) UIView *overlay;
 @property (nonatomic, strong) ALSCustomLockScreenMask *overlayMask;
 @property (nonatomic, strong) UIImageView *wallpaperView;
@@ -38,7 +40,7 @@
         
         //the overlay is that colored portion of the lock screen.
         _overlay = [[UIView alloc] initWithFrame:self.bounds];
-        [_overlay setBackgroundColor:[UIColor whiteColor]];
+        [_overlay setBackgroundColor:_color];
         [_overlay.layer setMask:_overlayMask];
         
         //the clock view is the circular view that displays the time on the lock screen.
@@ -56,6 +58,15 @@
         [self addSubview:_wallpaperView];
         [self addSubview:_overlay];
         [self addSubview:_clockView];
+        
+        _keypadButtons = [NSMutableArray array];
+        for(int i=0;i<10;i++) {
+            ALSKeypadButton *keypadButton = [[ALSKeypadButton alloc] initWithRadius:[_overlayMask buttonRadius] number:i color:_color];
+            [_keypadButtons addObject:keypadButton];
+            [keypadButton setAlpha:0];
+            [keypadButton setTransform:CGAffineTransformScale(CGAffineTransformIdentity, 0, 0)];
+            [self addSubview:keypadButton];
+        }
     }
     return self;
 }
@@ -71,6 +82,21 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.window setHidden:YES];
     });
+}
+
+/*
+ Reposition the keypad buttons.
+ */
+- (void)layoutSubviews {
+    CGFloat buttonOffset = [self.overlayMask buttonRadius]*2+[self.overlayMask buttonPadding];
+    for(int i=0;i<10;i++) {
+        if(i==9) {
+            [[self.keypadButtons objectAtIndex:0] setCenter:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2+[self.overlayMask buttonRadius]*4+[self.overlayMask buttonPadding]*2)];
+        }
+        else {
+            [[self.keypadButtons objectAtIndex:i+1] setCenter:CGPointMake(self.bounds.size.width/2+(i%3==0?-buttonOffset:(i%3==2?buttonOffset:0)), self.bounds.size.height/2+(i<3?-buttonOffset:(i>=6?buttonOffset:0)))];
+        }
+    }
 }
 
 /*
@@ -96,14 +122,26 @@
         CGFloat buttonOffset = [self.overlayMask buttonRadius]*2+[self.overlayMask buttonPadding];
         CGFloat axesButtonsRadii = MAX(0,MIN([self.overlayMask buttonRadius],largeRadius-[self.overlayMask buttonPadding]-buttonOffset));
         CGFloat diagonalButtonsRadii = MAX(0,MIN([self.overlayMask buttonRadius],largeRadius-[self.overlayMask buttonPadding]-sqrt(buttonOffset*buttonOffset+buttonOffset*buttonOffset)));
+        CGFloat zeroButtonRadius = MAX(0,MIN([self.overlayMask buttonRadius],largeRadius-[self.overlayMask buttonPadding]-([self.overlayMask buttonRadius]*4+[self.overlayMask buttonPadding]*2)));
         
         //update mask
         [self.overlayMask setScrollPercentage:self.lastKnownScrollPercentage];
-        [self.overlayMask updateMaskWithLargeRadius:largeRadius smallRadius:MAX(0,fabs(smallRadius)-2) axesButtonsRadii:axesButtonsRadii diagonalButtonsRadii:diagonalButtonsRadii];
+        [self.overlayMask updateMaskWithLargeRadius:largeRadius smallRadius:MAX(0,fabs(smallRadius)-2) axesButtonsRadii:axesButtonsRadii diagonalButtonsRadii:diagonalButtonsRadii zeroButtonRadius:zeroButtonRadius];
         
         //update clock view
         CGFloat clockViewScale = MAX(0,MIN(1,smallRadius/[self.overlayMask largeCircleMinRadius]));
         [self.clockView setTransform:CGAffineTransformScale(CGAffineTransformIdentity, clockViewScale, clockViewScale)];
+        
+        //update keypad buttons
+        CGFloat axesButtonsScale = axesButtonsRadii/[self.overlayMask buttonRadius];
+        CGFloat diagonalButtonsScale = diagonalButtonsRadii/[self.overlayMask buttonRadius];
+        CGFloat middleButtonScale = MAX(0,-smallRadius/[self.overlayMask buttonRadius]);
+        CGFloat zeroButtonScale = zeroButtonRadius/[self.overlayMask buttonRadius];
+        for(int i=0;i<10;i++) {
+            CGFloat scale = (i==0?zeroButtonScale:(i==5?middleButtonScale:(i%2==0?axesButtonsScale:diagonalButtonsScale)));
+            [[self.keypadButtons objectAtIndex:i] setAlpha:scale];
+            [(UIView *)[self.keypadButtons objectAtIndex:i] setTransform:CGAffineTransformScale(CGAffineTransformIdentity, scale, scale)];
+        }
     }
 }
 

@@ -21,11 +21,11 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super init];
     if(self) {
-        _buttonRadius = 45;
+        _buttonRadius = 44;
         _buttonPadding = 10;
         _largeCircleInternalPadding = 20;
         _largeCircleMinRadius = 100;
-        _middleButtonVisiblePercentage = 0.6;
+        _middleButtonVisiblePercentage = 0.5;
         
         [self setFrame:frame];
     }
@@ -39,8 +39,8 @@
 /*
  Reposition everytying as needed.
  */
-- (void)setFrame:(CGRect)frame {
-    [super setFrame:frame];
+- (void)layoutSublayers {
+    [super layoutSublayers];
     
     self.largeCircleMaxRadius = ceilf(sqrt(self.bounds.size.width*self.bounds.size.width+self.bounds.size.height*self.bounds.size.height)/2);
 }
@@ -49,7 +49,7 @@
  Caled via our display link/
  Check if we have to do any updating, and then do it!
  */
-- (void)updateMaskWithLargeRadius:(CGFloat)largeRadius smallRadius:(CGFloat)smallRadius axesButtonsRadii:(CGFloat)axesButtonsRadii diagonalButtonsRadii:(CGFloat)diagonalButtonsRadii {
+- (void)updateMaskWithLargeRadius:(CGFloat)largeRadius smallRadius:(CGFloat)smallRadius axesButtonsRadii:(CGFloat)axesButtonsRadii diagonalButtonsRadii:(CGFloat)diagonalButtonsRadii zeroButtonRadius:(CGFloat)zeroButtonRadius {
     UIBezierPath *mask = [UIBezierPath bezierPath];
     
     //create mask for large circle
@@ -66,6 +66,7 @@
         }
         [mask appendPath:[[self class] pathForCircleWithRadius:(i%2==0?diagonalButtonsRadii:axesButtonsRadii) center:CGPointMake(self.bounds.size.width/2+(i%3==0?-buttonOffset:(i%3==2?buttonOffset:0)), self.bounds.size.height/2+(i<3?-buttonOffset:(i>=6?buttonOffset:0)))]];
     }
+    [mask appendPath:[[self class] pathForCircleWithRadius:zeroButtonRadius center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2+(self.buttonRadius*4+self.buttonPadding*2))]];
     
     [self setFillColor:[[UIColor blackColor] CGColor]];
     [self setPath:[mask CGPath]];
