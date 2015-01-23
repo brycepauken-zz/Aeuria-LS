@@ -89,11 +89,21 @@
 
 - (void)updateViews {
     if(self.lastKnownScrollPercentage != self.newScrollPercentage) {
-        self.lastKnownScrollPercentage = self.newScrollPercentage;
+        self.lastKnownScrollPercentage = MAX(0,self.newScrollPercentage);
+        
+        CGFloat largeRadius = [self.overlayMask largeCircleMinRadius]+([self.overlayMask largeCircleMaxRadius]-[self.overlayMask largeCircleMinRadius])*self.lastKnownScrollPercentage;
+        CGFloat smallRadius = [self.overlayMask largeCircleMinRadius]-([self.overlayMask largeCircleMinRadius]+[self.overlayMask buttonRadius])*MAX(0,MIN(1,self.lastKnownScrollPercentage/[self.overlayMask middleButtonVisiblePercentage]));
+        CGFloat buttonOffset = [self.overlayMask buttonRadius]*2+[self.overlayMask buttonPadding];
+        CGFloat axesButtonsRadii = MAX(0,MIN([self.overlayMask buttonRadius],largeRadius-[self.overlayMask buttonPadding]-buttonOffset));
+        CGFloat diagonalButtonsRadii = MAX(0,MIN([self.overlayMask buttonRadius],largeRadius-[self.overlayMask buttonPadding]-sqrt(buttonOffset*buttonOffset+buttonOffset*buttonOffset)));
         
         //update mask
         [self.overlayMask setScrollPercentage:self.lastKnownScrollPercentage];
-        [self.overlayMask updateMask];
+        [self.overlayMask updateMaskWithLargeRadius:largeRadius smallRadius:MAX(0,fabs(smallRadius)-2) axesButtonsRadii:axesButtonsRadii diagonalButtonsRadii:diagonalButtonsRadii];
+        
+        //update clock view
+        CGFloat clockViewScale = MAX(0,MIN(1,smallRadius/[self.overlayMask largeCircleMinRadius]));
+        [self.clockView setTransform:CGAffineTransformScale(CGAffineTransformIdentity, clockViewScale, clockViewScale)];
     }
 }
 

@@ -2,10 +2,12 @@
 
 @interface ALSCustomLockScreenMask()
 
-@property (nonatomic) CGFloat buttonSize;
+@property (nonatomic) CGFloat buttonRadius;
+@property (nonatomic) CGFloat buttonPadding;
 @property (nonatomic) CGFloat largeCircleInternalPadding;
 @property (nonatomic) CGFloat largeCircleMaxRadius;
 @property (nonatomic) CGFloat largeCircleMinRadius;
+@property (nonatomic) CGFloat middleButtonVisiblePercentage;
 @property (nonatomic) CGFloat scrollPercentage;
 
 @end
@@ -19,11 +21,13 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super init];
     if(self) {
-        [self setFrame:frame];
-        
-        _buttonSize = 90;
+        _buttonRadius = 45;
+        _buttonPadding = 10;
         _largeCircleInternalPadding = 20;
         _largeCircleMinRadius = 100;
+        _middleButtonVisiblePercentage = 0.6;
+        
+        [self setFrame:frame];
     }
     return self;
 }
@@ -39,24 +43,32 @@
     [super setFrame:frame];
     
     self.largeCircleMaxRadius = ceilf(sqrt(self.bounds.size.width*self.bounds.size.width+self.bounds.size.height*self.bounds.size.height)/2);
-    
-    [self updateMask];
 }
 
 /*
  Caled via our display link/
  Check if we have to do any updating, and then do it!
  */
-- (void)updateMask {
-    CGFloat largeCircleRadius = self.largeCircleMinRadius+(self.largeCircleMaxRadius-self.largeCircleMinRadius)*self.scrollPercentage;
-    UIBezierPath *largeCircleMask = [[self class] pathForCircleWithRadius:largeCircleRadius center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)];
+- (void)updateMaskWithLargeRadius:(CGFloat)largeRadius smallRadius:(CGFloat)smallRadius axesButtonsRadii:(CGFloat)axesButtonsRadii diagonalButtonsRadii:(CGFloat)diagonalButtonsRadii {
+    UIBezierPath *mask = [UIBezierPath bezierPath];
     
-    //UIBezierPath *transparentPieces = [UIBezierPath bezierPath];
-    [largeCircleMask appendPath:[[self class] pathForCircleWithRadius:largeCircleRadius-self.largeCircleInternalPadding/2 center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)]];
+    //create mask for large circle
+    [mask appendPath:[[self class] pathForCircleWithRadius:largeRadius center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)]];
     
+    //remove inner circle (for clock view and middle button)
+    [mask appendPath:[[self class] pathForCircleWithRadius:smallRadius center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)]];
+    
+    //remove buttons on axes (directly above, below, left, or right of center button)
+    CGFloat buttonOffset = self.buttonRadius*2+self.buttonPadding;
+    for(int i=0;i<9;i++) {
+        if(i==4) {
+            continue;
+        }
+        [mask appendPath:[[self class] pathForCircleWithRadius:(i%2==0?diagonalButtonsRadii:axesButtonsRadii) center:CGPointMake(self.bounds.size.width/2+(i%3==0?-buttonOffset:(i%3==2?buttonOffset:0)), self.bounds.size.height/2+(i<3?-buttonOffset:(i>=6?buttonOffset:0)))]];
+    }
     
     [self setFillColor:[[UIColor blackColor] CGColor]];
-    [self setPath:[largeCircleMask CGPath]];
+    [self setPath:[mask CGPath]];
     [self setFillRule:kCAFillRuleEvenOdd];
 }
 
