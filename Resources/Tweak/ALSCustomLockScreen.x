@@ -1,18 +1,13 @@
-//
-//  ALSCustomLockScreen.m
-//  aeurials
-//
-//  Created by Bryce Pauken on 1/20/15.
-//  Copyright (c) 2015 kingfish. All rights reserved.
-//
-
 #import "ALSCustomLockScreen.h"
 
+#import "ALSClockView.h"
 #import "ALSCustomLockScreenMask.h"
 #import "SBWallpaperImage.h"
 
 @interface ALSCustomLockScreen()
 
+@property (nonatomic, strong) ALSClockView *clockView;
+@property (nonatomic, strong) UIColor *color;
 @property (nonatomic, strong) UIView *overlay;
 @property (nonatomic, strong) ALSCustomLockScreenMask *overlayMask;
 @property (nonatomic, strong) UIImageView *wallpaperView;
@@ -27,6 +22,12 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if(self) {
+        _color = [UIColor whiteColor];
+        
+        //the wallpaper view is a simple imageview containing the user's selected lockscreen wallpaper.
+        _wallpaperView = [[UIImageView alloc] initWithFrame:self.bounds];
+        [_wallpaperView setImage:[[%c(SBWallpaperImage) alloc] initWithVariant:0]];
+        
         //the mask is responsible for creating open areas in the colored portion of the lock screen.
         _overlayMask = [[ALSCustomLockScreenMask alloc] initWithFrame:self.bounds];
         
@@ -35,13 +36,14 @@
         [_overlay setBackgroundColor:[UIColor whiteColor]];
         [_overlay.layer setMask:_overlayMask];
         
-        //the wallpaper view is a simple imageview containing the user's selected lockscreen wallpaper.
-        _wallpaperView = [[UIImageView alloc] initWithFrame:self.bounds];
-        [_wallpaperView setImage:[[%c(SBWallpaperImage) alloc] initWithVariant:0]];
+        //the clock view is the circular view that displays the time on the lock screen.
+        _clockView = [[ALSClockView alloc] initWithRadius:[_overlayMask largeCircleMinRadius] internalPadding:[_overlayMask largeCircleInternalPadding] color:_color];
+        [_clockView setCenter:self.center];
         
         [self setUserInteractionEnabled:NO];
         [self addSubview:_wallpaperView];
         [self addSubview:_overlay];
+        [self addSubview:_clockView];
     }
     return self;
 }

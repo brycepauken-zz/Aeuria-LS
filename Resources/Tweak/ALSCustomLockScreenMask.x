@@ -1,13 +1,4 @@
-//
-//  ALSCustomLockScreenMask.m
-//  aeurials
-//
-//  Created by Bryce Pauken on 1/21/15.
-//  Copyright (c) 2015 kingfish. All rights reserved.
-//
-
 #import "ALSCustomLockScreenMask.h"
-
 
 @interface ALSCustomLockScreenMask()
 
@@ -15,8 +6,10 @@
 @property (nonatomic) CGFloat lastKnownScrollPercentage;
 @property (nonatomic) CGFloat newScrollPercentage;
 
-@property (nonatomic) int largeCircleMaxRadius;
-@property (nonatomic) int largeCircleMinRadius;
+@property (nonatomic) CGFloat buttonSize;
+@property (nonatomic) CGFloat largeCircleInternalPadding;
+@property (nonatomic) CGFloat largeCircleMaxRadius;
+@property (nonatomic) CGFloat largeCircleMinRadius;
 
 @end
 
@@ -31,6 +24,8 @@
     if(self) {
         [self setFrame:frame];
         
+        _buttonSize = 90;
+        _largeCircleInternalPadding = 20;
         _largeCircleMinRadius = 100;
         
         _lastKnownScrollPercentage = 0;
@@ -66,8 +61,13 @@
     if(true || self.lastKnownScrollPercentage != self.newScrollPercentage) {
         self.lastKnownScrollPercentage = self.newScrollPercentage;
         
-        UIBezierPath *largeCircleMask = [[self class] pathForCircleWithRadius:self.largeCircleMinRadius+(self.largeCircleMaxRadius-self.largeCircleMinRadius)*self.lastKnownScrollPercentage center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)];
+        CGFloat largeCircleRadius = self.largeCircleMinRadius+(self.largeCircleMaxRadius-self.largeCircleMinRadius)*self.lastKnownScrollPercentage;
+        UIBezierPath *largeCircleMask = [[self class] pathForCircleWithRadius:largeCircleRadius center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)];
         
+        //UIBezierPath *transparentPieces = [UIBezierPath bezierPath];
+        [largeCircleMask appendPath:[[self class] pathForCircleWithRadius:largeCircleRadius-self.largeCircleInternalPadding/2 center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)]];
+        
+         
         [self setFillColor:[[UIColor blackColor] CGColor]];
         [self setPath:[largeCircleMask CGPath]];
         [self setFillRule:kCAFillRuleEvenOdd];

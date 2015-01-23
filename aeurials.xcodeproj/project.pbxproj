@@ -9,6 +9,8 @@
 /* Begin PBXFileReference section */
 		0230EC001A704D2E00AA9C8B /* ALSCustomLockScreenMask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenMask.h; sourceTree = "<group>"; };
 		0230EC011A704D2E00AA9C8B /* ALSCustomLockScreenMask.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreenMask.x; sourceTree = "<group>"; };
+		0230EC021A70CC0C00AA9C8B /* ALSClockView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSClockView.h; sourceTree = "<group>"; };
+		0230EC031A70CC0C00AA9C8B /* ALSClockView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSClockView.x; sourceTree = "<group>"; };
 		02D96A861A6F735F00095C83 /* SBLockScreenViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBLockScreenViewController.h; sourceTree = "<group>"; };
 		02D96A871A6F735F00095C83 /* SBLockScreenViewController.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBLockScreenViewController.x; sourceTree = "<group>"; };
 		02D96A8B1A6F739000095C83 /* fakeroot */ = {isa = PBXFileReference; lastKnownFileType = text; path = fakeroot; sourceTree = "<group>"; };
@@ -50,6 +52,8 @@
 		02D96A801A6F735F00095C83 /* Tweak */ = {
 			isa = PBXGroup;
 			children = (
+				0230EC021A70CC0C00AA9C8B /* ALSClockView.h */,
+				0230EC031A70CC0C00AA9C8B /* ALSClockView.x */,
 				02D96AA41A6F8F8700095C83 /* ALSCustomLockScreen.h */,
 				02D96AA51A6F8F8700095C83 /* ALSCustomLockScreen.x */,
 				0230EC001A704D2E00AA9C8B /* ALSCustomLockScreenMask.h */,
