@@ -2,14 +2,11 @@
 
 @interface ALSCustomLockScreenMask()
 
-@property (nonatomic, strong) CADisplayLink *displayLink;
-@property (nonatomic) CGFloat lastKnownScrollPercentage;
-@property (nonatomic) CGFloat newScrollPercentage;
-
 @property (nonatomic) CGFloat buttonSize;
 @property (nonatomic) CGFloat largeCircleInternalPadding;
 @property (nonatomic) CGFloat largeCircleMaxRadius;
 @property (nonatomic) CGFloat largeCircleMinRadius;
+@property (nonatomic) CGFloat scrollPercentage;
 
 @end
 
@@ -27,13 +24,6 @@
         _buttonSize = 90;
         _largeCircleInternalPadding = 20;
         _largeCircleMinRadius = 100;
-        
-        _lastKnownScrollPercentage = 0;
-        _newScrollPercentage = 0;
-        
-        _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateMask)];
-        [_displayLink setFrameInterval:1];
-        [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     }
     return self;
 }
@@ -58,24 +48,16 @@
  Check if we have to do any updating, and then do it!
  */
 - (void)updateMask {
-    if(true || self.lastKnownScrollPercentage != self.newScrollPercentage) {
-        self.lastKnownScrollPercentage = self.newScrollPercentage;
-        
-        CGFloat largeCircleRadius = self.largeCircleMinRadius+(self.largeCircleMaxRadius-self.largeCircleMinRadius)*self.lastKnownScrollPercentage;
-        UIBezierPath *largeCircleMask = [[self class] pathForCircleWithRadius:largeCircleRadius center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)];
-        
-        //UIBezierPath *transparentPieces = [UIBezierPath bezierPath];
-        [largeCircleMask appendPath:[[self class] pathForCircleWithRadius:largeCircleRadius-self.largeCircleInternalPadding/2 center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)]];
-        
-         
-        [self setFillColor:[[UIColor blackColor] CGColor]];
-        [self setPath:[largeCircleMask CGPath]];
-        [self setFillRule:kCAFillRuleEvenOdd];
-    }
-}
-
-- (void)updateScrollPercentage:(CGFloat)percentage {
-    self.newScrollPercentage = percentage;
+    CGFloat largeCircleRadius = self.largeCircleMinRadius+(self.largeCircleMaxRadius-self.largeCircleMinRadius)*self.scrollPercentage;
+    UIBezierPath *largeCircleMask = [[self class] pathForCircleWithRadius:largeCircleRadius center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)];
+    
+    //UIBezierPath *transparentPieces = [UIBezierPath bezierPath];
+    [largeCircleMask appendPath:[[self class] pathForCircleWithRadius:largeCircleRadius-self.largeCircleInternalPadding/2 center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)]];
+    
+    
+    [self setFillColor:[[UIColor blackColor] CGColor]];
+    [self setPath:[largeCircleMask CGPath]];
+    [self setFillRule:kCAFillRuleEvenOdd];
 }
 
 @end

@@ -12,6 +12,11 @@
 @property (nonatomic, strong) ALSCustomLockScreenMask *overlayMask;
 @property (nonatomic, strong) UIImageView *wallpaperView;
 
+//display link properties
+@property (nonatomic, strong) CADisplayLink *displayLink;
+@property (nonatomic) CGFloat lastKnownScrollPercentage;
+@property (nonatomic) CGFloat newScrollPercentage;
+
 @end
 
 @implementation ALSCustomLockScreen
@@ -39,6 +44,13 @@
         //the clock view is the circular view that displays the time on the lock screen.
         _clockView = [[ALSClockView alloc] initWithRadius:[_overlayMask largeCircleMinRadius] internalPadding:[_overlayMask largeCircleInternalPadding] color:_color];
         [_clockView setCenter:self.center];
+        
+        _lastKnownScrollPercentage = MAXFLOAT;
+        _newScrollPercentage = 0;
+        
+        _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateViews)];
+        [_displayLink setFrameInterval:1];
+        [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
         
         [self setUserInteractionEnabled:NO];
         [self addSubview:_wallpaperView];
@@ -72,7 +84,17 @@
  Forward the new scroll percentage to our mask
  */
 - (void)updateScrollPercentage:(CGFloat)percentage {
-    [self.overlayMask updateScrollPercentage:percentage];
+    self.newScrollPercentage = percentage;
+}
+
+- (void)updateViews {
+    if(self.lastKnownScrollPercentage != self.newScrollPercentage) {
+        self.lastKnownScrollPercentage = self.newScrollPercentage;
+        
+        //update mask
+        [self.overlayMask setScrollPercentage:self.lastKnownScrollPercentage];
+        [self.overlayMask updateMask];
+    }
 }
 
 @end

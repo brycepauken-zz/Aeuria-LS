@@ -10,6 +10,7 @@
 - (instancetype)initWithFrame:(CGRect)frame;
 - (CGFloat)largeCircleInternalPadding;
 - (CGFloat)largeCircleMinRadius;
-- (void)updateScrollPercentage:(CGFloat)percentage;
+- (void)setScrollPercentage:(CGFloat)percentage;
+- (void)updateMask;
 
 @end
