@@ -7,10 +7,11 @@ THEOS_BUILD_DIR = ../Build
 #The Tweak itself
 TWEAK_NAME = AeuriaLS
 AeuriaLS_FILES =\
-   Tweak/ALSKeypadButton.x \
    Tweak/ALSClockView.x \
    Tweak/ALSCustomLockScreen.x \
    Tweak/ALSCustomLockScreenMask.x \
+   Tweak/ALSKeypadButton.x \
+   Tweak/ALSTextLayer.x \
    Tweak/SBLockScreenViewController.x
 AeuriaLS_FRAMEWORKS = CoreGraphics CoreText Foundation QuartzCore UIKit
 

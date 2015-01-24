@@ -1,14 +1,19 @@
 #import "ALSCustomLockScreenMask.h"
 
+#import "ALSTextLayer.h"
+
 @interface ALSCustomLockScreenMask()
 
 @property (nonatomic) CGFloat buttonRadius;
 @property (nonatomic) CGFloat buttonPadding;
+@property (nonatomic, strong) CAShapeLayer *circleMaskLayer;
+@property (nonatomic, strong) CAShapeLayer *internalLayer;
 @property (nonatomic) CGFloat largeCircleInternalPadding;
 @property (nonatomic) CGFloat largeCircleMaxRadius;
 @property (nonatomic) CGFloat largeCircleMinRadius;
 @property (nonatomic) CGFloat middleButtonVisiblePercentage;
 @property (nonatomic) CGFloat scrollPercentage;
+@property (nonatomic, strong) ALSTextLayer *titleLayer;
 
 @end
 
@@ -27,6 +32,13 @@
         _largeCircleMinRadius = 100;
         _middleButtonVisiblePercentage = 0.5;
         
+        _circleMaskLayer = [[CAShapeLayer alloc] init];
+        _internalLayer = [[CAShapeLayer alloc] init];
+        _titleLayer = [[ALSTextLayer alloc] init];
+        [_internalLayer setMask:_circleMaskLayer];
+        
+        [self addSublayer:self.internalLayer];
+        [self.internalLayer addSublayer:self.titleLayer];
         [self setFrame:frame];
     }
     return self;
@@ -42,6 +54,9 @@
 - (void)layoutSublayers {
     [super layoutSublayers];
     
+    [self.circleMaskLayer setFrame:self.frame];
+    [self.internalLayer setFrame:self.frame];
+    
     self.largeCircleMaxRadius = ceilf(sqrt(self.bounds.size.width*self.bounds.size.width+self.bounds.size.height*self.bounds.size.height)/2);
 }
 
@@ -52,8 +67,14 @@
 - (void)updateMaskWithLargeRadius:(CGFloat)largeRadius smallRadius:(CGFloat)smallRadius axesButtonsRadii:(CGFloat)axesButtonsRadii diagonalButtonsRadii:(CGFloat)diagonalButtonsRadii zeroButtonRadius:(CGFloat)zeroButtonRadius {
     UIBezierPath *mask = [UIBezierPath bezierPath];
     
-    //create mask for large circle
-    [mask appendPath:[[self class] pathForCircleWithRadius:largeRadius center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)]];
+    //this is our layer that masks the large outside circle
+    [self.circleMaskLayer setPath:[[[self class] pathForCircleWithRadius:largeRadius center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)] CGPath]];
+    
+    //add entire bounds to mask
+    [mask appendPath:[UIBezierPath bezierPathWithRect:self.bounds]];
+    
+    //remove area of title
+    [mask appendPath:[UIBezierPath bezierPathWithRect:CGRectInset(self.titleLayer.frame, 2, 2)]];
     
     //remove inner circle (for clock view and middle button)
     [mask appendPath:[[self class] pathForCircleWithRadius:smallRadius center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)]];
@@ -68,9 +89,11 @@
     }
     [mask appendPath:[[self class] pathForCircleWithRadius:zeroButtonRadius center:CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2+(self.buttonRadius*4+self.buttonPadding*2))]];
     
-    [self setFillColor:[[UIColor blackColor] CGColor]];
-    [self setPath:[mask CGPath]];
-    [self setFillRule:kCAFillRuleEvenOdd];
+    [self.titleLayer setPosition:CGPointMake(self.bounds.size.width/2, (self.bounds.size.height/2-buttonOffset-self.buttonRadius)/2)];
+    
+    [self.internalLayer setFillColor:[[UIColor blackColor] CGColor]];
+    [self.internalLayer setPath:[mask CGPath]];
+    [self.internalLayer setFillRule:kCAFillRuleEvenOdd];
 }
 
 @end

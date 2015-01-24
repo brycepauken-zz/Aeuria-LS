@@ -88,6 +88,8 @@
  Reposition the keypad buttons.
  */
 - (void)layoutSubviews {
+    [super layoutSubviews];
+    
     CGFloat buttonOffset = [self.overlayMask buttonRadius]*2+[self.overlayMask buttonPadding];
     for(int i=0;i<10;i++) {
         if(i==9) {
