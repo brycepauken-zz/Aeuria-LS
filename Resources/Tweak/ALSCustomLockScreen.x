@@ -126,7 +126,7 @@
         
         //update mask
         [self.overlayMask setScrollPercentage:self.lastKnownScrollPercentage];
-        [self.overlayMask updateMaskWithLargeRadius:largeRadius smallRadius:MAX(0,fabs(smallRadius)-2) axesButtonsRadii:axesButtonsRadii diagonalButtonsRadii:diagonalButtonsRadii zeroButtonRadius:zeroButtonRadius];
+        [self.overlayMask updateMaskWithLargeRadius:largeRadius smallRadius:(smallRadius-2>=0?smallRadius-2:MIN(-(smallRadius-2),zeroButtonRadius)) axesButtonsRadii:axesButtonsRadii diagonalButtonsRadii:diagonalButtonsRadii zeroButtonRadius:zeroButtonRadius];
         
         //update clock view
         CGFloat clockViewScale = MAX(0,MIN(1,smallRadius/[self.overlayMask largeCircleMinRadius]));
@@ -135,10 +135,9 @@
         //update keypad buttons
         CGFloat axesButtonsScale = axesButtonsRadii/[self.overlayMask buttonRadius];
         CGFloat diagonalButtonsScale = diagonalButtonsRadii/[self.overlayMask buttonRadius];
-        CGFloat middleButtonScale = MAX(0,-smallRadius/[self.overlayMask buttonRadius]);
         CGFloat zeroButtonScale = zeroButtonRadius/[self.overlayMask buttonRadius];
         for(int i=0;i<10;i++) {
-            CGFloat scale = (i==0?zeroButtonScale:(i==5?middleButtonScale:(i%2==0?axesButtonsScale:diagonalButtonsScale)));
+            CGFloat scale = (i==0||i==5?zeroButtonScale:(i%2==0?axesButtonsScale:diagonalButtonsScale));
             [[self.keypadButtons objectAtIndex:i] setAlpha:scale];
             [(UIView *)[self.keypadButtons objectAtIndex:i] setTransform:CGAffineTransformScale(CGAffineTransformIdentity, scale, scale)];
         }
