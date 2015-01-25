@@ -15,6 +15,7 @@
 		025832811A72445100F1B849 /* ALSKeypadButton.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSKeypadButton.x; sourceTree = "<group>"; };
 		02BB98721A736F930056352A /* ALSTextLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSTextLayer.h; sourceTree = "<group>"; };
 		02BB98731A736F930056352A /* ALSTextLayer.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSTextLayer.x; sourceTree = "<group>"; };
+		02C57CE71A75AF46003F490A /* AeuriaLS.deb */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = AeuriaLS.deb; path = Build/AeuriaLS.deb; sourceTree = "<group>"; };
 		02D96A861A6F735F00095C83 /* SBLockScreenViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBLockScreenViewController.h; sourceTree = "<group>"; };
 		02D96A871A6F735F00095C83 /* SBLockScreenViewController.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBLockScreenViewController.x; sourceTree = "<group>"; };
 		02D96A8B1A6F739000095C83 /* fakeroot */ = {isa = PBXFileReference; lastKnownFileType = text; path = fakeroot; sourceTree = "<group>"; };
@@ -44,10 +45,19 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		02C57CE61A75AF31003F490A /* Build */ = {
+			isa = PBXGroup;
+			children = (
+				02C57CE71A75AF46003F490A /* AeuriaLS.deb */,
+			);
+			name = Build;
+			sourceTree = "<group>";
+		};
 		02D96A751A6F6EE700095C83 = {
 			isa = PBXGroup;
 			children = (
 				02D96AA11A6F751200095C83 /* Makefile */,
+				02C57CE61A75AF31003F490A /* Build */,
 				02D96A891A6F739000095C83 /* Preferences */,
 				02D96A801A6F735F00095C83 /* Tweak */,
 			);

@@ -12,6 +12,7 @@
 @property (nonatomic, strong) NSMutableArray *keypadButtons;
 @property (nonatomic, strong) UIView *overlay;
 @property (nonatomic, strong) ALSCustomLockScreenMask *overlayMask;
+@property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIImageView *wallpaperView;
 
 //display link properties
@@ -47,6 +48,9 @@
         _clockView = [[ALSClockView alloc] initWithRadius:[_overlayMask largeCircleMinRadius] internalPadding:[_overlayMask largeCircleInternalPadding] color:_color];
         [_clockView setCenter:self.center];
         
+        _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
+        [_scrollView setDelegate:self];
+        
         _lastKnownScrollPercentage = MAXFLOAT;
         _newScrollPercentage = 0;
         
@@ -54,10 +58,10 @@
         [_displayLink setFrameInterval:1];
         [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
         
-        [self setUserInteractionEnabled:NO];
         [self addSubview:_wallpaperView];
         [self addSubview:_overlay];
         [self addSubview:_clockView];
+        [self addSubview:_scrollView];
         
         _keypadButtons = [NSMutableArray array];
         for(int i=0;i<10;i++) {
@@ -67,6 +71,8 @@
             [keypadButton setTransform:CGAffineTransformScale(CGAffineTransformIdentity, 0, 0)];
             [self addSubview:keypadButton];
         }
+        
+        [self setNeedsDisplay];
     }
     return self;
 }
@@ -80,7 +86,7 @@
     } completion:nil];*/
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.window setHidden:YES];
+        //[self.window setHidden:YES];
     });
 }
 
@@ -89,6 +95,11 @@
  */
 - (void)layoutSubviews {
     [super layoutSubviews];
+    
+    if(self.scrollView.contentSize.width != self.bounds.size.width*2) {
+        [self.scrollView setContentSize:CGSizeMake(self.bounds.size.width*2, self.bounds.size.height)];
+        [self.scrollView setContentOffset:CGPointMake(self.bounds.size.width, 0)];
+    }
     
     CGFloat buttonOffset = [self.overlayMask buttonRadius]*2+[self.overlayMask buttonPadding];
     for(int i=0;i<10;i++) {
@@ -108,11 +119,15 @@
     
 }
 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    self.newScrollPercentage = (scrollView.bounds.size.width-scrollView.contentOffset.x)/scrollView.bounds.size.width;
+}
+
 /*
  Forward the new scroll percentage to our mask
  */
 - (void)updateScrollPercentage:(CGFloat)percentage {
-    self.newScrollPercentage = percentage;
+    //self.newScrollPercentage = percentage;
 }
 
 - (void)updateViews {

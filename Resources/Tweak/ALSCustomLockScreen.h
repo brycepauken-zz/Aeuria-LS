@@ -6,7 +6,7 @@
  with for such purposes as forwarding passcodes so we don't have to handle them.
  */
 
-@interface ALSCustomLockScreen : UIView
+@interface ALSCustomLockScreen : UIView <UIScrollViewDelegate>
 
 - (void)animateOut;
 - (void)resetView;

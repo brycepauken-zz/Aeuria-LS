@@ -38,6 +38,7 @@ internal-stage::
 	$(ECHO_NOTHING)cp Preferences/Info.plist $(THEOS_STAGING_DIR)/Library/PreferenceLoader/Preferences/AeuriaLSPreferences.plist$(ECHO_END)
 after-package::
 	$(ECHO_NOTHING)rm -rf _$(ECHO_END)
-	$(ECHO_NOTHING)mv $(THEOS_PACKAGE_DIR)/$(THEOS_PACKAGE_NAME)_$(_THEOS_INTERNAL_PACKAGE_VERSION)_$(THEOS_PACKAGE_ARCH).deb $(THEOS_PACKAGE_DIR)/$(TWEAK_NAME)_$(_THEOS_INTERNAL_PACKAGE_VERSION).deb$(ECHO_END)
+	$(ECHO_NOTHING)mv $(THEOS_PACKAGE_DIR)/$(THEOS_PACKAGE_NAME)_$(_THEOS_INTERNAL_PACKAGE_VERSION)_$(THEOS_PACKAGE_ARCH).deb $(THEOS_PACKAGE_DIR)/$(TWEAK_NAME).deb$(ECHO_END)
+	$(ECHO_NOTHING)find $(THEOS_PACKAGE_DIR) ! -name '$(TWEAK_NAME).deb' -type f -exec rm -f {} +$(ECHO_END)
 after-install::
 	install.exec "killall -9 SpringBoard"
