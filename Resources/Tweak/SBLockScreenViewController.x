@@ -7,7 +7,7 @@
 
 @property (nonatomic, strong) ALSCustomLockScreen *customLockScreen;
 
-- (void)addCustomLockScreenToWindow:(UIWindow *)window;
+- (void)addCustomLockScreenToView:(UIView *)view;
 
 @end
 
@@ -42,7 +42,7 @@
 - (void)startLockScreenFadeInAnimationForSource:(int)arg1 {
     %orig;
     
-    UIView *lockScreenView = [self lockScreenView];
+    UIView *lockScreenView = [[self lockScreenScrollView] superview];
     if(lockScreenView) {
         NSArray *windows = [[UIApplication sharedApplication].windows sortedArrayUsingComparator:^NSComparisonResult(UIWindow *win1, UIWindow *win2) {
             return win2.windowLevel - win1.windowLevel;
@@ -57,7 +57,7 @@
             [[windows objectAtIndex:i] setHidden:YES];
         }
         
-        [self addCustomLockScreenToWindow:lockScreenView.window];
+        [self addCustomLockScreenToView:lockScreenView];
     }
 }
 
@@ -75,18 +75,18 @@
 - (void)viewDidAppear:(BOOL)view {
     %orig;
     
-    [self addCustomLockScreenToWindow:[[self view] window]];
+    [self addCustomLockScreenToView:[[self lockScreenScrollView] superview]];
 }
 
 /*
- Add our custom lock screen to the given window.
+ Add our custom lock screen to the given view.
  We create the custom lock screen first if needed,
- make sure it's in the right window, and then add it.
+ make sure it's in the right view, and then add it.
  */
 %new
-- (void)addCustomLockScreenToWindow:(UIWindow *)window {
+- (void)addCustomLockScreenToView:(UIView *)view {
     if(!self.customLockScreen) {
-        self.customLockScreen = [[ALSCustomLockScreen alloc] initWithFrame:window.bounds];
+        self.customLockScreen = [[ALSCustomLockScreen alloc] initWithFrame:view.bounds];
         [self.customLockScreen.layer setZPosition:MAXFLOAT];
     }
     else {
@@ -97,7 +97,7 @@
         [self.customLockScreen removeFromSuperview];
     }
     
-    [window addSubview:self.customLockScreen];
+    [view insertSubview:self.customLockScreen atIndex:0];
 }
 
 /*
