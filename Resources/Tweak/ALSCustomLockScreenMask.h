@@ -8,13 +8,7 @@
 @interface ALSCustomLockScreenMask : CAShapeLayer
 
 - (instancetype)initWithFrame:(CGRect)frame;
-- (CGFloat)buttonRadius;
-- (CGFloat)buttonPadding;
-- (CGFloat)largeCircleInternalPadding;
-- (CGFloat)largeCircleMinRadius;
-- (CGFloat)largeCircleMaxRadius;
-- (CGFloat)middleButtonVisiblePercentage;
-- (void)setScrollPercentage:(CGFloat)percentage;
-- (void)updateMaskWithLargeRadius:(CGFloat)largeRadius smallRadius:(CGFloat)smallRadius axesButtonsRadii:(CGFloat)axesButtonsRadii diagonalButtonsRadii:(CGFloat)diagonalButtonsRadii zeroButtonRadius:(CGFloat)zeroButtonRadius;
+- (void)resetMask;
+- (void)updateMaskWithPercentage:(CGFloat)percentage;
 
 @end

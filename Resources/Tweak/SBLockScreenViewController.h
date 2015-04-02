@@ -7,14 +7,9 @@
 
 @interface SBLockScreenViewController : NSObject
 
-- (void)finishUIUnlockFromSource:(int)source;
 - (id)lockScreenScrollView;
 - (id)lockScreenView;
-- (void)lockScreenViewDidScrollWithNewScrollPercentage:(CGFloat)percentage tracking:(BOOL)tracking;
-- (void)startLockScreenFadeInAnimationForSource:(int)arg1;
 - (long long)statusBarStyle;
-- (UIView *)view;
 - (void)viewWillAppear:(BOOL)view;
 
 @end
-

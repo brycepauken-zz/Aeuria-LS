@@ -7,17 +7,23 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		0230EC001A704D2E00AA9C8B /* ALSCustomLockScreenMask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenMask.h; sourceTree = "<group>"; };
-		0230EC011A704D2E00AA9C8B /* ALSCustomLockScreenMask.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreenMask.x; sourceTree = "<group>"; };
-		0230EC021A70CC0C00AA9C8B /* ALSClockView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSClockView.h; sourceTree = "<group>"; };
-		0230EC031A70CC0C00AA9C8B /* ALSClockView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSClockView.x; sourceTree = "<group>"; };
-		025832801A72445100F1B849 /* ALSKeypadButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSKeypadButton.h; sourceTree = "<group>"; };
-		025832811A72445100F1B849 /* ALSKeypadButton.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSKeypadButton.x; sourceTree = "<group>"; };
-		02BB98721A736F930056352A /* ALSTextLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSTextLayer.h; sourceTree = "<group>"; };
-		02BB98731A736F930056352A /* ALSTextLayer.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSTextLayer.x; sourceTree = "<group>"; };
+		023724181AC25213007FAFC1 /* ALSCustomLockScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreen.h; sourceTree = "<group>"; };
+		023724191AC25213007FAFC1 /* ALSCustomLockScreen.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreen.x; sourceTree = "<group>"; };
+		0237241A1AC25213007FAFC1 /* ALSCustomLockScreenMask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenMask.h; sourceTree = "<group>"; };
+		0237241B1AC25213007FAFC1 /* ALSCustomLockScreenMask.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreenMask.x; sourceTree = "<group>"; };
+		0237241C1AC25213007FAFC1 /* SBChevronView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBChevronView.h; sourceTree = "<group>"; };
+		0237241D1AC25213007FAFC1 /* SBChevronView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBChevronView.x; sourceTree = "<group>"; };
+		0237241E1AC25213007FAFC1 /* SBFLockScreenDateView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBFLockScreenDateView.h; sourceTree = "<group>"; };
+		0237241F1AC25213007FAFC1 /* SBFLockScreenDateView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBFLockScreenDateView.x; sourceTree = "<group>"; };
+		023724201AC25213007FAFC1 /* SBLockScreenScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBLockScreenScrollView.h; sourceTree = "<group>"; };
+		023724211AC25213007FAFC1 /* SBLockScreenScrollView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBLockScreenScrollView.x; sourceTree = "<group>"; };
+		023724221AC25213007FAFC1 /* SBLockScreenViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBLockScreenViewController.h; sourceTree = "<group>"; };
+		023724231AC25213007FAFC1 /* SBLockScreenViewController.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBLockScreenViewController.x; sourceTree = "<group>"; };
+		023724241AC25213007FAFC1 /* SBWallpaperEffectView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBWallpaperEffectView.h; sourceTree = "<group>"; };
+		023724251AC25213007FAFC1 /* SBWallpaperEffectView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBWallpaperEffectView.x; sourceTree = "<group>"; };
 		02C57CE71A75AF46003F490A /* AeuriaLS.deb */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = AeuriaLS.deb; path = Build/AeuriaLS.deb; sourceTree = "<group>"; };
-		02D96A861A6F735F00095C83 /* SBLockScreenViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBLockScreenViewController.h; sourceTree = "<group>"; };
-		02D96A871A6F735F00095C83 /* SBLockScreenViewController.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBLockScreenViewController.x; sourceTree = "<group>"; };
+		02C859091AC35CEC00C5B920 /* ALSCustomLockScreenClock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenClock.h; sourceTree = "<group>"; };
+		02C8590A1AC35CEC00C5B920 /* ALSCustomLockScreenClock.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreenClock.x; sourceTree = "<group>"; };
 		02D96A8B1A6F739000095C83 /* fakeroot */ = {isa = PBXFileReference; lastKnownFileType = text; path = fakeroot; sourceTree = "<group>"; };
 		02D96A8C1A6F739000095C83 /* last_package */ = {isa = PBXFileReference; lastKnownFileType = text; path = last_package; sourceTree = "<group>"; };
 		02D96A8E1A6F739000095C83 /* com.kingfish.homeonlyiconspreferences-0.0.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = "com.kingfish.homeonlyiconspreferences-0.0.1"; sourceTree = "<group>"; };
@@ -39,9 +45,6 @@
 		02D96A9F1A6F739000095C83 /* Snowflake.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Snowflake.png; sourceTree = "<group>"; };
 		02D96AA01A6F739000095C83 /* Snowflake@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Snowflake@2x.png"; sourceTree = "<group>"; };
 		02D96AA11A6F751200095C83 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; name = Makefile; path = Resources/Makefile; sourceTree = "<group>"; };
-		02D96AA31A6F862A00095C83 /* SBWallpaperImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBWallpaperImage.h; sourceTree = "<group>"; };
-		02D96AA41A6F8F8700095C83 /* ALSCustomLockScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreen.h; sourceTree = "<group>"; };
-		02D96AA51A6F8F8700095C83 /* ALSCustomLockScreen.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreen.x; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -66,19 +69,22 @@
 		02D96A801A6F735F00095C83 /* Tweak */ = {
 			isa = PBXGroup;
 			children = (
-				0230EC021A70CC0C00AA9C8B /* ALSClockView.h */,
-				0230EC031A70CC0C00AA9C8B /* ALSClockView.x */,
-				02D96AA41A6F8F8700095C83 /* ALSCustomLockScreen.h */,
-				02D96AA51A6F8F8700095C83 /* ALSCustomLockScreen.x */,
-				0230EC001A704D2E00AA9C8B /* ALSCustomLockScreenMask.h */,
-				0230EC011A704D2E00AA9C8B /* ALSCustomLockScreenMask.x */,
-				025832801A72445100F1B849 /* ALSKeypadButton.h */,
-				025832811A72445100F1B849 /* ALSKeypadButton.x */,
-				02BB98721A736F930056352A /* ALSTextLayer.h */,
-				02BB98731A736F930056352A /* ALSTextLayer.x */,
-				02D96A861A6F735F00095C83 /* SBLockScreenViewController.h */,
-				02D96A871A6F735F00095C83 /* SBLockScreenViewController.x */,
-				02D96AA31A6F862A00095C83 /* SBWallpaperImage.h */,
+				023724181AC25213007FAFC1 /* ALSCustomLockScreen.h */,
+				023724191AC25213007FAFC1 /* ALSCustomLockScreen.x */,
+				02C859091AC35CEC00C5B920 /* ALSCustomLockScreenClock.h */,
+				02C8590A1AC35CEC00C5B920 /* ALSCustomLockScreenClock.x */,
+				0237241A1AC25213007FAFC1 /* ALSCustomLockScreenMask.h */,
+				0237241B1AC25213007FAFC1 /* ALSCustomLockScreenMask.x */,
+				0237241C1AC25213007FAFC1 /* SBChevronView.h */,
+				0237241D1AC25213007FAFC1 /* SBChevronView.x */,
+				0237241E1AC25213007FAFC1 /* SBFLockScreenDateView.h */,
+				0237241F1AC25213007FAFC1 /* SBFLockScreenDateView.x */,
+				023724201AC25213007FAFC1 /* SBLockScreenScrollView.h */,
+				023724211AC25213007FAFC1 /* SBLockScreenScrollView.x */,
+				023724221AC25213007FAFC1 /* SBLockScreenViewController.h */,
+				023724231AC25213007FAFC1 /* SBLockScreenViewController.x */,
+				023724241AC25213007FAFC1 /* SBWallpaperEffectView.h */,
+				023724251AC25213007FAFC1 /* SBWallpaperEffectView.x */,
 			);
 			name = Tweak;
 			path = Resources/Tweak;

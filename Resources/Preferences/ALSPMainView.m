@@ -109,7 +109,7 @@
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
     
     if(indexPath.row == 0 && self.respringCellEnabled) {
-        system("killall -9 SpringBoard");
+        //system("killall -9 SpringBoard");
     }
     else {
         HOIThemeStatus newStatus = [ALSPPreferenceManager toggledStatus:[[[self.themeList objectAtIndex:indexPath.row-1] objectForKey:@"Status"] integerValue]];
