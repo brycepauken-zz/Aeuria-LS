@@ -1,11 +1,5 @@
-@interface PSListController : UIViewController {
-    NSArray *_specifiers;
-}
+#import "PSListController.h"
 
-@end
-
-@interface AeuriaLSPreferencesListController : PSListController {
-    
-}
+@interface AeuriaLSPreferencesListController : PSListController
 
 @end

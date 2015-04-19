@@ -20,14 +20,12 @@ AeuriaLS_FRAMEWORKS = CoreGraphics CoreText Foundation QuartzCore UIKit
 #The Tweak's preferences
 BUNDLE_NAME = AeuriaLSPreferences
 AeuriaLSPreferences_FILES =\
-   Preferences/AeuriaLSPreferencesListController.m \
-   Preferences/ALSPContainerView.m \
-   Preferences/ALSPMainView.m \
-   Preferences/ALSPPreferenceManager.m \
-   Preferences/ALSPThemeTableCell.m
-AeuriaLSPreferences_FRAMEWORKS = CoreGraphics QuartzCore UIKit
+   Preferences/AeuriaLSPreferencesHeader.m \
+   Preferences/AeuriaLSPreferencesListController.mm \
+   Preferences/AeuriaLSPreferencesSubListController.mm
+AeuriaLSPreferences_FRAMEWORKS = CoreGraphics Foundation QuartzCore UIKit
 AeuriaLSPreferences_INSTALL_PATH = /Library/PreferenceBundles
-AeuriaLSPreferences_PRIVATE_FRAMEWORKS = Preferences
+AeuriaLSPreferences_PRIVATE_FRAMEWORKS = AppSupport Preferences
 AeuriaLSPreferences_RESOURCE_DIRS = Preferences/Resources
 
 #Compiling
@@ -37,7 +35,7 @@ include $(THEOS_MAKE_PATH)/tweak.mk
 include $(THEOS_MAKE_PATH)/bundle.mk
 internal-stage::
 	$(ECHO_NOTHING)mkdir -p $(THEOS_STAGING_DIR)/Library/PreferenceLoader/Preferences$(ECHO_END)
-	$(ECHO_NOTHING)cp Preferences/Info.plist $(THEOS_STAGING_DIR)/Library/PreferenceLoader/Preferences/AeuriaLSPreferences.plist$(ECHO_END)
+	$(ECHO_NOTHING)cp Preferences/Resources/Main.plist $(THEOS_STAGING_DIR)/Library/PreferenceLoader/Preferences/AeuriaLSPreferences.plist$(ECHO_END)
 after-package::
 	$(ECHO_NOTHING)rm -rf _$(ECHO_END)
 	$(ECHO_NOTHING)mv $(THEOS_PACKAGE_DIR)/$(THEOS_PACKAGE_NAME)_$(_THEOS_INTERNAL_PACKAGE_VERSION)_$(THEOS_PACKAGE_ARCH).deb $(THEOS_PACKAGE_DIR)/$(TWEAK_NAME).deb$(ECHO_END)

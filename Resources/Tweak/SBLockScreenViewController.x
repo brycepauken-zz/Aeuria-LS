@@ -83,6 +83,9 @@
 - (void)viewDidAppear:(BOOL)view {
     %orig;
     
+    //get objects
+    //recursive dbug description?
+    
     if(self.customLockScreen && self.customLockScreen.superview) {
         [self.customLockScreen removeFromSuperview];
     }

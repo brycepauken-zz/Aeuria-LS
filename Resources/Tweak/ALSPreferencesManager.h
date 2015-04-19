@@ -1,0 +1,3 @@
+@interface ALSPreferencesManager : NSObject
+
+@end

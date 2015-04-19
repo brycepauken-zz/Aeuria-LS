@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>PrefTest First Page</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Test2</string>
+			<key>key</key>
+			<string>test2</string>
+			<key>default</key>
+			<true/>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>Clock Format</string>
+</dict>
+</plist>

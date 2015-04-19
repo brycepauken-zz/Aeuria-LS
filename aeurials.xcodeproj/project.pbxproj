@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXFileReference section */
+		022130AA1AE1BDE800054A1A /* ALSPreferencesManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesManager.h; sourceTree = "<group>"; };
+		022130AB1AE1BDE800054A1A /* ALSPreferencesManager.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSPreferencesManager.x; sourceTree = "<group>"; };
 		023724181AC25213007FAFC1 /* ALSCustomLockScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreen.h; sourceTree = "<group>"; };
 		023724191AC25213007FAFC1 /* ALSCustomLockScreen.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreen.x; sourceTree = "<group>"; };
 		0237241A1AC25213007FAFC1 /* ALSCustomLockScreenMask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenMask.h; sourceTree = "<group>"; };
@@ -21,29 +23,26 @@
 		023724231AC25213007FAFC1 /* SBLockScreenViewController.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBLockScreenViewController.x; sourceTree = "<group>"; };
 		023724241AC25213007FAFC1 /* SBWallpaperEffectView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBWallpaperEffectView.h; sourceTree = "<group>"; };
 		023724251AC25213007FAFC1 /* SBWallpaperEffectView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBWallpaperEffectView.x; sourceTree = "<group>"; };
+		02530BF21ADF1940004F3488 /* Clock Format.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Clock Format.plist"; sourceTree = "<group>"; };
+		02530BF31ADF1C5E004F3488 /* AeuriaLSPreferencesSubListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AeuriaLSPreferencesSubListController.h; sourceTree = "<group>"; };
+		02530BF41ADF1C5E004F3488 /* AeuriaLSPreferencesSubListController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AeuriaLSPreferencesSubListController.mm; sourceTree = "<group>"; };
+		02BED8D71AD3B86D0075EAB0 /* AeuriaLSPreferencesHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AeuriaLSPreferencesHeader.h; sourceTree = "<group>"; };
+		02BED8D81AD3B86D0075EAB0 /* AeuriaLSPreferencesHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AeuriaLSPreferencesHeader.m; sourceTree = "<group>"; };
+		02BED8D91AD3B86D0075EAB0 /* AeuriaLSPreferencesListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AeuriaLSPreferencesListController.h; sourceTree = "<group>"; };
+		02BED8DA1AD3B86D0075EAB0 /* AeuriaLSPreferencesListController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AeuriaLSPreferencesListController.mm; sourceTree = "<group>"; };
+		02BED8DC1AD3B86D0075EAB0 /* PSListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PSListController.h; sourceTree = "<group>"; };
+		02BED8DD1AD3B8B90075EAB0 /* AeuriaLSPreferences.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AeuriaLSPreferences.plist; sourceTree = "<group>"; };
+		02BED8DE1AD3B8CA0075EAB0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		02BED8E21AD3B90B0075EAB0 /* Main.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Main.plist; sourceTree = "<group>"; };
+		02BED8E31AD3BD580075EAB0 /* PSTableCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PSTableCell.h; sourceTree = "<group>"; };
+		02BED8E41AD3BEC50075EAB0 /* PSSpecifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PSSpecifier.h; sourceTree = "<group>"; };
+		02BED8E51AD3C3C30075EAB0 /* SBWallpaperController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBWallpaperController.h; sourceTree = "<group>"; };
 		02C57CE71A75AF46003F490A /* AeuriaLS.deb */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = AeuriaLS.deb; path = Build/AeuriaLS.deb; sourceTree = "<group>"; };
 		02C859091AC35CEC00C5B920 /* ALSCustomLockScreenClock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenClock.h; sourceTree = "<group>"; };
 		02C8590A1AC35CEC00C5B920 /* ALSCustomLockScreenClock.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreenClock.x; sourceTree = "<group>"; };
 		02D96A8B1A6F739000095C83 /* fakeroot */ = {isa = PBXFileReference; lastKnownFileType = text; path = fakeroot; sourceTree = "<group>"; };
 		02D96A8C1A6F739000095C83 /* last_package */ = {isa = PBXFileReference; lastKnownFileType = text; path = last_package; sourceTree = "<group>"; };
 		02D96A8E1A6F739000095C83 /* com.kingfish.homeonlyiconspreferences-0.0.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = "com.kingfish.homeonlyiconspreferences-0.0.1"; sourceTree = "<group>"; };
-		02D96A8F1A6F739000095C83 /* AeuriaLSPreferencesListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AeuriaLSPreferencesListController.h; sourceTree = "<group>"; };
-		02D96A901A6F739000095C83 /* AeuriaLSPreferencesListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AeuriaLSPreferencesListController.m; sourceTree = "<group>"; };
-		02D96A911A6F739000095C83 /* ALSPContainerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPContainerView.h; sourceTree = "<group>"; };
-		02D96A921A6F739000095C83 /* ALSPContainerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPContainerView.m; sourceTree = "<group>"; };
-		02D96A931A6F739000095C83 /* ALSPMainView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPMainView.h; sourceTree = "<group>"; };
-		02D96A941A6F739000095C83 /* ALSPMainView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPMainView.m; sourceTree = "<group>"; };
-		02D96A951A6F739000095C83 /* ALSPPreferenceManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPPreferenceManager.h; sourceTree = "<group>"; };
-		02D96A961A6F739000095C83 /* ALSPPreferenceManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPPreferenceManager.m; sourceTree = "<group>"; };
-		02D96A971A6F739000095C83 /* ALSPThemeTableCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPThemeTableCell.h; sourceTree = "<group>"; };
-		02D96A981A6F739000095C83 /* ALSPThemeTableCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPThemeTableCell.m; sourceTree = "<group>"; };
-		02D96A991A6F739000095C83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		02D96A9B1A6F739000095C83 /* AeuriaLSPreferences.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AeuriaLSPreferences.png; sourceTree = "<group>"; };
-		02D96A9C1A6F739000095C83 /* AeuriaLSPreferences@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AeuriaLSPreferences@2x.png"; sourceTree = "<group>"; };
-		02D96A9D1A6F739000095C83 /* Checkmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Checkmark.png; sourceTree = "<group>"; };
-		02D96A9E1A6F739000095C83 /* Checkmark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Checkmark@2x.png"; sourceTree = "<group>"; };
-		02D96A9F1A6F739000095C83 /* Snowflake.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Snowflake.png; sourceTree = "<group>"; };
-		02D96AA01A6F739000095C83 /* Snowflake@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Snowflake@2x.png"; sourceTree = "<group>"; };
 		02D96AA11A6F751200095C83 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; name = Makefile; path = Resources/Makefile; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -75,6 +74,8 @@
 				02C8590A1AC35CEC00C5B920 /* ALSCustomLockScreenClock.x */,
 				0237241A1AC25213007FAFC1 /* ALSCustomLockScreenMask.h */,
 				0237241B1AC25213007FAFC1 /* ALSCustomLockScreenMask.x */,
+				022130AA1AE1BDE800054A1A /* ALSPreferencesManager.h */,
+				022130AB1AE1BDE800054A1A /* ALSPreferencesManager.x */,
 				0237241C1AC25213007FAFC1 /* SBChevronView.h */,
 				0237241D1AC25213007FAFC1 /* SBChevronView.x */,
 				0237241E1AC25213007FAFC1 /* SBFLockScreenDateView.h */,
@@ -94,18 +95,17 @@
 			isa = PBXGroup;
 			children = (
 				02D96A8A1A6F739000095C83 /* .theos */,
-				02D96A8F1A6F739000095C83 /* AeuriaLSPreferencesListController.h */,
-				02D96A901A6F739000095C83 /* AeuriaLSPreferencesListController.m */,
-				02D96A911A6F739000095C83 /* ALSPContainerView.h */,
-				02D96A921A6F739000095C83 /* ALSPContainerView.m */,
-				02D96A931A6F739000095C83 /* ALSPMainView.h */,
-				02D96A941A6F739000095C83 /* ALSPMainView.m */,
-				02D96A951A6F739000095C83 /* ALSPPreferenceManager.h */,
-				02D96A961A6F739000095C83 /* ALSPPreferenceManager.m */,
-				02D96A971A6F739000095C83 /* ALSPThemeTableCell.h */,
-				02D96A981A6F739000095C83 /* ALSPThemeTableCell.m */,
-				02D96A991A6F739000095C83 /* Info.plist */,
 				02D96A9A1A6F739000095C83 /* Resources */,
+				02BED8D71AD3B86D0075EAB0 /* AeuriaLSPreferencesHeader.h */,
+				02BED8D81AD3B86D0075EAB0 /* AeuriaLSPreferencesHeader.m */,
+				02BED8D91AD3B86D0075EAB0 /* AeuriaLSPreferencesListController.h */,
+				02BED8DA1AD3B86D0075EAB0 /* AeuriaLSPreferencesListController.mm */,
+				02530BF31ADF1C5E004F3488 /* AeuriaLSPreferencesSubListController.h */,
+				02530BF41ADF1C5E004F3488 /* AeuriaLSPreferencesSubListController.mm */,
+				02BED8DC1AD3B86D0075EAB0 /* PSListController.h */,
+				02BED8E41AD3BEC50075EAB0 /* PSSpecifier.h */,
+				02BED8E31AD3BD580075EAB0 /* PSTableCell.h */,
+				02BED8E51AD3C3C30075EAB0 /* SBWallpaperController.h */,
 			);
 			name = Preferences;
 			path = Resources/Preferences;
@@ -132,12 +132,10 @@
 		02D96A9A1A6F739000095C83 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				02D96A9B1A6F739000095C83 /* AeuriaLSPreferences.png */,
-				02D96A9C1A6F739000095C83 /* AeuriaLSPreferences@2x.png */,
-				02D96A9D1A6F739000095C83 /* Checkmark.png */,
-				02D96A9E1A6F739000095C83 /* Checkmark@2x.png */,
-				02D96A9F1A6F739000095C83 /* Snowflake.png */,
-				02D96AA01A6F739000095C83 /* Snowflake@2x.png */,
+				02BED8DD1AD3B8B90075EAB0 /* AeuriaLSPreferences.plist */,
+				02530BF21ADF1940004F3488 /* Clock Format.plist */,
+				02BED8DE1AD3B8CA0075EAB0 /* Info.plist */,
+				02BED8E21AD3B90B0075EAB0 /* Main.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
