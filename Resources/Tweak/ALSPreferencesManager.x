@@ -17,6 +17,7 @@
 
 static void PreferencesChanged(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
     CFStringRef bundleID = CFSTR("com.brycepauken.aeurials");
+    //freed at end of method
     CFArrayRef keyList = CFPreferencesCopyKeyList(appID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
     if(!keyList) {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Key List" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -24,7 +25,8 @@ static void PreferencesChanged(CFNotificationCenterRef center, void *observer, C
 
         return;
     }
-    NSDictionary *newPreferences = (NSDictionary *)CFPreferencesCopyMultiple(keyList, bundleID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+    //frred automatically by ARC
+    NSDictionary *newPreferences = CFBridgingRelease(CFPreferencesCopyMultiple(keyList, bundleID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
     if(!newPreferences) {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Preferences" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];

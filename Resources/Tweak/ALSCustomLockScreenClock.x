@@ -71,8 +71,10 @@ static const int kSubtitleOffset = 14;
         NSString *minuteString = [self numberToText:minute isMinute:YES];
         
         //get paths representing the hour and minute strings (rendered in a large font)
-        CGPathRef largeHourPath = [self newPathForText:hourString isTitle:YES];
-        CGPathRef largeMinutePath = [self newPathForText:minuteString isTitle:NO];
+        //freed before return
+        CGPathRef largeHourPath = [self createPathForText:hourString isTitle:YES];
+        //freed before return
+        CGPathRef largeMinutePath = [self createPathForText:minuteString isTitle:NO];
         
         CGSize largeHourPathSize = CGPathGetPathBoundingBox(largeHourPath).size;
         CGFloat hourScale = [self scaleForPathOfSize:largeHourPathSize withinRadius:radius isHalfCircle:YES withOffsetFromCenter:0];
@@ -90,6 +92,9 @@ static const int kSubtitleOffset = 14;
         [returnPath appendPath:hourPath];
         [returnPath appendPath:minutePath];
         
+        CGPathRelease(largeHourPath);
+        CGPathRelease(largeMinutePath);
+        
         return returnPath;
     }
     return nil;
@@ -99,23 +104,27 @@ static const int kSubtitleOffset = 14;
  Creates a path for the given text, rendered at the font size given by kPathDefaultFontSize.
  The isTitle parameter only determines which font to use.
  */
-+ (CGPathRef)newPathForText:(NSString *)text isTitle:(BOOL)isTitle {
++ (CGPathRef)createPathForText:(NSString *)text isTitle:(BOOL)isTitle {
+    //freed before return
     CGMutablePathRef path = CGPathCreateMutable();
     
     static NSDictionary *titleStringAttributes;
     static NSDictionary *subtitleStringAttributes;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        //freed near-immediately
         CTFontRef titleFontRef = CTFontCreateWithName(CFSTR("AvenirNext-DemiBold"), kPathDefaultFontSize, NULL);
         titleStringAttributes = [NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)titleFontRef, kCTFontAttributeName, @(0.01), kCTKernAttributeName, nil];
         CFRelease(titleFontRef);
         
+        //freed near-immediately
         CTFontRef subtitleFontRef = CTFontCreateWithName(CFSTR("Georgia-Italic"), kPathDefaultFontSize, NULL);
         subtitleStringAttributes = [NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)subtitleFontRef, kCTFontAttributeName, @(0.01), kCTKernAttributeName, nil];
         CFRelease(subtitleFontRef);
     });
     
     NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:text attributes:(isTitle?titleStringAttributes:subtitleStringAttributes)];
+    //freed after loop
     CTLineRef line = CTLineCreateWithAttributedString((CFAttributedStringRef)attributedString);
     CFArrayRef runArray = CTLineGetGlyphRuns(line);
     for(CFIndex i=0; i<CFArrayGetCount(runArray); i++) {
@@ -128,6 +137,7 @@ static const int kSubtitleOffset = 14;
             CTRunGetGlyphs(run, thisGlyphRange, &glyph);
             CTRunGetPositions(run, thisGlyphRange, &position);
             
+            //freed near-immediately
             CGPathRef letter = CTFontCreatePathForGlyph(runFont, glyph, NULL);
             CGAffineTransform t = CGAffineTransformMakeTranslation(position.x, position.y);
             t = CGAffineTransformScale(t, 1, -1);
@@ -139,6 +149,8 @@ static const int kSubtitleOffset = 14;
     
     CGRect pathBounds = CGPathGetPathBoundingBox(path);
     CGAffineTransform pathTranslation = CGAffineTransformMakeTranslation(-pathBounds.origin.x, -pathBounds.origin.y);
+    
+    //not freed here; owned by caller of method
     CGPathRef returnPath = CGPathCreateCopyByTransformingPath(path, &pathTranslation);
     CGPathRelease(path);
     return returnPath;

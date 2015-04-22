@@ -27,14 +27,19 @@ static CGFloat _wallpaperViewHeight;
         //get the user's current lock screen wallpaper
         NSData *lockscreenWallpaperData = [NSData dataWithContentsOfFile:@"/var/mobile/Library/SpringBoard/LockBackground.cpbitmap"];
         if(lockscreenWallpaperData) {
+            //freed near-immediately
             CFDataRef lockscreenWallpaperDataRef = CFDataCreate(NULL, lockscreenWallpaperData.bytes, lockscreenWallpaperData.length);
+            //this is a declaration for the method used in the following statement, not a call
             CFArrayRef CPBitmapCreateImagesFromData(CFDataRef cpbitmap, void*, int, void*);
+            //freed after if statement
             CFArrayRef wallpaperArray = CPBitmapCreateImagesFromData(lockscreenWallpaperDataRef, NULL, 1, NULL);
+            CFRelease(lockscreenWallpaperDataRef);
             if(CFArrayGetCount(wallpaperArray) > 0) {
                 CGImageRef lockscreenWallpaperRef = (CGImageRef)CFArrayGetValueAtIndex(wallpaperArray, 0);
                 _lockscreenWallpaper = [UIImage imageWithCGImage:lockscreenWallpaperRef];
                 [_wallpaperView setImage:_lockscreenWallpaper];
             }
+            CFRelease(wallpaperArray);
         }
     
         [self addSubview:_wallpaperView];
