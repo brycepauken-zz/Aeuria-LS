@@ -1,6 +1,8 @@
 #import "ALSCustomLockScreen.h"
 
 #import "ALSCustomLockScreenMask.h"
+#import "ALSPreferencesManager.h"
+#import "ALSProxyTarget.h"
 
 @interface ALSCustomLockScreen()
 
@@ -8,6 +10,7 @@
 @property (nonatomic, strong) UIView *filledOverlay;
 @property (nonatomic, strong) ALSCustomLockScreenMask *filledOverlayMask;
 @property (nonatomic) CGFloat percentage;
+@property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
 @property (nonatomic) CGFloat previousPercentage;
 
 @end
@@ -17,6 +20,8 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if(self) {
+        _preferencesManager = [[ALSPreferencesManager alloc] init];
+        
         _percentage = 0;
         _previousPercentage = 0;
         
@@ -26,7 +31,8 @@
         [_filledOverlay setBackgroundColor:[UIColor whiteColor]];
         [_filledOverlay.layer setMask:_filledOverlayMask];
         
-        _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateViews)];
+        ALSProxyTarget *proxyTarget = [ALSProxyTarget proxyForTarget:self selector:@selector(updateViews)];
+        _displayLink = [CADisplayLink displayLinkWithTarget:proxyTarget selector:@selector(tick:)];
         [_displayLink setFrameInterval:1];
         [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
         

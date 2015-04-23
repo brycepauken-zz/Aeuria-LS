@@ -1,9 +1,10 @@
-#import "AeuriaLSPreferencesListController.h"
+#import "ALSPreferencesListController.h"
 
-#import "AeuriaLSPreferencesSubListController.h"
+#import "ALSPreferencesProxyTarget.h"
+#import "ALSPreferencesSubListController.h"
 #import "PSSpecifier.h"
 
-@interface AeuriaLSPreferencesListController()
+@interface ALSPreferencesListController()
 
 @property (nonatomic, strong) CADisplayLink *displayLink;
 @property (nonatomic, strong) UINavigationBar *navigationBar;
@@ -12,7 +13,7 @@
 
 @end
 
-@implementation AeuriaLSPreferencesListController
+@implementation ALSPreferencesListController
 
 static NSString *kPreferencePath = @"/User/Library/Preferences/com.brycepauken.aeurials.plist";
 
@@ -24,18 +25,18 @@ static NSString *kPreferencePath = @"/User/Library/Preferences/com.brycepauken.a
 }
 
 - (void)dealloc {
-    //calling viewDidDisappear cleans up for us if need be
-    [self viewDidDisappear:NO];
+    [self setNavigationBarSubviewsHidden:NO];
+    [self.displayLink invalidate];
 }
 
-- (id)readPreferenceValue:(PSSpecifier*)specifier {
+/*- (id)readPreferenceValue:(PSSpecifier*)specifier {
     //read the preference from file
     NSDictionary *preferences = [NSDictionary dictionaryWithContentsOfFile:kPreferencePath];
     if(!preferences[specifier.properties[@"key"]]) {
         return specifier.properties[@"default"];
     }
     return preferences[specifier.properties[@"key"]];
-}
+}*/
 
 - (void)setNavigationBarAlpha:(CGFloat)alpha {
     if(alpha<0.025) {
@@ -57,7 +58,7 @@ static NSString *kPreferencePath = @"/User/Library/Preferences/com.brycepauken.a
     }
 }
 
-- (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
+/*- (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
     //read preferences from file
     NSMutableDictionary *preferences = [NSMutableDictionary dictionaryWithContentsOfFile:kPreferencePath];
     if(!preferences) {
@@ -72,7 +73,7 @@ static NSString *kPreferencePath = @"/User/Library/Preferences/com.brycepauken.a
     if(notifcation) {
         CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), notifcation, NULL, NULL, YES);
     }
-}
+}*/
 
 - (void)updateNavigationBarAlpha {
     //pick which view to use; our own, or our child controller's view (if there is one)
@@ -192,7 +193,7 @@ static NSString *kPreferencePath = @"/User/Library/Preferences/com.brycepauken.a
     [super viewWillAppear:animated];
     
     //watch for sublist changes
-    [[NSNotificationCenter defaultCenter] addObserverForName:kAeuriaLSPreferencesSubListStateChanged object:nil queue:nil usingBlock:^(NSNotification *notification) {
+    [[NSNotificationCenter defaultCenter] addObserverForName:kALSPreferencesSubListStateChanged object:nil queue:nil usingBlock:^(NSNotification *notification) {
         if([[notification.userInfo objectForKey:@"appearing"] boolValue]) {
             self.sublistController = notification.object;
             [self.navigationBarOverlay setHidden:YES];
@@ -204,7 +205,8 @@ static NSString *kPreferencePath = @"/User/Library/Preferences/com.brycepauken.a
     }];
     
     //used to track our pane's horizontal offset
-    self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateNavigationBarAlpha)];
+    ALSPreferencesProxyTarget *proxyTarget = [ALSPreferencesProxyTarget proxyForTarget:self selector:@selector(updateNavigationBarAlpha)];
+    self.displayLink = [CADisplayLink displayLinkWithTarget:proxyTarget selector:@selector(tick:)];
     [self.displayLink setFrameInterval:1];
     [self.displayLink setPaused:YES];
     [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];

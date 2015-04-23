@@ -1,6 +1,7 @@
 #import "ALSCustomLockScreenMask.h"
 
 #import "ALSCustomLockScreenClock.h"
+#import "ALSProxyTarget.h"
 
 @interface ALSCustomLockScreenMask()
 
@@ -76,7 +77,8 @@ static const int kLargeCircleMinRadius = 100;
     NSInteger currentSecond = [dateComponents second];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(((60-currentSecond)%60)) * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        self.minuteTimer = [NSTimer scheduledTimerWithTimeInterval:60 target:self selector:@selector(updateTimeOnMinute) userInfo:nil repeats:YES];
+        ALSProxyTarget *proxyTarget = [ALSProxyTarget proxyForTarget:self selector:@selector(updateTimeOnMinute)];
+        self.minuteTimer = [NSTimer scheduledTimerWithTimeInterval:60 target:proxyTarget selector:@selector(tick:) userInfo:nil repeats:YES];
         [self updateTimeOnMinute];
     });
     [self updateTimeWithDate:[NSDate date]];

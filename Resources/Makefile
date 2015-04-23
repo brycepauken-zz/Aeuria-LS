@@ -10,6 +10,8 @@ AeuriaLS_FILES =\
    Tweak/ALSCustomLockScreen.x \
    Tweak/ALSCustomLockScreenClock.x \
    Tweak/ALSCustomLockScreenMask.x \
+   Tweak/ALSPreferencesManager.x \
+   Tweak/ALSProxyTarget.x \
    Tweak/SBChevronView.x \
    Tweak/SBFLockScreenDateView.x \
    Tweak/SBLockScreenScrollView.x \
@@ -20,9 +22,10 @@ AeuriaLS_FRAMEWORKS = CoreGraphics CoreText Foundation QuartzCore UIKit
 #The Tweak's preferences
 BUNDLE_NAME = AeuriaLSPreferences
 AeuriaLSPreferences_FILES =\
-   Preferences/AeuriaLSPreferencesHeader.m \
-   Preferences/AeuriaLSPreferencesListController.mm \
-   Preferences/AeuriaLSPreferencesSubListController.mm
+   Preferences/ALSPreferencesHeader.m \
+   Preferences/ALSPreferencesListController.m \
+   Preferences/ALSPreferencesProxyTarget.m \
+   Preferences/ALSPreferencesSubListController.m
 AeuriaLSPreferences_FRAMEWORKS = CoreGraphics Foundation QuartzCore UIKit
 AeuriaLSPreferences_INSTALL_PATH = /Library/PreferenceBundles
 AeuriaLSPreferences_PRIVATE_FRAMEWORKS = AppSupport Preferences

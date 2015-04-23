@@ -15,29 +15,35 @@
 
 @implementation ALSPreferencesManager
 
-static void PreferencesChanged(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
+static NSString *kPreferencePath = @"/User/Library/Preferences/com.brycepauken.aeurials.plist";
+
+void preferencesChanged(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
+    ALSPreferencesManager *preferencesManager = (__bridge ALSPreferencesManager *)observer;
+    
     CFStringRef bundleID = CFSTR("com.brycepauken.aeurials");
     //freed at end of method
-    CFArrayRef keyList = CFPreferencesCopyKeyList(appID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
-    if(!keyList) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Key List" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+    CFArrayRef keyList = CFPreferencesCopyKeyList(bundleID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+    if(keyList) {
+        //freed automatically by ARC
+        NSDictionary *newPreferences = CFBridgingRelease(CFPreferencesCopyMultiple(keyList, bundleID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
+        if(newPreferences) {
+            preferencesManager.preferences = newPreferences;
+        }
+        CFRelease(keyList);
+    }
+}
 
-        return;
+- (id)init {
+    self = [super init];
+    if(self) {
+        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge void *)self, (CFNotificationCallback)preferencesChanged, CFSTR("com.brycepauken.aeurials/PreferencesChanged"), NULL, CFNotificationSuspensionBehaviorCoalesce);
+        preferencesChanged(NULL, (__bridge void *)self, NULL, NULL, NULL);
     }
-    //frred automatically by ARC
-    NSDictionary *newPreferences = CFBridgingRelease(CFPreferencesCopyMultiple(keyList, bundleID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
-    if(!newPreferences) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Preferences" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
-    }
-    else {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Success" message:@"Obtained" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
-        
-        self.preferences = newPreferences;
-    }
-    CFRelease(keyList);
+    return self;
+}
+
+- (void)dealloc {
+    CFNotificationCenterRemoveEveryObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge void *)self);
 }
 
 @end

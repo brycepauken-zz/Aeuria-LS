@@ -1,20 +1,20 @@
-#import "AeuriaLSPreferencesHeader.h"
+#import "ALSPreferencesHeader.h"
 #import "PSSpecifier.h"
 #import "SBWallpaperController.h"
 
-@interface AeuriaLSPreferencesHeader()
+@interface ALSPreferencesHeader()
 
 @property (nonatomic, strong) UIImage *lockscreenWallpaper;
 @property (nonatomic, strong) UIImageView *wallpaperView;
 
 @end
 
-@implementation AeuriaLSPreferencesHeader
+@implementation ALSPreferencesHeader
 
 static CGFloat _wallpaperViewHeight;
 
 - (id)initWithSpecifier:(PSSpecifier *)specifier {
-    self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"AeuriaLSPreferencesHeader" specifier:specifier];
+    self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"ALSPreferencesHeader" specifier:specifier];
     if(self) {
         //called to initialize _wallpaperViewHeight if we haven't already
         [self preferredHeightForWidth:0];
