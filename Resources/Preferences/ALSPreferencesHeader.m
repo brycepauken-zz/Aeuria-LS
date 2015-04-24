@@ -8,6 +8,7 @@
 @property (nonatomic, strong) UIView *filledOverlay;
 @property (nonatomic, strong) CAShapeLayer *filledOverlayMask;
 @property (nonatomic, strong) UIImage *lockscreenWallpaper;
+@property (nonatomic) BOOL tableViewSearched;
 @property (nonatomic, strong) UIImageView *wallpaperView;
 
 @end
@@ -36,7 +37,7 @@ static CGFloat _wallpaperViewHeight;
         [subviewContainer setClipsToBounds:YES];
         
         //create the wallpaper view
-        _wallpaperView = [[UIImageView alloc] initWithFrame:subviewContainer.bounds];
+        _wallpaperView = [[UIImageView alloc] initWithFrame:CGRectInset(subviewContainer.bounds, 0, -50)];
         [_wallpaperView setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
         [_wallpaperView setContentMode:UIViewContentModeScaleAspectFill];
         [subviewContainer addSubview:_wallpaperView];
@@ -77,11 +78,11 @@ static CGFloat _wallpaperViewHeight;
             [shadowCastingView setBackgroundColor:[UIColor blackColor]];
             [shadowCastingView.layer setMasksToBounds:NO];
             [shadowCastingView.layer setShadowOffset:CGSizeMake(0, 0)];
-            [shadowCastingView.layer setShadowOpacity:0.5];
+            [shadowCastingView.layer setShadowOpacity:0.4];
             [shadowCastingView.layer setShadowRadius:2];
             [subviewContainer addSubview:shadowCastingView];
         }
-         
+        
         [self updateFilledOverlay];
         [self addSubview:subviewContainer];
     }
@@ -90,11 +91,40 @@ static CGFloat _wallpaperViewHeight;
 }
 
 - (void)layoutSubviews {
+    if(!self.tableViewSearched && self.superview) {
+        //find nearest parent tableview
+        UIView *currentView = self;
+        while(![currentView isKindOfClass:[UITableView class]] && currentView) {
+            currentView = currentView.superview;
+        }
+        if(currentView) {
+            [currentView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
+            
+            CGRect screenBounds = [[UIScreen mainScreen] bounds];
+            CGFloat statusBarBackgroundWidth = MAX(screenBounds.size.width, screenBounds.size.height)*2;
+            UIView *statusBarBackground = [[UIView alloc] initWithFrame:CGRectMake(0, 0, statusBarBackgroundWidth, 20)];
+            //[statusBarBackground setBackgroundColor:[UIColor colorWithRed:0.937 green:0.937 blue:0.957 alpha:1]];
+            [statusBarBackground setBackgroundColor:[currentView backgroundColor]];
+            [currentView.superview addSubview:statusBarBackground];
+        }
+        
+        self.tableViewSearched = YES;
+    }
+    
     //check if wallpaperView size changed
     CGSize filledOverlaySize = self.filledOverlay.bounds.size;
     [super layoutSubviews];
     if(!CGSizeEqualToSize(filledOverlaySize, self.filledOverlay.bounds.size)) {
         [self updateFilledOverlay];
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if([object isKindOfClass:[UITableView class]]) {
+        CGPoint contentOffset = [object contentOffset];
+        contentOffset.y += 64;
+        contentOffset.y /= 2;
+        [self.wallpaperView setCenter:CGPointMake(self.wallpaperView.superview.bounds.size.width/2, self.wallpaperView.superview.bounds.size.height/2+contentOffset.y)];
     }
 }
 
