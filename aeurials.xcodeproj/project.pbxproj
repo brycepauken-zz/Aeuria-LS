@@ -9,6 +9,7 @@
 /* Begin PBXFileReference section */
 		022130AA1AE1BDE800054A1A /* ALSPreferencesManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesManager.h; sourceTree = "<group>"; };
 		022130AB1AE1BDE800054A1A /* ALSPreferencesManager.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSPreferencesManager.x; sourceTree = "<group>"; };
+		022627B91AE9E605006658FF /* LSPath.dat */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = LSPath.dat; sourceTree = "<group>"; };
 		023724181AC25213007FAFC1 /* ALSCustomLockScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreen.h; sourceTree = "<group>"; };
 		023724191AC25213007FAFC1 /* ALSCustomLockScreen.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreen.x; sourceTree = "<group>"; };
 		0237241A1AC25213007FAFC1 /* ALSCustomLockScreenMask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenMask.h; sourceTree = "<group>"; };
@@ -26,6 +27,7 @@
 		02530BF21ADF1940004F3488 /* Clock Format.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Clock Format.plist"; sourceTree = "<group>"; };
 		02530BF31ADF1C5E004F3488 /* ALSPreferencesSubListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesSubListController.h; sourceTree = "<group>"; };
 		02530BF41ADF1C5E004F3488 /* ALSPreferencesSubListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesSubListController.m; sourceTree = "<group>"; };
+		028687AE1AE9F78900BDD74A /* AeuriaPath.dat */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = AeuriaPath.dat; sourceTree = "<group>"; };
 		0298578B1AE859980014B5C2 /* ALSProxyTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSProxyTarget.h; sourceTree = "<group>"; };
 		0298578C1AE859980014B5C2 /* ALSProxyTarget.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSProxyTarget.x; sourceTree = "<group>"; };
 		02AC49791AE8ECD000426584 /* ALSPreferencesProxyTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesProxyTarget.h; sourceTree = "<group>"; };
@@ -141,8 +143,10 @@
 			isa = PBXGroup;
 			children = (
 				02BED8DD1AD3B8B90075EAB0 /* AeuriaLSPreferences.plist */,
+				028687AE1AE9F78900BDD74A /* AeuriaPath.dat */,
 				02530BF21ADF1940004F3488 /* Clock Format.plist */,
 				02BED8DE1AD3B8CA0075EAB0 /* Info.plist */,
+				022627B91AE9E605006658FF /* LSPath.dat */,
 				02BED8E21AD3B90B0075EAB0 /* Main.plist */,
 			);
 			path = Resources;

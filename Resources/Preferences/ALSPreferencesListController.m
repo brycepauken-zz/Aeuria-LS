@@ -15,8 +15,6 @@
 
 @implementation ALSPreferencesListController
 
-static NSString *kPreferencePath = @"/User/Library/Preferences/com.brycepauken.aeurials.plist";
-
 - (id)specifiers {
     if(_specifiers == nil) {
         _specifiers = [self loadSpecifiersFromPlistName:@"AeuriaLSPreferences" target:self];
@@ -28,15 +26,6 @@ static NSString *kPreferencePath = @"/User/Library/Preferences/com.brycepauken.a
     [self setNavigationBarSubviewsHidden:NO];
     [self.displayLink invalidate];
 }
-
-/*- (id)readPreferenceValue:(PSSpecifier*)specifier {
-    //read the preference from file
-    NSDictionary *preferences = [NSDictionary dictionaryWithContentsOfFile:kPreferencePath];
-    if(!preferences[specifier.properties[@"key"]]) {
-        return specifier.properties[@"default"];
-    }
-    return preferences[specifier.properties[@"key"]];
-}*/
 
 - (void)setNavigationBarAlpha:(CGFloat)alpha {
     if(alpha<0.025) {
@@ -57,23 +46,6 @@ static NSString *kPreferencePath = @"/User/Library/Preferences/com.brycepauken.a
         }
     }
 }
-
-/*- (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
-    //read preferences from file
-    NSMutableDictionary *preferences = [NSMutableDictionary dictionaryWithContentsOfFile:kPreferencePath];
-    if(!preferences) {
-        preferences = [NSMutableDictionary dictionary];
-    }
-    //set new preference
-    [preferences setObject:value forKey:specifier.properties[@"key"]];
-    //write preferences back to file
-    [preferences writeToFile:kPreferencePath atomically:YES];
-    //post a notification
-    CFStringRef notifcation = (__bridge CFStringRef)specifier.properties[@"PostNotification"];
-    if(notifcation) {
-        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), notifcation, NULL, NULL, YES);
-    }
-}*/
 
 - (void)updateNavigationBarAlpha {
     //pick which view to use; our own, or our child controller's view (if there is one)
@@ -157,10 +129,6 @@ static NSString *kPreferencePath = @"/User/Library/Preferences/com.brycepauken.a
                 
                 //hide existing subviews
                 [self setNavigationBarSubviewsHidden:YES];
-                
-                //possibly needed to rasterize (avoid group opacity)
-                //[self.navigationBar.layer setShouldRasterize:YES];
-                //[self.navigationBar.layer setRasterizationScale:[[UIScreen mainScreen].scale];
                 
                 //set up navigarion bar overlay
                 self.navigationBarOverlay = [[UIView alloc] initWithFrame:CGRectMake(0, -20, self.navigationBar.bounds.size.width, self.navigationBar.bounds.size.height+20)];

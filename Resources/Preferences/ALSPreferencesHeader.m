@@ -1,9 +1,12 @@
 #import "ALSPreferencesHeader.h"
+
 #import "PSSpecifier.h"
 #import "SBWallpaperController.h"
 
 @interface ALSPreferencesHeader()
 
+@property (nonatomic, strong) UIView *filledOverlay;
+@property (nonatomic, strong) CAShapeLayer *filledOverlayMask;
 @property (nonatomic, strong) UIImage *lockscreenWallpaper;
 @property (nonatomic, strong) UIImageView *wallpaperView;
 
@@ -11,6 +14,14 @@
 
 @implementation ALSPreferencesHeader
 
+//static const int kBorderThickness = 10;
+static const CGFloat kCircleInnerRadiusProportion = 0.25;
+static const CGFloat kCircleOuterRadiusProportion = 0.3;
+static const CGFloat kLSTextScale = 0.9;
+static const CGFloat kLSTextShift = 0.9;
+static const int kMiddlePadding = 8;
+
+static NSString *kALSPreferencesResourcesPath = @"/Library/PreferenceBundles/AeuriaLSPreferences.bundle/";
 static CGFloat _wallpaperViewHeight;
 
 - (id)initWithSpecifier:(PSSpecifier *)specifier {
@@ -21,6 +32,7 @@ static CGFloat _wallpaperViewHeight;
         
         //create the wallpaper view
         _wallpaperView = [[UIImageView alloc] initWithFrame:CGRectMake(0, -44, self.bounds.size.width, _wallpaperViewHeight)];
+        [_wallpaperView setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
         [_wallpaperView setClipsToBounds:YES];
         [_wallpaperView setContentMode:UIViewContentModeScaleAspectFill];
         
@@ -41,7 +53,28 @@ static CGFloat _wallpaperViewHeight;
             }
             CFRelease(wallpaperArray);
         }
-    
+        
+        //create the filled overlay that shows the title and circle
+        _filledOverlay = [[UIView alloc] initWithFrame:_wallpaperView.bounds];
+        [_filledOverlay setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
+        [_filledOverlay setBackgroundColor:[UIColor whiteColor]];
+        _filledOverlayMask = [[CAShapeLayer alloc] init];
+        [_filledOverlayMask setFillColor:[[UIColor blackColor] CGColor]];
+        [_filledOverlayMask setFillRule:kCAFillRuleEvenOdd];
+        [_filledOverlay.layer setMask:_filledOverlayMask];
+        [_wallpaperView addSubview:_filledOverlay];
+        
+        //create the dividers at the top and bottom of the wallpaper view
+        UIView *topDivider = [[UIView alloc] initWithFrame:CGRectMake(0, 0, _wallpaperView.bounds.size.width, 1)];
+        [topDivider setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleWidth];
+        [topDivider setBackgroundColor:[UIColor lightGrayColor]];
+        [_wallpaperView addSubview:topDivider];
+        UIView *bottomDivider = [[UIView alloc] initWithFrame:CGRectMake(0, _wallpaperView.bounds.size.height-1, _wallpaperView.bounds.size.width, 1)];
+        [bottomDivider setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleWidth];
+        [bottomDivider setBackgroundColor:[UIColor lightGrayColor]];
+        [_wallpaperView addSubview:bottomDivider];
+        
+        [self updateFilledOverlay];
         [self addSubview:_wallpaperView];
     }
     
@@ -50,11 +83,93 @@ static CGFloat _wallpaperViewHeight;
 
 - (void)layoutSubviews {
     //check if wallpaperView size changed
-    CGSize wallpaperViewSize = self.wallpaperView.bounds.size;
+    CGSize filledOverlaySize = self.filledOverlay.bounds.size;
     [super layoutSubviews];
-    if(!CGSizeEqualToSize(wallpaperViewSize, self.wallpaperView.bounds.size)) {
-        [self updateWallpaper];
+    if(!CGSizeEqualToSize(filledOverlaySize, self.filledOverlay.bounds.size)) {
+        [self updateFilledOverlay];
     }
+}
+
++ (CGPathRef)pathForAeuriaText {
+    static CGPathRef path;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        path = [self pathFromFile:@"AeuriaPath.dat"];
+    });
+    return path;
+}
+
++ (CGPathRef)pathForLSText {
+    static CGPathRef path;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        path = [self pathFromFile:@"LSPath.dat"];
+    });
+    return path;
+}
+
+/*
+ Returns a CGPathRef given by an array of types and coordinates stored in the given file.
+ */
++ (CGPathRef)pathFromFile:(NSString *)file {
+    //not freed; owned by caller
+    CGPathRef path;
+    //freed at end of method
+    CGMutablePathRef mutablePath = CGPathCreateMutable();
+    CGFloat s = 1000;
+    NSData *LSPathData = [NSData dataWithContentsOfFile:[kALSPreferencesResourcesPath stringByAppendingString:file]];
+    NSArray *LSPathInfo;
+    if(LSPathData) {
+        LSPathInfo = [NSKeyedUnarchiver unarchiveObjectWithData:LSPathData];
+    }
+    if(LSPathInfo.count) {
+        for(int i=0;i<LSPathInfo.count;i++) {
+            int numPoints;
+            switch ([LSPathInfo[i] intValue]) {
+                case kCGPathElementMoveToPoint:
+                    numPoints = 1;
+                    CGPathMoveToPoint(mutablePath, NULL,
+                        [LSPathInfo[i+1] intValue]/s, [LSPathInfo[i+2] intValue]/s
+                    );
+                    break;
+                case kCGPathElementAddLineToPoint:
+                    numPoints = 1;
+                    CGPathAddLineToPoint(mutablePath, NULL,
+                        [LSPathInfo[i+1] intValue]/s, [LSPathInfo[i+2] intValue]/s
+                    );
+                    break;
+                case kCGPathElementAddQuadCurveToPoint:
+                    numPoints = 2;
+                    CGPathAddQuadCurveToPoint(mutablePath, NULL,
+                        [LSPathInfo[i+1] intValue]/s, [LSPathInfo[i+2] intValue]/s,
+                        [LSPathInfo[i+3] intValue]/s, [LSPathInfo[i+4] intValue]/s
+                    );
+                    break;
+                case kCGPathElementAddCurveToPoint:
+                    numPoints = 3;
+                    CGPathAddCurveToPoint(mutablePath, NULL,
+                        [LSPathInfo[i+1] intValue]/s, [LSPathInfo[i+2] intValue]/s,
+                        [LSPathInfo[i+3] intValue]/s, [LSPathInfo[i+4] intValue]/s,
+                        [LSPathInfo[i+5] intValue]/s, [LSPathInfo[i+6] intValue]/s
+                    );
+                    break;
+                case kCGPathElementCloseSubpath:
+                    numPoints = 0;
+                    CGPathCloseSubpath(mutablePath);
+                    break;
+                default:
+                    numPoints = 0;
+                    break;
+            }
+            i += numPoints*2;
+        }
+        path = CGPathCreateCopy(mutablePath);
+    }
+    else {
+        path = CGPathCreateWithRect(CGRectMake(0, 0, 0, 0), NULL);
+    }
+    CGPathRelease(mutablePath);
+    return path;
 }
 
 - (CGFloat)preferredHeightForWidth:(CGFloat)arg1 {
@@ -62,34 +177,56 @@ static CGFloat _wallpaperViewHeight;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         CGRect screenBounds = [[UIScreen mainScreen] bounds];
-        _wallpaperViewHeight = ceilf(sqrtf(MIN(screenBounds.size.width, screenBounds.size.height)*20));
+        _wallpaperViewHeight = ceilf(sqrtf(MIN(screenBounds.size.width, screenBounds.size.height)*30));
         
         preferredHeight = _wallpaperViewHeight+100;
     });
     return preferredHeight;
 }
 
-- (void)updateWallpaper {
-    //get wallpaper image and find the needed scale
-    //UIImage *wallpaperImage = [[SBWallpaperController sharedInstance] _wallpaperViewForVariant:1];
+- (void)updateFilledOverlay {
+    //create the beginning of our mask
+    UIBezierPath *mask = [UIBezierPath bezierPath];
     
-    //crop and position lockscreen wallpaper
-    /*if(self.wallpaperView.bounds.size.width && self.lockscreenWallpaper) {
-        CGFloat widthScale = self.wallpaperView.bounds.size.width/self.lockscreenWallpaper.size.width;
-        CGFloat scaledHeight = self.lockscreenWallpaper.size.height*widthScale;
-        
-        //draw the image, scaled and cropped
-        UIGraphicsBeginImageContextWithOptions(self.wallpaperView.bounds.size, YES, [[UIScreen mainScreen] scale]);
-        CGRect wallpaperRect = CGRectMake(0, (self.wallpaperView.bounds.size.height - scaledHeight)/2, self.wallpaperView.bounds.size.width, self.wallpaperView.bounds.size.height);
-        [self.lockscreenWallpaper drawInRect:wallpaperRect];
-        
-        //get the image
-        UIImage *sizedImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        [self.wallpaperView setImage:sizedImage];
-    }*/
+    //get our large text paths, which we'll scale down
+    CGPathRef aeuriaPath = [[self class] pathForAeuriaText];
+    CGSize aeuriaPathSize = CGPathGetPathBoundingBox(aeuriaPath).size;
+    CGPathRef lsPath = [[self class] pathForLSText];
+    CGSize lsPathSize = CGPathGetPathBoundingBox(lsPath).size;
     
-    //[self.wallpaperView setImage:self.lockscreenWallpaper];
+    //find inner and outer circle radius for our current height
+    CGFloat innerCircleRadius = self.filledOverlay.bounds.size.height*kCircleInnerRadiusProportion;
+    CGFloat outerCircleRadius = self.filledOverlay.bounds.size.height*kCircleOuterRadiusProportion;
+    
+    //scale the LS path to fit within the inner circle radius
+    CGFloat lsHeight = innerCircleRadius*lsPathSize.height/sqrt(lsPathSize.width/2*lsPathSize.width/2+lsPathSize.height/2*lsPathSize.height/2);
+    CGFloat lsScale = (lsHeight/lsPathSize.height)*kLSTextScale;
+    
+    //scale the Aeuria path to the same height as the LS path
+    CGFloat aeuriaScale = lsHeight/aeuriaPathSize.height;
+    CGFloat aeuriaWidth = (aeuriaPathSize.width*aeuriaScale);
+    
+    //find the horizontal offset of the group (Aeuria text, then middle padding, then circle)
+    CGFloat horizontalOffset = ((self.filledOverlay.bounds.size.width-aeuriaWidth-kMiddlePadding)/2-outerCircleRadius);
+    
+    //transform and append the LS path
+    CGAffineTransform lsTransform = CGAffineTransformMakeScale(lsScale, lsScale);
+    lsTransform = CGAffineTransformTranslate(lsTransform, (horizontalOffset+aeuriaWidth+kMiddlePadding+outerCircleRadius-(lsPathSize.width*lsScale)*kLSTextShift/2)/lsScale, ((self.filledOverlay.bounds.size.height-(lsPathSize.height*lsScale))/2)/lsScale);
+    CGPathRef scaledLSPath = CGPathCreateCopyByTransformingPath(lsPath, &lsTransform);
+    [mask appendPath:[UIBezierPath bezierPathWithCGPath:scaledLSPath]];
+    CGPathRelease(scaledLSPath);
+    
+    //transform and append the Aeuria path
+    CGAffineTransform aeuriaTransform = CGAffineTransformMakeScale(aeuriaScale, aeuriaScale);
+    aeuriaTransform = CGAffineTransformTranslate(aeuriaTransform, horizontalOffset/aeuriaScale, ((self.filledOverlay.bounds.size.height+(lsPathSize.height*lsScale))/2-(aeuriaPathSize.height*aeuriaScale))/aeuriaScale);
+    CGPathRef scaledAeuriaPath = CGPathCreateCopyByTransformingPath(aeuriaPath, &aeuriaTransform);
+    [mask appendPath:[UIBezierPath bezierPathWithCGPath:scaledAeuriaPath]];
+    CGPathRelease(scaledAeuriaPath);
+    
+    //add circle to mask
+    [mask appendPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(horizontalOffset+aeuriaWidth+kMiddlePadding, self.filledOverlay.bounds.size.height/2-outerCircleRadius, outerCircleRadius*2, outerCircleRadius*2) byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(outerCircleRadius, outerCircleRadius)]];
+    
+    [self.filledOverlayMask setPath:mask.CGPath];
 }
 
 @end

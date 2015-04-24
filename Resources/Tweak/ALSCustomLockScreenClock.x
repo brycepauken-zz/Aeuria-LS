@@ -7,6 +7,7 @@
 //general properties
 @property (nonatomic) CGFloat radius;
 @property (nonatomic) ALSClockType type;
+
 //caching properties
 @property (nonatomic) NSInteger currentHour;
 @property (nonatomic) NSInteger currentMinute;
