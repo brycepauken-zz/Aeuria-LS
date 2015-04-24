@@ -30,11 +30,16 @@ static CGFloat _wallpaperViewHeight;
         //called to initialize _wallpaperViewHeight if we haven't already
         [self preferredHeightForWidth:0];
         
+        //create a container to hold (and clip) our header's subviews
+        UIView *subviewContainer = [[UIView alloc] initWithFrame:CGRectMake(0, -44, self.bounds.size.width, _wallpaperViewHeight)];
+        [subviewContainer setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
+        [subviewContainer setClipsToBounds:YES];
+        
         //create the wallpaper view
-        _wallpaperView = [[UIImageView alloc] initWithFrame:CGRectMake(0, -44, self.bounds.size.width, _wallpaperViewHeight)];
+        _wallpaperView = [[UIImageView alloc] initWithFrame:subviewContainer.bounds];
         [_wallpaperView setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-        [_wallpaperView setClipsToBounds:YES];
         [_wallpaperView setContentMode:UIViewContentModeScaleAspectFill];
+        [subviewContainer addSubview:_wallpaperView];
         
         //get the user's current lock screen wallpaper
         NSData *lockscreenWallpaperData = [NSData dataWithContentsOfFile:@"/var/mobile/Library/SpringBoard/LockBackground.cpbitmap"];
@@ -55,27 +60,30 @@ static CGFloat _wallpaperViewHeight;
         }
         
         //create the filled overlay that shows the title and circle
-        _filledOverlay = [[UIView alloc] initWithFrame:_wallpaperView.bounds];
+        _filledOverlay = [[UIView alloc] initWithFrame:subviewContainer.bounds];
         [_filledOverlay setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
         [_filledOverlay setBackgroundColor:[UIColor whiteColor]];
         _filledOverlayMask = [[CAShapeLayer alloc] init];
         [_filledOverlayMask setFillColor:[[UIColor blackColor] CGColor]];
         [_filledOverlayMask setFillRule:kCAFillRuleEvenOdd];
         [_filledOverlay.layer setMask:_filledOverlayMask];
-        [_wallpaperView addSubview:_filledOverlay];
+        [subviewContainer addSubview:_filledOverlay];
         
-        //create the dividers at the top and bottom of the wallpaper view
-        UIView *topDivider = [[UIView alloc] initWithFrame:CGRectMake(0, 0, _wallpaperView.bounds.size.width, 1)];
-        [topDivider setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleWidth];
-        [topDivider setBackgroundColor:[UIColor lightGrayColor]];
-        [_wallpaperView addSubview:topDivider];
-        UIView *bottomDivider = [[UIView alloc] initWithFrame:CGRectMake(0, _wallpaperView.bounds.size.height-1, _wallpaperView.bounds.size.width, 1)];
-        [bottomDivider setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleWidth];
-        [bottomDivider setBackgroundColor:[UIColor lightGrayColor]];
-        [_wallpaperView addSubview:bottomDivider];
-        
+        //create views outside of the subviewContainer to cast a shadow inside
+        CGRect screenBounds = [[UIScreen mainScreen] bounds];
+        CGFloat shadowCastingViewWidth = MAX(screenBounds.size.width, screenBounds.size.height)*2;
+        for(int i=0;i<2;i++) {
+            UIView *shadowCastingView = [[UIView alloc] initWithFrame:CGRectMake(-20, (i==0?-20:subviewContainer.bounds.size.height), shadowCastingViewWidth+40, 20)];
+            [shadowCastingView setBackgroundColor:[UIColor blackColor]];
+            [shadowCastingView.layer setMasksToBounds:NO];
+            [shadowCastingView.layer setShadowOffset:CGSizeMake(0, 0)];
+            [shadowCastingView.layer setShadowOpacity:0.5];
+            [shadowCastingView.layer setShadowRadius:2];
+            [subviewContainer addSubview:shadowCastingView];
+        }
+         
         [self updateFilledOverlay];
-        [self addSubview:_wallpaperView];
+        [self addSubview:subviewContainer];
     }
     
     return self;
