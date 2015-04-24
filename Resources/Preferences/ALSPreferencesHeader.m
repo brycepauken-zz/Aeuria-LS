@@ -5,9 +5,11 @@
 
 @interface ALSPreferencesHeader()
 
+@property (nonatomic, strong) NSArray *descriptionLabels;
 @property (nonatomic, strong) UIView *filledOverlay;
 @property (nonatomic, strong) CAShapeLayer *filledOverlayMask;
 @property (nonatomic, strong) UIImage *lockscreenWallpaper;
+@property (nonatomic, weak) UITableView *parentTableView;
 @property (nonatomic) BOOL tableViewSearched;
 @property (nonatomic, strong) UIImageView *wallpaperView;
 
@@ -15,11 +17,11 @@
 
 @implementation ALSPreferencesHeader
 
-//static const int kBorderThickness = 10;
 static const CGFloat kCircleInnerRadiusProportion = 0.25;
 static const CGFloat kCircleOuterRadiusProportion = 0.3;
-static const CGFloat kLSTextScale = 0.9;
-static const CGFloat kLSTextShift = 0.9;
+static const CGFloat kLSTextScale = 0.70;
+static const CGFloat kLSTextShift = 0.95;
+static const int kLabelPadding = 6;
 static const int kMiddlePadding = 8;
 
 static NSString *kALSPreferencesResourcesPath = @"/Library/PreferenceBundles/AeuriaLSPreferences.bundle/";
@@ -29,18 +31,18 @@ static CGFloat _wallpaperViewHeight;
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"ALSPreferencesHeader" specifier:specifier];
     if(self) {
         //called to initialize _wallpaperViewHeight if we haven't already
-        [self preferredHeightForWidth:0];
+        CGFloat preferredHeight = [self preferredHeightForWidth:0];
         
         //create a container to hold (and clip) our header's subviews
-        UIView *subviewContainer = [[UIView alloc] initWithFrame:CGRectMake(0, -44, self.bounds.size.width, _wallpaperViewHeight)];
-        [subviewContainer setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-        [subviewContainer setClipsToBounds:YES];
+        UIView *headerContainer = [[UIView alloc] initWithFrame:CGRectMake(0, -44, self.bounds.size.width, _wallpaperViewHeight)];
+        [headerContainer setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
+        [headerContainer setClipsToBounds:YES];
         
         //create the wallpaper view
-        _wallpaperView = [[UIImageView alloc] initWithFrame:CGRectInset(subviewContainer.bounds, 0, -50)];
+        _wallpaperView = [[UIImageView alloc] initWithFrame:CGRectInset(headerContainer.bounds, 0, -50)];
         [_wallpaperView setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
         [_wallpaperView setContentMode:UIViewContentModeScaleAspectFill];
-        [subviewContainer addSubview:_wallpaperView];
+        [headerContainer addSubview:_wallpaperView];
         
         //get the user's current lock screen wallpaper
         NSData *lockscreenWallpaperData = [NSData dataWithContentsOfFile:@"/var/mobile/Library/SpringBoard/LockBackground.cpbitmap"];
@@ -61,33 +63,106 @@ static CGFloat _wallpaperViewHeight;
         }
         
         //create the filled overlay that shows the title and circle
-        _filledOverlay = [[UIView alloc] initWithFrame:subviewContainer.bounds];
+        _filledOverlay = [[UIView alloc] initWithFrame:headerContainer.bounds];
         [_filledOverlay setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
         [_filledOverlay setBackgroundColor:[UIColor whiteColor]];
         _filledOverlayMask = [[CAShapeLayer alloc] init];
         [_filledOverlayMask setFillColor:[[UIColor blackColor] CGColor]];
         [_filledOverlayMask setFillRule:kCAFillRuleEvenOdd];
         [_filledOverlay.layer setMask:_filledOverlayMask];
-        [subviewContainer addSubview:_filledOverlay];
+        [headerContainer addSubview:_filledOverlay];
         
-        //create views outside of the subviewContainer to cast a shadow inside
+        //create views outside of the headerContainer to cast a shadow inside
         CGRect screenBounds = [[UIScreen mainScreen] bounds];
         CGFloat shadowCastingViewWidth = MAX(screenBounds.size.width, screenBounds.size.height)*2;
         for(int i=0;i<2;i++) {
-            UIView *shadowCastingView = [[UIView alloc] initWithFrame:CGRectMake(-20, (i==0?-20:subviewContainer.bounds.size.height), shadowCastingViewWidth+40, 20)];
+            UIView *shadowCastingView = [[UIView alloc] initWithFrame:CGRectMake(-20, (i==0?-20:headerContainer.bounds.size.height), shadowCastingViewWidth+40, 20)];
             [shadowCastingView setBackgroundColor:[UIColor blackColor]];
             [shadowCastingView.layer setMasksToBounds:NO];
             [shadowCastingView.layer setShadowOffset:CGSizeMake(0, 0)];
             [shadowCastingView.layer setShadowOpacity:0.4];
             [shadowCastingView.layer setShadowRadius:2];
-            [subviewContainer addSubview:shadowCastingView];
+            [headerContainer addSubview:shadowCastingView];
         }
         
+        //add the description view containing credits
+        UIView *descriptionView = [self descriptionView];
+        [descriptionView setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleWidth];
+        [descriptionView setFrame:CGRectMake(0, preferredHeight-descriptionView.frame.size.height+10, self.bounds.size.width, descriptionView.frame.size.height)];
+        
         [self updateFilledOverlay];
-        [self addSubview:subviewContainer];
+        [self addSubview:headerContainer];
+        [self addSubview:descriptionView];
     }
     
     return self;
+}
+
+- (void)dealloc {
+    [self.parentTableView removeObserver:self forKeyPath:@"contentOffset"];
+}
+
+- (void)descriptionLabelTapped:(UITapGestureRecognizer *)tapRecognizer {
+    if(tapRecognizer.view.tag==0) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.reddit.com/user/icominblob"]];
+    }
+    else {
+        if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitter://"]]) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"twitter://user?screen_name=brycepauken"]];
+        }
+        else {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://twitter.com/brycepauken"]];
+        }
+    }
+}
+
+- (UIView *)descriptionView {
+    static UIView *descriptionView;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        self.descriptionLabels = @[[UILabel new], [UILabel new]];
+        descriptionView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 0)];
+        NSArray *leadingStrings = @[@"Initial Concept by ", @"Tweak Programmed by "];
+        NSArray *names = @[@"Zach Williams", @"Bryce Pauken"];
+        CGFloat currentOffset = kLabelPadding;
+        for(int i=0;i<self.descriptionLabels.count;i++) {
+            NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
+            [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:[leadingStrings objectAtIndex:i] attributes:@{NSUnderlineStyleAttributeName:@(NSUnderlineStyleNone)}]];
+            [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:[names objectAtIndex:i] attributes:@{NSUnderlineStyleAttributeName:@(NSUnderlineStyleSingle)}]];
+            
+            UILabel *label = [self.descriptionLabels objectAtIndex:i];
+            [label setAttributedText:attributedString];
+            [label setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin];
+            [label setFont:[UIFont systemFontOfSize:13]];
+            [label setTextColor:[UIColor lightGrayColor]];
+            [label setTag:i];
+            [label setUserInteractionEnabled:YES];
+            [label sizeToFit];
+            [label setCenter:CGPointMake(50, currentOffset+label.bounds.size.height/2)];
+            [descriptionView addSubview:label];
+            
+            UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(descriptionLabelTapped:)];
+            [tapGestureRecognizer setNumberOfTapsRequired:1];
+            [label addGestureRecognizer:tapGestureRecognizer];
+            
+            currentOffset += (label.bounds.size.height+kLabelPadding);
+        }
+        [descriptionView setFrame:CGRectMake(0, 0, 100, currentOffset)];
+    });
+    return descriptionView;
+}
+
+/*
+ We override hitTest:withEvent: to allow for tapping labels outisde of their view
+ (plus adding a bit of padding around the outside while we're at it)
+ */
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    for(UILabel *label in self.descriptionLabels) {
+        if(CGRectContainsPoint(CGRectInset([self convertRect:label.frame fromView:label.superview], kLabelPadding/2, kLabelPadding/2), point)) {
+            return label;
+        }
+    }
+    return [super hitTest:point withEvent:event];
 }
 
 - (void)layoutSubviews {
@@ -98,12 +173,12 @@ static CGFloat _wallpaperViewHeight;
             currentView = currentView.superview;
         }
         if(currentView) {
-            [currentView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
+            self.parentTableView = (UITableView *)currentView;
+            [self.parentTableView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
             
             CGRect screenBounds = [[UIScreen mainScreen] bounds];
             CGFloat statusBarBackgroundWidth = MAX(screenBounds.size.width, screenBounds.size.height)*2;
             UIView *statusBarBackground = [[UIView alloc] initWithFrame:CGRectMake(0, 0, statusBarBackgroundWidth, 20)];
-            //[statusBarBackground setBackgroundColor:[UIColor colorWithRed:0.937 green:0.937 blue:0.957 alpha:1]];
             [statusBarBackground setBackgroundColor:[currentView backgroundColor]];
             [currentView.superview addSubview:statusBarBackground];
         }
@@ -217,7 +292,7 @@ static CGFloat _wallpaperViewHeight;
         CGRect screenBounds = [[UIScreen mainScreen] bounds];
         _wallpaperViewHeight = ceilf(sqrtf(MIN(screenBounds.size.width, screenBounds.size.height)*30));
         
-        preferredHeight = _wallpaperViewHeight+100;
+        preferredHeight = _wallpaperViewHeight+[[self descriptionView] bounds].size.height-44;
     });
     return preferredHeight;
 }
@@ -256,7 +331,8 @@ static CGFloat _wallpaperViewHeight;
     
     //transform and append the Aeuria path
     CGAffineTransform aeuriaTransform = CGAffineTransformMakeScale(aeuriaScale, aeuriaScale);
-    aeuriaTransform = CGAffineTransformTranslate(aeuriaTransform, horizontalOffset/aeuriaScale, ((self.filledOverlay.bounds.size.height+(lsPathSize.height*lsScale))/2-(aeuriaPathSize.height*aeuriaScale))/aeuriaScale);
+    //aeuriaTransform = CGAffineTransformTranslate(aeuriaTransform, horizontalOffset/aeuriaScale, ((self.filledOverlay.bounds.size.height+(lsPathSize.height*lsScale))/2-(aeuriaPathSize.height*aeuriaScale))/aeuriaScale);
+    aeuriaTransform = CGAffineTransformTranslate(aeuriaTransform, horizontalOffset/aeuriaScale, ((self.filledOverlay.bounds.size.height-(aeuriaPathSize.height*aeuriaScale))/2)/aeuriaScale);
     CGPathRef scaledAeuriaPath = CGPathCreateCopyByTransformingPath(aeuriaPath, &aeuriaTransform);
     [mask appendPath:[UIBezierPath bezierPathWithCGPath:scaledAeuriaPath]];
     CGPathRelease(scaledAeuriaPath);
