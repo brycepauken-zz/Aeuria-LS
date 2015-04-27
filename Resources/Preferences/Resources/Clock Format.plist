@@ -22,6 +22,20 @@
 			<key>default</key>
 			<true/>
 		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSDefaultCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Clock Face Color</string>
+			<key>cellClass</key>
+			<string>ALSPreferencesColorCell</string>
+			<key>default</key>
+			<string>#FF0000</string>
+			<key>key</key>
+			<string>test3</string>
+		</dict>
 	</array>
 	<key>title</key>
 	<string>Clock Format</string>

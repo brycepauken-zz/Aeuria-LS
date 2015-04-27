@@ -6,8 +6,8 @@
 
 #import "SBLockScreenViewController.h"
 
-#import <objc/runtime.h>
 #import "ALSCustomLockScreen.h"
+#import <objc/runtime.h>
 
 @interface SBLockScreenViewController()
 
@@ -27,16 +27,6 @@
 - (id)customLockScreen {
     return objc_getAssociatedObject(self, @selector(customLockScreen));
 }
-
-/*- (void)layoutSubviews {
-    %orig;
-    
-    for(UIView *view in [[self lockScreenView] subviews]) {
-        if(![view isKindOfClass:[ALSCustomLockScreen class]]) {
-            [view setHidden:YES];
-        }
-    }
-}*/
 
 /*
  Called when the main lock screen scroll view is scrolling.

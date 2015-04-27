@@ -13,6 +13,8 @@
 @property (nonatomic) BOOL tableViewSearched;
 @property (nonatomic, strong) UIImageView *wallpaperView;
 
+
+
 @end
 
 @implementation ALSPreferencesHeader
@@ -28,6 +30,10 @@ static NSString *kALSPreferencesResourcesPath = @"/Library/PreferenceBundles/Aeu
 static CGFloat _wallpaperViewHeight;
 
 - (id)initWithSpecifier:(PSSpecifier *)specifier {
+    return [self initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil specifier:specifier];
+}
+
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier specifier:(PSSpecifier *)specifier {
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"ALSPreferencesHeader" specifier:specifier];
     if(self) {
         //called to initialize _wallpaperViewHeight if we haven't already
@@ -166,10 +172,12 @@ static CGFloat _wallpaperViewHeight;
 }
 
 - (void)layoutSubviews {
+    [super layoutSubviews];
+    
     if(!self.tableViewSearched && self.superview) {
         //find nearest parent tableview
         UIView *currentView = self;
-        while(![currentView isKindOfClass:[UITableView class]] && currentView) {
+        while(currentView && ![currentView isKindOfClass:[UITableView class]]) {
             currentView = currentView.superview;
         }
         if(currentView) {

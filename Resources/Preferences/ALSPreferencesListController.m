@@ -25,6 +25,7 @@
 - (void)dealloc {
     [self setNavigationBarSubviewsHidden:NO];
     [self.displayLink invalidate];
+    CFNotificationCenterRemoveEveryObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge void *)self);
 }
 
 - (void)setNavigationBarAlpha:(CGFloat)alpha {
@@ -116,43 +117,41 @@
         
         //we found the navigation bar — make an image representing it and place it on top (to make the animation look better)
         if(self.navigationBar) {
-            if(true) { //iphone/non-split
-                //get current image from navigation bar
-                UIWindow *window = self.navigationBar.window;
-                CGPoint navigationBarPosition = [self.navigationBar convertPoint:CGPointZero toView:window];
-                UIGraphicsBeginImageContextWithOptions(self.navigationBar.bounds.size, YES, 0.0);
-                CGContextRef ctx = UIGraphicsGetCurrentContext();
-                CGContextTranslateCTM(ctx, -navigationBarPosition.x, -navigationBarPosition.y);
-                [window drawViewHierarchyInRect:window.bounds afterScreenUpdates:YES];
-                UIImage *navigationBarImage = UIGraphicsGetImageFromCurrentImageContext();
-                UIGraphicsEndImageContext();
-                
-                //hide existing subviews
-                [self setNavigationBarSubviewsHidden:YES];
-                
-                //set up navigarion bar overlay
-                self.navigationBarOverlay = [[UIView alloc] initWithFrame:CGRectMake(0, -20, self.navigationBar.bounds.size.width, self.navigationBar.bounds.size.height+20)];
-                [self.navigationBarOverlay setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-                [self.navigationBarOverlay setBackgroundColor:[UIColor colorWithWhite:0.96f alpha:1]];
-                [self.navigationBarOverlay.layer setZPosition:MAXFLOAT];
-                
-                //add image to navigation bar
-                UIImageView *navigationBarImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 20, navigationBarImage.size.width, navigationBarImage.size.height)];
-                [navigationBarImageView setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin];
-                [navigationBarImageView setImage:navigationBarImage];
-                [self.navigationBarOverlay addSubview:navigationBarImageView];
-                
-                //add bottom border to overlay
-                UIView *navigationBarOverlayBorder = [[UIView alloc] initWithFrame:CGRectMake(0, self.navigationBarOverlay.bounds.size.height, self.navigationBarOverlay.bounds.size.width, 1)];
-                [navigationBarOverlayBorder setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-                [navigationBarOverlayBorder setBackgroundColor:[UIColor lightGrayColor]];
-                [self.navigationBarOverlay addSubview:navigationBarOverlayBorder];
-                
-                [self.navigationBar addSubview:self.navigationBarOverlay];
-                
-                //start display link to update navigation bar alpha
-                [self.displayLink setPaused:NO];
-            }
+            //get current image from navigation bar
+            UIWindow *window = self.navigationBar.window;
+            CGPoint navigationBarPosition = [self.navigationBar convertPoint:CGPointZero toView:window];
+            UIGraphicsBeginImageContextWithOptions(self.navigationBar.bounds.size, YES, 0.0);
+            CGContextRef ctx = UIGraphicsGetCurrentContext();
+            CGContextTranslateCTM(ctx, -navigationBarPosition.x, -navigationBarPosition.y);
+            [window drawViewHierarchyInRect:window.bounds afterScreenUpdates:YES];
+            UIImage *navigationBarImage = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            
+            //hide existing subviews
+            [self setNavigationBarSubviewsHidden:YES];
+            
+            //set up navigarion bar overlay
+            self.navigationBarOverlay = [[UIView alloc] initWithFrame:CGRectMake(0, -20, self.navigationBar.bounds.size.width, self.navigationBar.bounds.size.height+20)];
+            [self.navigationBarOverlay setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
+            [self.navigationBarOverlay setBackgroundColor:[UIColor colorWithWhite:0.96f alpha:1]];
+            [self.navigationBarOverlay.layer setZPosition:MAXFLOAT];
+            
+            //add image to navigation bar
+            UIImageView *navigationBarImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 20, navigationBarImage.size.width, navigationBarImage.size.height)];
+            [navigationBarImageView setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin];
+            [navigationBarImageView setImage:navigationBarImage];
+            [self.navigationBarOverlay addSubview:navigationBarImageView];
+            
+            //add bottom border to overlay
+            UIView *navigationBarOverlayBorder = [[UIView alloc] initWithFrame:CGRectMake(0, self.navigationBarOverlay.bounds.size.height, self.navigationBarOverlay.bounds.size.width, 1)];
+            [navigationBarOverlayBorder setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
+            [navigationBarOverlayBorder setBackgroundColor:[UIColor lightGrayColor]];
+            [self.navigationBarOverlay addSubview:navigationBarOverlayBorder];
+            
+            [self.navigationBar addSubview:self.navigationBarOverlay];
+            
+            //start display link to update navigation bar alpha
+            [self.displayLink setPaused:NO];
         }
     }
 }
@@ -178,6 +177,11 @@
     [self.displayLink setFrameInterval:1];
     [self.displayLink setPaused:YES];
     [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+    
+    //watch for notifications saying we need to save a value
+    /*[[NSNotificationCenter defaultCenter] addObserverForName:@"com.brycepauken.aeurials/InternalPreferencesChanged" object:nil queue:nil usingBlock:^(NSNotification *notification) {
+        [self setPreferenceValue:[notification.userInfo objectForKey:@"value"] specifier:[notification.userInfo objectForKey:@"specifier"]];
+    }];*/
 }
 
 @end
