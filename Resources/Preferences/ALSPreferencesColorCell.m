@@ -1,5 +1,6 @@
 #import "ALSPreferencesColorCell.h"
 
+#import "ALSPreferencesColorPicker.h"
 #import "PSListController.h"
 #import "PSSpecifier.h"
 
@@ -7,10 +8,11 @@
 
 @property (nonatomic, strong) UIView *coloredBorder;
 @property (nonatomic, strong) UILabel *colorLabel;
+@property (nonatomic, strong) ALSPreferencesColorPicker *colorPicker;
+@property (nonatomic, strong) NSString *internalValue;
 @property (nonatomic, weak) UITableView *parentTableView;
 @property (nonatomic, strong) UIView *sideBar;
 @property (nonatomic, strong) PSSpecifier *specifier;
-@property (nonatomic) BOOL touchDown;
 
 @end
 
@@ -32,27 +34,52 @@ static const int kSideBarWidth = 84;
         _sideBar = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width-kSideBarWidth, 0, kSideBarWidth, self.bounds.size.height)];
         [_sideBar setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleHeight];
         [_sideBar setBackgroundColor:[UIColor clearColor]];
+        [_sideBar setUserInteractionEnabled:YES];
         
         //add the border that shows the selected color
         _coloredBorder = [[UIView alloc] initWithFrame:CGRectInset(_sideBar.bounds, kColoredBorderPadding, kColoredBorderPadding)];
         [_coloredBorder setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleTopMargin];
-        [_coloredBorder.layer setBorderColor:[UIColor redColor].CGColor];
+        [_sideBar setUserInteractionEnabled:YES];
+        [_coloredBorder.layer setBorderColor:[UIColor whiteColor].CGColor];
         [_coloredBorder.layer setBorderWidth:1];
         [_coloredBorder.layer setCornerRadius:2];
         [_coloredBorder.layer setMasksToBounds:YES];
         [_sideBar addSubview:_coloredBorder];
         
         _colorLabel = [[UILabel alloc] init];
-        [_colorLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
-        [_colorLabel setText:@"#FF0000"];
-        //[_colorLabel setTextColor:[UIColor colorWithWhite:0.2 alpha:1]];
+        [_colorLabel setFont:[UIFont fontWithName:@"Menlo-Regular" size:14]];
+        [_colorLabel setText:@"#FFFFFF"];
+        [_colorLabel setTextColor:[UIColor colorWithWhite:0.1 alpha:1]];
+        [_colorLabel setUserInteractionEnabled:YES];
         [_colorLabel sizeToFit];
         [_colorLabel setCenter:CGPointMake(_sideBar.bounds.size.width/2, _sideBar.bounds.size.height/2)];
         [_sideBar addSubview:_colorLabel];
         
         [self addSubview:_sideBar];
+        
+        UILongPressGestureRecognizer *gestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handlePress:)];
+        [gestureRecognizer setMinimumPressDuration:0.01];
+        [self addGestureRecognizer:gestureRecognizer];
     }
     return self;
+}
+
++ (UIColor *)colorFromHexString:(NSString *)string {
+    unsigned rgbValue = 0;
+    NSScanner *scanner = [NSScanner scannerWithString:string];
+    [scanner setScanLocation:1];
+    [scanner scanHexInt:&rgbValue];
+    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
+}
+
+- (void)handlePress:(UILongPressGestureRecognizer*)sender {
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        [self setBackgroundColor:[UIColor colorWithWhite:1 alpha:1]];
+        [self showColorPicker];
+    }
+    else if (sender.state == UIGestureRecognizerStateBegan){
+        [self setBackgroundColor:[UIColor colorWithWhite:0.9 alpha:1]];
+    }
 }
 
 - (UITableView *)parentTableView {
@@ -87,32 +114,24 @@ static const int kSideBarWidth = 84;
 }
 
 - (void)setValue:(id)value {
-    
+    self.internalValue = value;
+    [self.colorLabel setText:value];
+    [self.coloredBorder.layer setBorderColor:[[self class] colorFromHexString:self.internalValue].CGColor];
 }
 
 - (void)showColorPicker {
-    //create an overlay to darken the background
-    UIView *backgroundOverlay = [[UIView alloc] initWithFrame:self.window.bounds];
-    [backgroundOverlay setAlpha:0.5];
-    [backgroundOverlay setBackgroundColor:[UIColor blackColor]];
-    [self.window addSubview:backgroundOverlay];
-}
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    self.touchDown = YES;
-    [self setBackgroundColor:[UIColor colorWithWhite:0.9 alpha:1]];
-}
-
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self touchesEnded:touches withEvent:event];
-}
-
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    if(self.touchDown) {
-        [self setTouchDown:NO];
-        [self setBackgroundColor:[UIColor colorWithWhite:1 alpha:1]];
-        [self showColorPicker];
-    }
+    self.colorPicker = [[ALSPreferencesColorPicker alloc] initWithParentView:self.parentTableView];
+    __weak ALSPreferencesColorPicker *weakColorPicker = self.colorPicker;
+    __weak ALSPreferencesColorCell *weakSelf = self;
+    [self.colorPicker setCompletionBlock:^(NSString *hexColor) {
+        [weakColorPicker dismiss];
+        if(hexColor) {
+            [weakSelf setValue:hexColor];
+            [weakSelf savePreferenceValue:hexColor];
+        }
+    }];
+    [self.colorPicker setHexColor:self.internalValue];
+    [self.colorPicker show];
 }
 
 @end

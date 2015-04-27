@@ -22,7 +22,11 @@ AeuriaLS_FRAMEWORKS = CoreGraphics CoreText Foundation QuartzCore UIKit
 #The Tweak's preferences
 BUNDLE_NAME = AeuriaLSPreferences
 AeuriaLSPreferences_FILES =\
+   Preferences/ALSColorGradient.m \
+   Preferences/ALSColorPanGestureRecognizer.m \
+   Preferences/ALSColorPickerInnerShadow.m \
    Preferences/ALSPreferencesColorCell.m \
+   Preferences/ALSPreferencesColorPicker.m \
    Preferences/ALSPreferencesHeader.m \
    Preferences/ALSPreferencesListController.m \
    Preferences/ALSPreferencesProxyTarget.m \
