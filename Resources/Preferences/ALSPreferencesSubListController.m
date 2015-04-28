@@ -4,6 +4,12 @@ NSString *kALSPreferencesSubListStateChanged = @"ALSPreferencesSubListStateChang
 
 @implementation ALSPreferencesSubListController
 
+- (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
+    [super setPreferenceValue:value specifier:specifier];
+    
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.brycepauken.aeurials/PreferencesChanged"), NULL, NULL, YES);
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
