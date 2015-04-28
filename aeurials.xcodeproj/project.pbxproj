@@ -32,7 +32,7 @@
 		023747321AEEEE0400825E1C /* ALSColorPanGestureRecognizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSColorPanGestureRecognizer.m; sourceTree = "<group>"; };
 		023747351AEEEE0400825E1C /* ALSColorPickerInnerShadow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSColorPickerInnerShadow.h; sourceTree = "<group>"; };
 		023747361AEEEE0400825E1C /* ALSColorPickerInnerShadow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSColorPickerInnerShadow.m; sourceTree = "<group>"; };
-		02530BF21ADF1940004F3488 /* Clock Format.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Clock Format.plist"; sourceTree = "<group>"; };
+		02530BF21ADF1940004F3488 /* Clock Face Settings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Clock Face Settings.plist"; sourceTree = "<group>"; };
 		02530BF31ADF1C5E004F3488 /* ALSPreferencesSubListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesSubListController.h; sourceTree = "<group>"; };
 		02530BF41ADF1C5E004F3488 /* ALSPreferencesSubListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesSubListController.m; sourceTree = "<group>"; };
 		0280F2621AEB264D0048BF91 /* ALSPreferencesColorCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesColorCell.h; sourceTree = "<group>"; };
@@ -40,6 +40,9 @@
 		028687AE1AE9F78900BDD74A /* AeuriaPath.dat */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = AeuriaPath.dat; sourceTree = "<group>"; };
 		0298578B1AE859980014B5C2 /* ALSProxyTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSProxyTarget.h; sourceTree = "<group>"; };
 		0298578C1AE859980014B5C2 /* ALSProxyTarget.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSProxyTarget.x; sourceTree = "<group>"; };
+		02A1014F1AEF3AE8003296EB /* ALSPreferencesListItemsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesListItemsController.h; sourceTree = "<group>"; };
+		02A101501AEF3AE8003296EB /* ALSPreferencesListItemsController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesListItemsController.m; sourceTree = "<group>"; };
+		02A101511AEF3B42003296EB /* PSListItemsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PSListItemsController.h; sourceTree = "<group>"; };
 		02AC49791AE8ECD000426584 /* ALSPreferencesProxyTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesProxyTarget.h; sourceTree = "<group>"; };
 		02AC497A1AE8ECD000426584 /* ALSPreferencesProxyTarget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesProxyTarget.m; sourceTree = "<group>"; };
 		02BED8D71AD3B86D0075EAB0 /* ALSPreferencesHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesHeader.h; sourceTree = "<group>"; };
@@ -128,11 +131,14 @@
 				02BED8D81AD3B86D0075EAB0 /* ALSPreferencesHeader.m */,
 				02BED8D91AD3B86D0075EAB0 /* ALSPreferencesListController.h */,
 				02BED8DA1AD3B86D0075EAB0 /* ALSPreferencesListController.m */,
+				02A1014F1AEF3AE8003296EB /* ALSPreferencesListItemsController.h */,
+				02A101501AEF3AE8003296EB /* ALSPreferencesListItemsController.m */,
 				02AC49791AE8ECD000426584 /* ALSPreferencesProxyTarget.h */,
 				02AC497A1AE8ECD000426584 /* ALSPreferencesProxyTarget.m */,
 				02530BF31ADF1C5E004F3488 /* ALSPreferencesSubListController.h */,
 				02530BF41ADF1C5E004F3488 /* ALSPreferencesSubListController.m */,
 				02BED8DC1AD3B86D0075EAB0 /* PSListController.h */,
+				02A101511AEF3B42003296EB /* PSListItemsController.h */,
 				02BED8E41AD3BEC50075EAB0 /* PSSpecifier.h */,
 				02BED8E31AD3BD580075EAB0 /* PSTableCell.h */,
 				02BED8E51AD3C3C30075EAB0 /* SBWallpaperController.h */,
@@ -164,7 +170,7 @@
 			children = (
 				02BED8DD1AD3B8B90075EAB0 /* AeuriaLSPreferences.plist */,
 				028687AE1AE9F78900BDD74A /* AeuriaPath.dat */,
-				02530BF21ADF1940004F3488 /* Clock Format.plist */,
+				02530BF21ADF1940004F3488 /* Clock Face Settings.plist */,
 				02BED8DE1AD3B8CA0075EAB0 /* Info.plist */,
 				022627B91AE9E605006658FF /* LSPath.dat */,
 				02BED8E21AD3B90B0075EAB0 /* Main.plist */,

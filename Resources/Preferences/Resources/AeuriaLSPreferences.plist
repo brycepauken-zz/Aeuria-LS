@@ -14,7 +14,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Change how the time is displayed</string>
+			<string>Change the clock&apos;s format and style</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -22,7 +22,7 @@
 			<key>detail</key>
 			<string>ALSPreferencesSubListController</string>
 			<key>label</key>
-			<string>Clock Format</string>
+			<string>Clock Face Settings</string>
 		</dict>
 		<dict>
 			<key>cell</key>

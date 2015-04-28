@@ -183,11 +183,6 @@
     [self.displayLink setFrameInterval:1];
     [self.displayLink setPaused:YES];
     [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-    
-    //watch for notifications saying we need to save a value
-    /*[[NSNotificationCenter defaultCenter] addObserverForName:@"com.brycepauken.aeurials/InternalPreferencesChanged" object:nil queue:nil usingBlock:^(NSNotification *notification) {
-        [self setPreferenceValue:[notification.userInfo objectForKey:@"value"] specifier:[notification.userInfo objectForKey:@"specifier"]];
-    }];*/
 }
 
 @end

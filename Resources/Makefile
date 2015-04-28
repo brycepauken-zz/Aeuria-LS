@@ -29,6 +29,7 @@ AeuriaLSPreferences_FILES =\
    Preferences/ALSPreferencesColorPicker.m \
    Preferences/ALSPreferencesHeader.m \
    Preferences/ALSPreferencesListController.m \
+   Preferences/ALSPreferencesListItemsController.m \
    Preferences/ALSPreferencesProxyTarget.m \
    Preferences/ALSPreferencesSubListController.m
 AeuriaLSPreferences_FRAMEWORKS = CoreGraphics Foundation QuartzCore UIKit

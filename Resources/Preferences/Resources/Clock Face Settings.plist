@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Clock Format Settings</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkListCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>detail</key>
+			<string>ALSPreferencesListItemsController</string>
+			<key>label</key>
+			<string>Clock Type</string>
+			<key>key</key>
+			<string>clockType</string>
+			<key>validTitles</key>
+			<array>
+				<string>Text</string>
+				<string>Analog</string>
+				<string>Digital</string>
+			</array>
+			<key>validValues</key>
+			<array>
+				<real>0</real>
+				<integer>1</integer>
+				<integer>2</integer>
+			</array>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>24 Hour Time</string>
+			<key>key</key>
+			<string>twentyFourHour</string>
+			<key>default</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Clock Style Settings</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSDefaultCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Clock Face Color</string>
+			<key>cellClass</key>
+			<string>ALSPreferencesColorCell</string>
+			<key>default</key>
+			<string>#FF0000</string>
+			<key>key</key>
+			<string>faceColor</string>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>Clock</string>
+</dict>
+</plist>
