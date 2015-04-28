@@ -6,32 +6,12 @@ THEOS_BUILD_DIR = ../Build
 
 #The Tweak itself
 TWEAK_NAME = AeuriaLS
-AeuriaLS_FILES =\
-   Tweak/ALSCustomLockScreen.x \
-   Tweak/ALSCustomLockScreenClock.x \
-   Tweak/ALSCustomLockScreenMask.x \
-   Tweak/ALSPreferencesManager.x \
-   Tweak/ALSProxyTarget.x \
-   Tweak/SBChevronView.x \
-   Tweak/SBFLockScreenDateView.x \
-   Tweak/SBLockScreenScrollView.x \
-   Tweak/SBLockScreenViewController.x \
-   Tweak/SBWallpaperEffectView.x
+AeuriaLS_FILES = $(wildcard Tweak/*.x)
 AeuriaLS_FRAMEWORKS = CoreGraphics CoreText Foundation QuartzCore UIKit
 
 #The Tweak's preferences
 BUNDLE_NAME = AeuriaLSPreferences
-AeuriaLSPreferences_FILES =\
-   Preferences/ALSColorGradient.m \
-   Preferences/ALSColorPanGestureRecognizer.m \
-   Preferences/ALSColorPickerInnerShadow.m \
-   Preferences/ALSPreferencesColorCell.m \
-   Preferences/ALSPreferencesColorPicker.m \
-   Preferences/ALSPreferencesHeader.m \
-   Preferences/ALSPreferencesListController.m \
-   Preferences/ALSPreferencesListItemsController.m \
-   Preferences/ALSPreferencesProxyTarget.m \
-   Preferences/ALSPreferencesSubListController.m
+AeuriaLSPreferences_FILES = $(wildcard Preferences/*.m)
 AeuriaLSPreferences_FRAMEWORKS = CoreGraphics Foundation QuartzCore UIKit
 AeuriaLSPreferences_INSTALL_PATH = /Library/PreferenceBundles
 AeuriaLSPreferences_PRIVATE_FRAMEWORKS = AppSupport Preferences
