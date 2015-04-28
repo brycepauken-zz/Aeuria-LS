@@ -6,16 +6,16 @@
 //  Copyright (c) 2015 Bryce Pauken. All rights reserved.
 //
 
-#import "ALSColorGradient.h"
+#import "ALSPreferencesColorGradient.h"
 
-@interface ALSColorGradient()
+@interface ALSPreferencesColorGradient()
 
 @property (nonatomic) int accessibleSize;
 @property (nonatomic) float hue;
 
 @end
 
-@implementation ALSColorGradient
+@implementation ALSPreferencesColorGradient
 
 /*
  Helper function for RGBfromHSL

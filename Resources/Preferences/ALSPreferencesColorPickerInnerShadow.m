@@ -6,15 +6,15 @@
 //  Copyright (c) 2015 Bryce Pauken. All rights reserved.
 //
 
-#import "ALSColorPickerInnerShadow.h"
+#import "ALSPreferencesColorPickerInnerShadow.h"
 
-@interface ALSColorPickerInnerShadow()
+@interface ALSPreferencesColorPickerInnerShadow()
 
 @property (nonatomic) CGPathRef path;
 
 @end
 
-@implementation ALSColorPickerInnerShadow
+@implementation ALSPreferencesColorPickerInnerShadow
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];

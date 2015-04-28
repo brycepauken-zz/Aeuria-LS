@@ -26,12 +26,12 @@
 		023724251AC25213007FAFC1 /* SBWallpaperEffectView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBWallpaperEffectView.x; sourceTree = "<group>"; };
 		023747251AEEECB700825E1C /* ALSPreferencesColorPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesColorPicker.h; sourceTree = "<group>"; };
 		023747261AEEECB700825E1C /* ALSPreferencesColorPicker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesColorPicker.m; sourceTree = "<group>"; };
-		0237472F1AEEEE0400825E1C /* ALSColorGradient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSColorGradient.h; sourceTree = "<group>"; };
-		023747301AEEEE0400825E1C /* ALSColorGradient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSColorGradient.m; sourceTree = "<group>"; };
-		023747311AEEEE0400825E1C /* ALSColorPanGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSColorPanGestureRecognizer.h; sourceTree = "<group>"; };
-		023747321AEEEE0400825E1C /* ALSColorPanGestureRecognizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSColorPanGestureRecognizer.m; sourceTree = "<group>"; };
-		023747351AEEEE0400825E1C /* ALSColorPickerInnerShadow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSColorPickerInnerShadow.h; sourceTree = "<group>"; };
-		023747361AEEEE0400825E1C /* ALSColorPickerInnerShadow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSColorPickerInnerShadow.m; sourceTree = "<group>"; };
+		0237472F1AEEEE0400825E1C /* ALSPreferencesColorGradient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesColorGradient.h; sourceTree = "<group>"; };
+		023747301AEEEE0400825E1C /* ALSPreferencesColorGradient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesColorGradient.m; sourceTree = "<group>"; };
+		023747311AEEEE0400825E1C /* ALSPreferencesColorPanGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesColorPanGestureRecognizer.h; sourceTree = "<group>"; };
+		023747321AEEEE0400825E1C /* ALSPreferencesColorPanGestureRecognizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesColorPanGestureRecognizer.m; sourceTree = "<group>"; };
+		023747351AEEEE0400825E1C /* ALSPreferencesColorPickerInnerShadow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesColorPickerInnerShadow.h; sourceTree = "<group>"; };
+		023747361AEEEE0400825E1C /* ALSPreferencesColorPickerInnerShadow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesColorPickerInnerShadow.m; sourceTree = "<group>"; };
 		02530BF21ADF1940004F3488 /* Clock Face Settings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Clock Face Settings.plist"; sourceTree = "<group>"; };
 		02530BF31ADF1C5E004F3488 /* ALSPreferencesSubListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesSubListController.h; sourceTree = "<group>"; };
 		02530BF41ADF1C5E004F3488 /* ALSPreferencesSubListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesSubListController.m; sourceTree = "<group>"; };
@@ -117,12 +117,12 @@
 			children = (
 				02D96A8A1A6F739000095C83 /* .theos */,
 				02D96A9A1A6F739000095C83 /* Resources */,
-				0237472F1AEEEE0400825E1C /* ALSColorGradient.h */,
-				023747301AEEEE0400825E1C /* ALSColorGradient.m */,
-				023747311AEEEE0400825E1C /* ALSColorPanGestureRecognizer.h */,
-				023747321AEEEE0400825E1C /* ALSColorPanGestureRecognizer.m */,
-				023747351AEEEE0400825E1C /* ALSColorPickerInnerShadow.h */,
-				023747361AEEEE0400825E1C /* ALSColorPickerInnerShadow.m */,
+				0237472F1AEEEE0400825E1C /* ALSPreferencesColorGradient.h */,
+				023747301AEEEE0400825E1C /* ALSPreferencesColorGradient.m */,
+				023747311AEEEE0400825E1C /* ALSPreferencesColorPanGestureRecognizer.h */,
+				023747321AEEEE0400825E1C /* ALSPreferencesColorPanGestureRecognizer.m */,
+				023747351AEEEE0400825E1C /* ALSPreferencesColorPickerInnerShadow.h */,
+				023747361AEEEE0400825E1C /* ALSPreferencesColorPickerInnerShadow.m */,
 				0280F2621AEB264D0048BF91 /* ALSPreferencesColorCell.h */,
 				0280F2631AEB264D0048BF91 /* ALSPreferencesColorCell.m */,
 				023747251AEEECB700825E1C /* ALSPreferencesColorPicker.h */,

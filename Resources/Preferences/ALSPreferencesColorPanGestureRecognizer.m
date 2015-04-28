@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Bryce Pauken. All rights reserved.
 //
 
-#import "ALSColorPanGestureRecognizer.h"
+#import "ALSPreferencesColorPanGestureRecognizer.h"
 
 @interface UIGestureRecognizer()
 
@@ -16,7 +16,7 @@
 
 @end
 
-@implementation ALSColorPanGestureRecognizer
+@implementation ALSPreferencesColorPanGestureRecognizer
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];

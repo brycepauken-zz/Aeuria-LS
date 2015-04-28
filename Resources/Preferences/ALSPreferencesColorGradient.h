@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Bryce Pauken. All rights reserved.
 //
 
-@interface ALSColorGradient : UIView
+@interface ALSPreferencesColorGradient : UIView
 
 - (UIColor *)colorAtPoint:(CGPoint)point;
 + (UIImage *)imageForHuePickerWithSize:(CGSize)size;

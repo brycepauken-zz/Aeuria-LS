@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Bryce Pauken. All rights reserved.
 //
 
-@interface ALSColorPickerInnerShadow : UIView
+@interface ALSPreferencesColorPickerInnerShadow : UIView
 
 - (void)setPath:(CGPathRef)path;
 

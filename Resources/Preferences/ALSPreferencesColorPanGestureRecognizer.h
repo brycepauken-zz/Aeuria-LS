@@ -6,6 +6,6 @@
 //  Copyright (c) 2015 Bryce Pauken. All rights reserved.
 //
 
-@interface ALSColorPanGestureRecognizer : UIPanGestureRecognizer
+@interface ALSPreferencesColorPanGestureRecognizer : UIPanGestureRecognizer
 
 @end

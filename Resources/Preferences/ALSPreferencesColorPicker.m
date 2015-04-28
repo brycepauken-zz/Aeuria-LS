@@ -1,13 +1,13 @@
 #import "ALSPreferencesColorPicker.h"
 
-#import "ALSColorGradient.h"
-#import "ALSColorPanGestureRecognizer.h"
-#import "ALSColorPickerInnerShadow.h"
+#import "ALSPreferencesColorGradient.h"
+#import "ALSPreferencesColorPanGestureRecognizer.h"
+#import "ALSPreferencesColorPickerInnerShadow.h"
 
 @interface ALSPreferencesColorPicker()
 
 @property (nonatomic, strong) UIView *backgroundOverlay;
-@property (nonatomic, strong) ALSColorGradient *colorGradient;
+@property (nonatomic, strong) ALSPreferencesColorGradient *colorGradient;
 @property (nonatomic, copy) void (^completionBlock)(NSString *hexColor);
 @property (nonatomic, strong) UIScrollView *colorGradientContainer;
 @property (nonatomic, strong) UIView *colorPreview;
@@ -58,7 +58,7 @@ static const int kTextFieldHeight = 30;
         [_colorGradientContainer.layer setCornerRadius:4];
         
         //create the color gradient
-        _colorGradient = [[ALSColorGradient alloc] initWithFrame:CGRectMake(0, 0, colorGradientSize, colorGradientSize)];
+        _colorGradient = [[ALSPreferencesColorGradient alloc] initWithFrame:CGRectMake(0, 0, colorGradientSize, colorGradientSize)];
         [_colorGradient setAccessibleSize:colorPickerSize];
         [_colorGradient setHue:0];
         [_colorGradientContainer addSubview:_colorGradient];
@@ -74,7 +74,7 @@ static const int kTextFieldHeight = 30;
         [_colorPreview.layer setCornerRadius:kColorPointerPreviewRadius];
         [colorPointer addSubview:_colorPreview];
         //create an inner shadow for the color preview
-        ALSColorPickerInnerShadow *colorPreviewInnerShadow = [[ALSColorPickerInnerShadow alloc] initWithFrame:_colorPreview.bounds];
+        ALSPreferencesColorPickerInnerShadow *colorPreviewInnerShadow = [[ALSPreferencesColorPickerInnerShadow alloc] initWithFrame:_colorPreview.bounds];
         CGPathRef colorPreviewInnerShadowPath = CGPathCreateWithEllipseInRect(colorPreviewInnerShadow.bounds, NULL);
         [colorPreviewInnerShadow setPath:colorPreviewInnerShadowPath];
         CGPathRelease(colorPreviewInnerShadowPath);
@@ -113,18 +113,18 @@ static const int kTextFieldHeight = 30;
         [colorPointer.layer setMask:colorPointerMaskLayer];
         
         //create an inner shadow for the color gradient view
-        ALSColorPickerInnerShadow *colorGradientInnerShadow = [[ALSColorPickerInnerShadow alloc] initWithFrame:_colorGradientContainer.frame];
+        ALSPreferencesColorPickerInnerShadow *colorGradientInnerShadow = [[ALSPreferencesColorPickerInnerShadow alloc] initWithFrame:_colorGradientContainer.frame];
         CGPathRef colorGradientInnerShadowPath = CGPathCreateWithRoundedRect(_colorGradientContainer.bounds, 4, 4, NULL);
         [colorGradientInnerShadow setPath:colorGradientInnerShadowPath];
         CGPathRelease(colorGradientInnerShadowPath);
         
         //create the view that allows the user to choose the hue
         _huePicker = [[UIImageView alloc] initWithFrame:CGRectMake(kColorPickerWindowPadding, colorPickerSize+kHuePickerIndicatorHeight+kHuePickerIndicatorMargin*2+kColorPickerWindowPadding, colorPickerSize, kHuePickerHeight)];
-        [_huePicker setImage:[ALSColorGradient imageForHuePickerWithSize:_huePicker.bounds.size]];
+        [_huePicker setImage:[ALSPreferencesColorGradient imageForHuePickerWithSize:_huePicker.bounds.size]];
         [_huePicker setUserInteractionEnabled:YES];
         [_huePicker.layer setCornerRadius:4];
         [_huePicker.layer setMasksToBounds:YES];
-        ALSColorPanGestureRecognizer *hueDragRecognizer = [[ALSColorPanGestureRecognizer alloc] initWithTarget:self action:@selector(hueBarDragged:)];
+        ALSPreferencesColorPanGestureRecognizer *hueDragRecognizer = [[ALSPreferencesColorPanGestureRecognizer alloc] initWithTarget:self action:@selector(hueBarDragged:)];
         [_huePicker addGestureRecognizer:hueDragRecognizer];
         
         //create the hue picker indicator
@@ -137,7 +137,7 @@ static const int kTextFieldHeight = 30;
         [huePickerIndicator.layer addSublayer:_huePickerIndicatorLayer];
         
         //create an inner shadow for the hue picker
-        ALSColorPickerInnerShadow *huePickerInnerShadow = [[ALSColorPickerInnerShadow alloc] initWithFrame:_huePicker.bounds];
+        ALSPreferencesColorPickerInnerShadow *huePickerInnerShadow = [[ALSPreferencesColorPickerInnerShadow alloc] initWithFrame:_huePicker.bounds];
         CGPathRef huePickerInnerShadowPath = CGPathCreateWithRoundedRect(huePickerInnerShadow.bounds, 4, 4, NULL);
         [huePickerInnerShadow setPath:huePickerInnerShadowPath];
         CGPathRelease(huePickerInnerShadowPath);
