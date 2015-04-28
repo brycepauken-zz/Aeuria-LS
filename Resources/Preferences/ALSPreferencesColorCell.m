@@ -41,7 +41,7 @@ static const int kSideBarWidth = 84;
         [_coloredBorder setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleTopMargin];
         [_sideBar setUserInteractionEnabled:YES];
         [_coloredBorder.layer setBorderColor:[UIColor whiteColor].CGColor];
-        [_coloredBorder.layer setBorderWidth:1];
+        [_coloredBorder.layer setBorderWidth:2];
         [_coloredBorder.layer setCornerRadius:2];
         [_coloredBorder.layer setMasksToBounds:YES];
         [_sideBar addSubview:_coloredBorder];

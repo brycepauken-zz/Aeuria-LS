@@ -345,6 +345,10 @@ static void RGB_TO_HSL(CGFloat r, CGFloat g, CGFloat b, CGFloat *outH, CGFloat *
     return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
 }
 
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 - (void)dismiss {
     [self setUserInteractionEnabled:NO];
     [self.backgroundOverlay setUserInteractionEnabled:NO];
@@ -354,6 +358,7 @@ static void RGB_TO_HSL(CGFloat r, CGFloat g, CGFloat b, CGFloat *outH, CGFloat *
         [self setTransform:CGAffineTransformMakeScale(0.5, 0.5)];
     } completion:^(BOOL finished) {
         [self.backgroundOverlay removeFromSuperview];
+        [self.scrollView removeFromSuperview];
         [self removeFromSuperview];
     }];
 }
