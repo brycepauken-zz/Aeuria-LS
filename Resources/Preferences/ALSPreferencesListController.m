@@ -48,6 +48,12 @@
     }
 }
 
+- (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
+    [super setPreferenceValue:value specifier:specifier];
+    
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.brycepauken.aeurials/PreferencesChanged"), NULL, NULL, YES);
+}
+
 - (void)updateNavigationBarAlpha {
     //pick which view to use; our own, or our child controller's view (if there is one)
     UIView *currentView = self.sublistController?self.sublistController.view:self.view;

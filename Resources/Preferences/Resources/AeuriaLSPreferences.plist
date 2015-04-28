@@ -35,8 +35,6 @@
 			<string>test1</string>
 			<key>default</key>
 			<true/>
-			<key>PostNotification</key>
-			<string>com.brycepauken.aeurials/PreferencesChanged</string>
 		</dict>
 	</array>
 	<key>title</key>
