@@ -33,7 +33,7 @@ static const int kSideBarWidth = 84;
         //add the bar on the side (used to provide a background for light colors)
         _sideBar = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width-kSideBarWidth, 0, kSideBarWidth, self.bounds.size.height)];
         [_sideBar setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleHeight];
-        [_sideBar setBackgroundColor:[UIColor clearColor]];
+        [_sideBar setBackgroundColor:[UIColor colorWithWhite:0.8 alpha:1]];
         [_sideBar setUserInteractionEnabled:YES];
         
         //add the border that shows the selected color
@@ -116,7 +116,16 @@ static const int kSideBarWidth = 84;
 - (void)setValue:(id)value {
     self.internalValue = value;
     [self.colorLabel setText:value];
-    [self.coloredBorder.layer setBorderColor:[[self class] colorFromHexString:self.internalValue].CGColor];
+    
+    UIColor *color = [[self class] colorFromHexString:self.internalValue];
+    [self.coloredBorder.layer setBorderColor:color.CGColor];
+    
+    CGFloat red, green, blue;
+    [color getRed:&red green:&green blue:&blue alpha:NULL];
+    
+    CGFloat brightness = sqrt(0.299*red*red + 0.587*green*green + 0.114*blue*blue);
+    [self.sideBar setBackgroundColor:(brightness>0.8?[UIColor colorWithWhite:0.1 alpha:1]:[UIColor clearColor])];
+    [self.colorLabel setTextColor:(brightness>0.8?[UIColor whiteColor]:[UIColor colorWithWhite:0.1 alpha:1])];
 }
 
 - (void)showColorPicker {
