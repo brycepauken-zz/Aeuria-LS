@@ -66,6 +66,20 @@
 			<key>key</key>
 			<string>faceColor</string>
 		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSDefaultCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Main Font</string>
+			<key>cellClass</key>
+			<string>ALSPreferencesFontCell</string>
+			<key>default</key>
+			<string>Helvetica</string>
+			<key>key</key>
+			<string>mainFont</string>
+		</dict>
 	</array>
 	<key>title</key>
 	<string>Clock</string>

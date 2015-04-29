@@ -90,8 +90,12 @@
  
 Example Alert
  
-UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Title" message:@"Message" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Title" message:@"Message" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+ 
+ Example Logging
+ 
+ [[self performSelector:@selector(recursiveDescription)] writeToFile:@"/var/mobile/Documents/out1.txt" atomically:NO encoding:NSStringEncodingConversionAllowLossy error:nil];
  
  */
 

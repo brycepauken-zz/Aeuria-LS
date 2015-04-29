@@ -6,6 +6,5 @@
 		icon = "AeuriaLSPreferences.png";
 		isController = 1;
 		label = "Aeuria LS";
-		PostNotification = "com.brycepauken.aeurials/PreferencesChanged";
 	};
 }

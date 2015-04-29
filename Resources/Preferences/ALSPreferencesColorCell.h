@@ -1,5 +1,5 @@
-#import "PSTableCell.h"
+#import "ALSPreferencesCell.h"
 
-@interface ALSPreferencesColorCell : PSTableCell
+@interface ALSPreferencesColorCell : ALSPreferencesCell
 
 @end

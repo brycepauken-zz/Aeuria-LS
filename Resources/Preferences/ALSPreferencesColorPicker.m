@@ -144,7 +144,6 @@ static const int kTextFieldHeight = 30;
         [_huePicker addSubview:huePickerInnerShadow];
         
         //create the accept and cancel buttons
-        
         UIButton *firstButton;
         UIButton *secondButton;
         for(int i=0;i<2;i++) {

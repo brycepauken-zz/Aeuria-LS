@@ -35,8 +35,15 @@
 		02530BF21ADF1940004F3488 /* Clock Face Settings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Clock Face Settings.plist"; sourceTree = "<group>"; };
 		02530BF31ADF1C5E004F3488 /* ALSPreferencesSubListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesSubListController.h; sourceTree = "<group>"; };
 		02530BF41ADF1C5E004F3488 /* ALSPreferencesSubListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesSubListController.m; sourceTree = "<group>"; };
+		027E66601AF029DF00B77D65 /* ALSPreferencesFontCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesFontCell.h; sourceTree = "<group>"; };
+		027E66611AF029DF00B77D65 /* ALSPreferencesFontCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesFontCell.m; sourceTree = "<group>"; };
+		027E66641AF02BCC00B77D65 /* ALSPreferencesCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesCell.h; sourceTree = "<group>"; };
+		027E66651AF02BCC00B77D65 /* ALSPreferencesCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesCell.m; sourceTree = "<group>"; };
+		027E66661AF0345C00B77D65 /* ALSPreferencesFontPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesFontPicker.h; sourceTree = "<group>"; };
+		027E66671AF0345C00B77D65 /* ALSPreferencesFontPicker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesFontPicker.m; sourceTree = "<group>"; };
 		0280F2621AEB264D0048BF91 /* ALSPreferencesColorCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesColorCell.h; sourceTree = "<group>"; };
 		0280F2631AEB264D0048BF91 /* ALSPreferencesColorCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesColorCell.m; sourceTree = "<group>"; };
+		028285EE1AF0836D0079E923 /* Defaults.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
 		028687AE1AE9F78900BDD74A /* AeuriaPath.dat */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = AeuriaPath.dat; sourceTree = "<group>"; };
 		0298578B1AE859980014B5C2 /* ALSProxyTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSProxyTarget.h; sourceTree = "<group>"; };
 		0298578C1AE859980014B5C2 /* ALSProxyTarget.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSProxyTarget.x; sourceTree = "<group>"; };
@@ -117,6 +124,8 @@
 			children = (
 				02D96A8A1A6F739000095C83 /* .theos */,
 				02D96A9A1A6F739000095C83 /* Resources */,
+				027E66641AF02BCC00B77D65 /* ALSPreferencesCell.h */,
+				027E66651AF02BCC00B77D65 /* ALSPreferencesCell.m */,
 				0237472F1AEEEE0400825E1C /* ALSPreferencesColorGradient.h */,
 				023747301AEEEE0400825E1C /* ALSPreferencesColorGradient.m */,
 				023747311AEEEE0400825E1C /* ALSPreferencesColorPanGestureRecognizer.h */,
@@ -127,6 +136,10 @@
 				0280F2631AEB264D0048BF91 /* ALSPreferencesColorCell.m */,
 				023747251AEEECB700825E1C /* ALSPreferencesColorPicker.h */,
 				023747261AEEECB700825E1C /* ALSPreferencesColorPicker.m */,
+				027E66601AF029DF00B77D65 /* ALSPreferencesFontCell.h */,
+				027E66611AF029DF00B77D65 /* ALSPreferencesFontCell.m */,
+				027E66661AF0345C00B77D65 /* ALSPreferencesFontPicker.h */,
+				027E66671AF0345C00B77D65 /* ALSPreferencesFontPicker.m */,
 				02BED8D71AD3B86D0075EAB0 /* ALSPreferencesHeader.h */,
 				02BED8D81AD3B86D0075EAB0 /* ALSPreferencesHeader.m */,
 				02BED8D91AD3B86D0075EAB0 /* ALSPreferencesListController.h */,
@@ -171,6 +184,7 @@
 				02BED8DD1AD3B8B90075EAB0 /* AeuriaLSPreferences.plist */,
 				028687AE1AE9F78900BDD74A /* AeuriaPath.dat */,
 				02530BF21ADF1940004F3488 /* Clock Face Settings.plist */,
+				028285EE1AF0836D0079E923 /* Defaults.plist */,
 				02BED8DE1AD3B8CA0075EAB0 /* Info.plist */,
 				022627B91AE9E605006658FF /* LSPath.dat */,
 				02BED8E21AD3B90B0075EAB0 /* Main.plist */,

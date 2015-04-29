@@ -1,18 +1,13 @@
 #import "ALSPreferencesColorCell.h"
 
 #import "ALSPreferencesColorPicker.h"
-#import "PSListController.h"
-#import "PSSpecifier.h"
 
 @interface ALSPreferencesColorCell()
 
 @property (nonatomic, strong) UIView *coloredBorder;
 @property (nonatomic, strong) UILabel *colorLabel;
 @property (nonatomic, strong) ALSPreferencesColorPicker *colorPicker;
-@property (nonatomic, strong) NSString *internalValue;
-@property (nonatomic, weak) UITableView *parentTableView;
 @property (nonatomic, strong) UIView *sideBar;
-@property (nonatomic, strong) PSSpecifier *specifier;
 
 @end
 
@@ -28,8 +23,6 @@ static const int kSideBarWidth = 84;
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier specifier:(PSSpecifier *)specifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier specifier:specifier];
     if(self) {
-        _specifier = specifier;
-        
         //add the bar on the side (used to provide a background for light colors)
         _sideBar = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width-kSideBarWidth, 0, kSideBarWidth, self.bounds.size.height)];
         [_sideBar setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleHeight];
@@ -56,10 +49,6 @@ static const int kSideBarWidth = 84;
         [_sideBar addSubview:_colorLabel];
         
         [self addSubview:_sideBar];
-        
-        UILongPressGestureRecognizer *gestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handlePress:)];
-        [gestureRecognizer setMinimumPressDuration:0.01];
-        [self addGestureRecognizer:gestureRecognizer];
     }
     return self;
 }
@@ -73,49 +62,19 @@ static const int kSideBarWidth = 84;
 }
 
 - (void)handlePress:(UILongPressGestureRecognizer*)sender {
+    [super handlePress:sender];
+    
     if (sender.state == UIGestureRecognizerStateEnded) {
-        [self setBackgroundColor:[UIColor colorWithWhite:1 alpha:1]];
         [self showColorPicker];
-    }
-    else if (sender.state == UIGestureRecognizerStateBegan){
-        [self setBackgroundColor:[UIColor colorWithWhite:0.9 alpha:1]];
-    }
-}
-
-- (UITableView *)parentTableView {
-    if(_parentTableView) {
-        return _parentTableView;
-    }
-    else if(self.superview) {
-        //find nearest parent tableview
-        UIView *currentView = self;
-        while(currentView && ![currentView isKindOfClass:[UITableView class]]) {
-            currentView = currentView.superview;
-        }
-        if(currentView) {
-            _parentTableView = (UITableView *)currentView;
-            return _parentTableView;
-        }
-    }
-    return nil;
-}
-
-/*
- Called to notify the controller to save our setting
- */
-- (void)savePreferenceValue:(id)value {
-    if(self.parentTableView && [self.parentTableView.delegate respondsToSelector:@selector(setPreferenceValue:specifier:)]) {
-        [(id)self.parentTableView.delegate setPreferenceValue:value specifier:self.specifier];
-    }
-    else {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Unable to save your changes. Please try again or seek assistance." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
     }
 }
 
 - (void)setValue:(id)value {
-    self.internalValue = value;
+    [super setValue:value];
+    
     [self.colorLabel setText:value];
+    [self.colorLabel sizeToFit];
+    [self.colorLabel setCenter:CGPointMake(self.sideBar.bounds.size.width/2, self.sideBar.bounds.size.height/2)];
     
     UIColor *color = [[self class] colorFromHexString:self.internalValue];
     [self.coloredBorder.layer setBorderColor:color.CGColor];
@@ -129,7 +88,7 @@ static const int kSideBarWidth = 84;
 }
 
 - (void)showColorPicker {
-    self.colorPicker = [[ALSPreferencesColorPicker alloc] initWithParentView:self.parentTableView];
+    self.colorPicker = [[ALSPreferencesColorPicker alloc] initWithParentView:self.parentTableView.superview];
     __weak ALSPreferencesColorPicker *weakColorPicker = self.colorPicker;
     __weak ALSPreferencesColorCell *weakSelf = self;
     [self.colorPicker setCompletionBlock:^(NSString *hexColor) {
