@@ -8,7 +8,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Clock Format Settings</string>
+			<string>Time Format</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -48,7 +48,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Clock Style Settings</string>
+			<string>Clock Style</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -74,8 +74,45 @@
 			<key>key</key>
 			<string>mainFont</string>
 		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSDefaultCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Secondary Font</string>
+			<key>cellClass</key>
+			<string>ALSPreferencesFontCell</string>
+			<key>key</key>
+			<string>secondaryFont</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Reset Settings</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Reset Clock Face Settings</string>
+			<key>action</key>
+			<string>resetSettings</string>
+			<key>isDestructive</key>
+			<true/>
+			<key>confirmation</key>
+			<dict>
+				<key>prompt</key>
+				<string>Reset All Clock Face Settings?</string>
+				<key>title</key>
+				<string>Reset</string>
+				<key>cancelTitle</key>
+				<string>Cancel</string>
+			</dict>
+		</dict>
 	</array>
 	<key>title</key>
-	<string>Clock</string>
+	<string>Clock Face</string>
 </dict>
 </plist>

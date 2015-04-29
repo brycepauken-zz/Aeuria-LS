@@ -9,7 +9,7 @@
 @property (nonatomic, strong) CADisplayLink *displayLink;
 @property (nonatomic, strong) UINavigationBar *navigationBar;
 @property (nonatomic, strong) UIView *navigationBarOverlay;
-@property (nonatomic, strong) UINavigationController *sublistController;
+@property (nonatomic, weak) PSListController *sublistController;
 
 @end
 
@@ -26,6 +26,17 @@
     [self setNavigationBarSubviewsHidden:NO];
     [self.displayLink invalidate];
     CFNotificationCenterRemoveEveryObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge void *)self);
+}
+
+- (void)resetSettings {
+    if(self.sublistController) {
+        for(PSSpecifier *specifier in [self.sublistController specifiers]) {
+            if([specifier propertyForKey:@"key"]) {
+                [self setPreferenceValue:[specifier propertyForKey:@"default"] specifier:specifier];
+            }
+        }
+        [self.sublistController reloadSpecifiers];
+    }
 }
 
 - (void)setNavigationBarAlpha:(CGFloat)alpha {
@@ -48,7 +59,7 @@
     }
 }
 
-- (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
+- (void)setPreferenceValue:(id)value specifier:(PSSpecifier *)specifier {
     [super setPreferenceValue:value specifier:specifier];
     
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.brycepauken.aeurials/PreferencesChanged"), NULL, NULL, YES);

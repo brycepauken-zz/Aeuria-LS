@@ -5,9 +5,11 @@
 	<key>clockType</key>
 	<integer>0</integer>
 	<key>faceColor</key>
-	<string>#FF0000</string>
+	<string>#FFFFFF</string>
 	<key>mainFont</key>
-	<string>Helvetica</string>
+	<string>AvenirNext-DemiBold</string>
+	<key>secondaryFont</key>
+	<string>Georgia-Italic</string>
 	<key>twentyFourHour</key>
 	<false/>
 </dict>

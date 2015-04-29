@@ -5,6 +5,7 @@
 }
 
 - (NSArray*)loadSpecifiersFromPlistName:(NSString*)plistName target:(id)target;
+- (void)reloadSpecifiers;
 - (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier;
 - (PSSpecifier *)specifierForID:(NSString*)specifierID;
 - (PSSpecifier*)specifierAtIndex:(int)index;
