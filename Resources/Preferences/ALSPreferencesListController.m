@@ -54,6 +54,20 @@
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.brycepauken.aeurials/PreferencesChanged"), NULL, NULL, YES);
 }
 
+- (PSSpecifier *)specifierForID:(NSString*)specifierID {
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Specifier2" message:specifierID delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:NO];
+    
+    return [super specifierForID:specifierID];
+}
+
+- (PSSpecifier*)specifierAtIndex:(int)index {
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Specifier3" message:@"hi" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:NO];
+    
+    return [super specifierAtIndex:index];
+}
+
 - (void)updateNavigationBarAlpha {
     //pick which view to use; our own, or our child controller's view (if there is one)
     UIView *currentView = self.sublistController?self.sublistController.view:self.view;

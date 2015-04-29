@@ -24,18 +24,6 @@
 			<key>label</key>
 			<string>Clock Face Settings</string>
 		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>defaults</key>
-			<string>com.brycepauken.aeurials</string>
-			<key>label</key>
-			<string>Test1</string>
-			<key>key</key>
-			<string>test1</string>
-			<key>default</key>
-			<true/>
-		</dict>
 	</array>
 	<key>title</key>
 	<string> </string>

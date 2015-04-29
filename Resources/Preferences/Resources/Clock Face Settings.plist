@@ -43,8 +43,6 @@
 			<string>24 Hour Time</string>
 			<key>key</key>
 			<string>twentyFourHour</string>
-			<key>default</key>
-			<false/>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -61,8 +59,6 @@
 			<string>Clock Face Color</string>
 			<key>cellClass</key>
 			<string>ALSPreferencesColorCell</string>
-			<key>default</key>
-			<string>#FF0000</string>
 			<key>key</key>
 			<string>faceColor</string>
 		</dict>
@@ -75,8 +71,6 @@
 			<string>Main Font</string>
 			<key>cellClass</key>
 			<string>ALSPreferencesFontCell</string>
-			<key>default</key>
-			<string>Helvetica</string>
 			<key>key</key>
 			<string>mainFont</string>
 		</dict>
