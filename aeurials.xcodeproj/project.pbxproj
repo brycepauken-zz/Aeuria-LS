@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
+		0206009E1AF1946F00F5597A /* Background & Status Bar Settings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Background & Status Bar Settings.plist"; sourceTree = "<group>"; };
 		022130AA1AE1BDE800054A1A /* ALSPreferencesManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesManager.h; sourceTree = "<group>"; };
 		022130AB1AE1BDE800054A1A /* ALSPreferencesManager.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSPreferencesManager.x; sourceTree = "<group>"; };
 		022627B91AE9E605006658FF /* LSPath.dat */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = LSPath.dat; sourceTree = "<group>"; };
@@ -183,6 +184,7 @@
 			children = (
 				02BED8DD1AD3B8B90075EAB0 /* AeuriaLSPreferences.plist */,
 				028687AE1AE9F78900BDD74A /* AeuriaPath.dat */,
+				0206009E1AF1946F00F5597A /* Background & Status Bar Settings.plist */,
 				02530BF21ADF1940004F3488 /* Clock Face Settings.plist */,
 				028285EE1AF0836D0079E923 /* Defaults.plist */,
 				02BED8DE1AD3B8CA0075EAB0 /* Info.plist */,

@@ -33,6 +33,12 @@ static NSString *kALSPreferencesDefaultsPath = @"/Library/PreferenceBundles/Aeur
     id specifiers = [super specifiers];
     for(PSSpecifier *specifier in specifiers) {
         [specifier setProperty:[defaults objectForKey:[specifier propertyForKey:@"key"]] forKey:@"default"];
+        
+        if([[specifier propertyForKey:@"key"] isEqualToString:@"backgroundVisiblity"]) {
+            //UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Title" message:[NSString stringWithFormat:@"%@",specifier.properties] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            //[alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+            [specifier setProperty:@(10) forKey:@"value"];
+        }
     }
     return specifiers;
 }

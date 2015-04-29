@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>backgroundColor</key>
+	<string>#000000</string>
+	<key>backgroundVisiblity</key>
+	<real>0.5</real>
 	<key>clockType</key>
 	<integer>0</integer>
 	<key>faceColor</key>
@@ -10,6 +14,8 @@
 	<string>AvenirNext-DemiBold</string>
 	<key>secondaryFont</key>
 	<string>Georgia-Italic</string>
+	<key>shouldColorBackground</key>
+	<true/>
 	<key>twentyFourHour</key>
 	<false/>
 </dict>
