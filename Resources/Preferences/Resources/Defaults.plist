@@ -2,18 +2,24 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>backgroundBlurStrength</key>
+	<integer>0</integer>
 	<key>backgroundColor</key>
 	<string>#000000</string>
-	<key>backgroundVisiblity</key>
+	<key>backgroundColorVisiblity</key>
 	<real>0.5</real>
 	<key>clockType</key>
 	<integer>0</integer>
+	<key>colorVisiblity</key>
+	<integer>1</integer>
 	<key>faceColor</key>
 	<string>#FFFFFF</string>
 	<key>mainFont</key>
 	<string>AvenirNext-DemiBold</string>
 	<key>secondaryFont</key>
 	<string>Georgia-Italic</string>
+	<key>shouldBlurBackground</key>
+	<false/>
 	<key>shouldColorBackground</key>
 	<true/>
 	<key>twentyFourHour</key>

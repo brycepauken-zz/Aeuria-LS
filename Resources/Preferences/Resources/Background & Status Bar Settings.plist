@@ -4,52 +4,86 @@
 <dict>
 	<key>items</key>
 	<array>
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>label</key>
-			<string>Background Color</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>defaults</key>
-			<string>com.brycepauken.aeurials</string>
-			<key>label</key>
-			<string>Add Color to Background</string>
-			<key>key</key>
-			<string>shouldColorBackground</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSDefaultCell</string>
-			<key>defaults</key>
-			<string>com.brycepauken.aeurials</string>
-			<key>label</key>
-			<string>Background Overlay Color</string>
-			<key>cellClass</key>
-			<string>ALSPreferencesColorCell</string>
-			<key>key</key>
-			<string>backgroundColor</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>label</key>
-			<string>Background Color Visibility</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSliderCell</string>
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>Background Color</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSSwitchCell</string>
             <key>defaults</key>
             <string>com.brycepauken.aeurials</string>
-			<key>key</key>
-			<string>backgroundVisiblity</string>
-			<key>min</key>
-			<real>0</real>
-			<key>max</key>
-			<real>1</real>
-		</dict>
+            <key>label</key>
+            <string>Add Color to Background</string>
+            <key>key</key>
+            <string>shouldColorBackground</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSDefaultCell</string>
+            <key>defaults</key>
+            <string>com.brycepauken.aeurials</string>
+            <key>label</key>
+            <string>Background Overlay Color</string>
+            <key>cellClass</key>
+            <string>ALSPreferencesColorCell</string>
+            <key>key</key>
+            <string>backgroundColor</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>Background Color Visibility</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSSliderCell</string>
+            <key>defaults</key>
+            <string>com.brycepauken.aeurials</string>
+            <key>key</key>
+            <string>backgroundColorVisiblity</string>
+            <key>min</key>
+            <real>0</real>
+            <key>max</key>
+            <real>1</real>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>Background Blur</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSSwitchCell</string>
+            <key>defaults</key>
+            <string>com.brycepauken.aeurials</string>
+            <key>label</key>
+            <string>Add Blur to Background</string>
+            <key>key</key>
+            <string>shouldBlurBackground</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>Background Blur Strength</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSSliderCell</string>
+            <key>defaults</key>
+            <string>com.brycepauken.aeurials</string>
+            <key>key</key>
+            <string>backgroundBlurStrength</string>
+            <key>min</key>
+            <real>0</real>
+            <key>max</key>
+            <real>20</real>
+        </dict>
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
@@ -60,7 +94,7 @@
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>label</key>
-			<string>Reset Clock Face Settings</string>
+			<string>Reset Section Settings</string>
 			<key>action</key>
 			<string>resetSettings</string>
 			<key>isDestructive</key>
@@ -68,7 +102,7 @@
 			<key>confirmation</key>
 			<dict>
 				<key>prompt</key>
-				<string>Reset All Clock Face Settings?</string>
+				<string>Reset All Background &amp; Status Bar Settings?</string>
 				<key>title</key>
 				<string>Reset</string>
 				<key>cancelTitle</key>
