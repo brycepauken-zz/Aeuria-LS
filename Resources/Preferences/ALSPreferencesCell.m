@@ -5,13 +5,21 @@
 @interface ALSPreferencesCell()
 
 @property (nonatomic, strong) UILabel *fontLabel;
+@property (nonatomic, strong) UILongPressGestureRecognizer *gestureRecognizer;
 @property (nonatomic, strong) id internalValue;
 @property (nonatomic, weak) UITableView *parentTableView;
+@property (nonatomic) BOOL registeredObserver;
 @property (nonatomic, strong) PSSpecifier *specifier;
 
 @end
 
 @implementation ALSPreferencesCell
+
+- (void)dealloc {
+    @synchronized(self) {
+        [self tryRemovingObserver];
+    }
+}
 
 - (id)initWithSpecifier:(PSSpecifier *)specifier {
     return [self initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil specifier:specifier];
@@ -22,11 +30,22 @@
     if(self) {
         _specifier = specifier;
         
-        UILongPressGestureRecognizer *gestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handlePress:)];
-        [gestureRecognizer setMinimumPressDuration:0.01];
-        [self addGestureRecognizer:gestureRecognizer];
+        _gestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handlePress:)];
+        [_gestureRecognizer setDelegate:self];
+        [_gestureRecognizer setMinimumPressDuration:0.01];
+        [self addGestureRecognizer:_gestureRecognizer];
     }
     return self;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    @synchronized(self) {
+        [self tryRemovingObserver];
+        self.registeredObserver = YES;
+        [self.parentTableView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
+    }
+    
+    return YES;
 }
 
 - (void)handlePress:(UILongPressGestureRecognizer*)sender {
@@ -56,6 +75,17 @@
     return nil;
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    @synchronized(self) {
+        [self tryRemovingObserver];
+    }
+    if([object isKindOfClass:[UITableView class]]) {
+        [self.gestureRecognizer setEnabled:NO];
+        [self.gestureRecognizer setEnabled:YES];
+        [self setBackgroundColor:[UIColor colorWithWhite:1 alpha:1]];
+    }
+}
+
 /*
  Called to notify the controller to save our setting
  */
@@ -71,6 +101,13 @@
 
 - (void)setValue:(id)value {
     self.internalValue = value;
+}
+
+- (void)tryRemovingObserver {
+    if(self.registeredObserver) {
+        self.registeredObserver = NO;
+        [self.parentTableView removeObserver:self forKeyPath:@"contentOffset"];
+    }
 }
 
 @end
