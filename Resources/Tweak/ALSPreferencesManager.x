@@ -15,7 +15,7 @@
 
 @implementation ALSPreferencesManager
 
-static NSString *kPreferencePath = @"/User/Library/Preferences/com.brycepauken.aeurials.plist";
+static NSString *kALSPreferencesDefaultsPath = @"/Library/PreferenceBundles/AeuriaLSPreferences.bundle/Defaults.plist";
 
 void preferencesChanged(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
     ALSPreferencesManager *preferencesManager = (__bridge ALSPreferencesManager *)observer;
@@ -44,6 +44,28 @@ void preferencesChanged(CFNotificationCenterRef center, void *observer, CFString
 
 - (void)dealloc {
     CFNotificationCenterRemoveEveryObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge void *)self);
+}
+
+- (id)preferenceForKey:(id)key {
+    if(!self.preferences) {
+        return nil;
+    }
+    return [self.preferences objectForKey:key];
+}
+
+- (void)setPreferences:(NSDictionary *)preferences {
+    static NSDictionary *defaults;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        defaults = [[NSDictionary alloc] initWithContentsOfFile:kALSPreferencesDefaultsPath];
+        if(!defaults) {
+            defaults = [[NSDictionary alloc] init];
+        }
+    });
+    
+    NSMutableDictionary *newPreferences = [NSMutableDictionary dictionaryWithDictionary:defaults];
+    [newPreferences addEntriesFromDictionary:preferences];
+    _preferences = newPreferences;
 }
 
 @end

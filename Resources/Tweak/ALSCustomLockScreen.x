@@ -25,7 +25,7 @@
         _percentage = 0;
         _previousPercentage = 0;
         
-        _filledOverlayMask = [[ALSCustomLockScreenMask alloc] initWithFrame:self.bounds];
+        _filledOverlayMask = [[ALSCustomLockScreenMask alloc] initWithFrame:self.bounds preferencesManager:_preferencesManager];
         _filledOverlay = [[UIView alloc] initWithFrame:self.bounds];
         [_filledOverlay setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
         [_filledOverlay setBackgroundColor:[UIColor whiteColor]];

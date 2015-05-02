@@ -52,7 +52,7 @@
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
-			<string>Max Subtitle Size:</string>
+			<string>Max Subtitle Height:</string>
 			<key>key</key>
 			<string>maxSubtitleHeight</string>
 			<key>isNumeric</key>
@@ -64,7 +64,7 @@
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
-			<string>Max Title Size:</string>
+			<string>Max Title Height:</string>
 			<key>key</key>
 			<string>maxTitleHeight</string>
 			<key>isNumeric</key>
@@ -88,7 +88,7 @@
 			<key>confirmation</key>
 			<dict>
 				<key>prompt</key>
-				<string>Reset All Clock Face Settings?</string>
+				<string>Reset the above Settings?</string>
 				<key>title</key>
 				<string>Reset</string>
 				<key>cancelTitle</key>

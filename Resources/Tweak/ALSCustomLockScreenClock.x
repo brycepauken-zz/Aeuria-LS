@@ -1,10 +1,12 @@
 #import "ALSCustomLockScreenClock.h"
 
+#import "ALSPreferencesManager.h"
 #import <CoreText/CoreText.h>
 
 @interface ALSCustomLockScreenClock()
 
 //general properties
+@property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
 @property (nonatomic) CGFloat radius;
 @property (nonatomic) ALSClockType type;
 
@@ -16,6 +18,11 @@
 @property (nonatomic) NSInteger preloadedMinute;
 @property (nonatomic, strong) UIBezierPath *preloadedPath;
 
+//preference properties
+@property (nonatomic) int maxSubtitleHeight;
+@property (nonatomic) int maxTitleHeight;
+@property (nonatomic) int subtitleOffset;
+
 @end
 
 @implementation ALSCustomLockScreenClock
@@ -23,14 +30,18 @@
 static const int kPathDefaultFontSize = 256;
 static const CGFloat kScaleSearchAcceptablePointDifference = 0.1;
 static const CGFloat kScaleSearchAcceptableScaleDifference = 0.001;
-static const int kSubtitleOffset = 14;
 
 /*
  The init method — simply save our clock's type and radius.
  */
-- (instancetype)initWithRadius:(CGFloat)radius type:(ALSClockType)type {
+- (instancetype)initWithRadius:(CGFloat)radius type:(ALSClockType)type preferencesManager:(ALSPreferencesManager *)preferencesManager {
     self = [super init];
     if(self) {
+        _preferencesManager = preferencesManager;
+        _maxSubtitleHeight = [[preferencesManager preferenceForKey:@"maxSubtitleHeight"] intValue];
+        _maxTitleHeight = [[preferencesManager preferenceForKey:@"maxTitleHeight"] intValue];
+        _subtitleOffset = [[preferencesManager preferenceForKey:@"clockSubtitleOffset"] intValue];
+        
         _radius = radius;
         _type = type;
     }
@@ -54,7 +65,7 @@ static const int kSubtitleOffset = 14;
             self.currentPath = self.preloadedPath;
         }
         else {
-            self.currentPath = [[self class] generatePathWithType:self.type radius:self.radius forHour:hour minute:minute];
+            self.currentPath = [[self class] generatePathWithType:self.type radius:self.radius forHour:hour minute:minute maxTitleHeight:self.maxTitleHeight maxSubtitleHeight:self.maxSubtitleHeight subtitleOffset:self.subtitleOffset];
         }
     }
     //return a copy of the (possibly new) current path, so transformations don't affect our cache
@@ -65,7 +76,7 @@ static const int kSubtitleOffset = 14;
  The generatePathForHour:forMinute: method creates the UIBezierPath representing
  the clock cutout for the given hour and minute.
  */
-+ (UIBezierPath *)generatePathWithType:(ALSClockType)type radius:(CGFloat)radius forHour:(NSInteger)hour minute:(NSInteger)minute {
++ (UIBezierPath *)generatePathWithType:(ALSClockType)type radius:(CGFloat)radius forHour:(NSInteger)hour minute:(NSInteger)minute maxTitleHeight:(int)maxTitleHeight maxSubtitleHeight:(int)maxSubtitleHeight subtitleOffset:(int)subtitleOffset {
     if(type == ALSClockTypeText) {
         //get the hour and minute as strings
         NSString *hourString = [[self numberToText:hour isMinute:NO] uppercaseString];
@@ -78,16 +89,16 @@ static const int kSubtitleOffset = 14;
         CGPathRef largeMinutePath = [self createPathForText:minuteString isTitle:NO];
         
         CGSize largeHourPathSize = CGPathGetPathBoundingBox(largeHourPath).size;
-        CGFloat hourScale = [self scaleForPathOfSize:largeHourPathSize withinRadius:radius isHalfCircle:YES withOffsetFromCenter:0];
+        CGFloat hourScale = [self scaleForPathOfSize:largeHourPathSize withinRadius:radius isHalfCircle:YES withOffsetFromCenter:0 maxHeight:maxTitleHeight];
         UIBezierPath *hourPath = [UIBezierPath bezierPathWithCGPath:largeHourPath];
         [hourPath applyTransform:CGAffineTransformMakeScale(hourScale, hourScale)];
         [hourPath applyTransform:CGAffineTransformMakeTranslation(radius-(largeHourPathSize.width*hourScale)/2, radius-(largeHourPathSize.height*hourScale))];
         
         CGSize largeMinutePathSize = CGPathGetPathBoundingBox(largeMinutePath).size;
-        CGFloat minuteScale = [self scaleForPathOfSize:largeMinutePathSize withinRadius:radius isHalfCircle:YES withOffsetFromCenter:kSubtitleOffset];
+        CGFloat minuteScale = [self scaleForPathOfSize:largeMinutePathSize withinRadius:radius isHalfCircle:YES withOffsetFromCenter:subtitleOffset maxHeight:maxSubtitleHeight];
         UIBezierPath *minutePath = [UIBezierPath bezierPathWithCGPath:largeMinutePath];
         [minutePath applyTransform:CGAffineTransformMakeScale(minuteScale, minuteScale)];
-        [minutePath applyTransform:CGAffineTransformMakeTranslation(radius-(largeMinutePathSize.width*minuteScale)/2, radius+kSubtitleOffset)];
+        [minutePath applyTransform:CGAffineTransformMakeTranslation(radius-(largeMinutePathSize.width*minuteScale)/2, radius+subtitleOffset)];
         
         UIBezierPath *returnPath = [UIBezierPath bezierPath];
         [returnPath appendPath:hourPath];
@@ -210,7 +221,7 @@ static const int kSubtitleOffset = 14;
 - (void)preloadPathForHour:(NSInteger)hour minute:(NSInteger)minute {
     //check if we need to update preloaded path
     if(!self.preloadedPath || hour!=self.preloadedHour || minute!=self.preloadedMinute) {
-        self.preloadedPath = [[self class] generatePathWithType:self.type radius:self.radius forHour:hour minute:minute];
+        self.preloadedPath = [[self class] generatePathWithType:self.type radius:self.radius forHour:hour minute:minute maxTitleHeight:self.maxTitleHeight maxSubtitleHeight:self.maxSubtitleHeight subtitleOffset:self.subtitleOffset];
         
         self.preloadedHour = hour;
         self.preloadedMinute = minute;
@@ -232,13 +243,14 @@ static const int kSubtitleOffset = 14;
  offset parameter, the scale must be determined using a binary search type algorithm
  rather than with math alone.
  */
-+ (CGFloat)scaleForPathOfSize:(CGSize)pathSize withinRadius:(CGFloat)radius isHalfCircle:(BOOL)isHalfCircle withOffsetFromCenter:(CGFloat)offset {
++ (CGFloat)scaleForPathOfSize:(CGSize)pathSize withinRadius:(CGFloat)radius isHalfCircle:(BOOL)isHalfCircle withOffsetFromCenter:(CGFloat)offset maxHeight:(int)maxHeight {
     if(isHalfCircle) {
         pathSize.width/=2;
         CGFloat radiusSquared = radius*radius;
         CGFloat minScale = 0;
         CGFloat maxScale = 1;
         CGFloat midScale, scaledWidth, scaledHeight, distanceFromCircle;
+        CGFloat returnVal = -1;
         int tries = 0;
         while(maxScale-minScale > kScaleSearchAcceptableScaleDifference) {
             ++tries;
@@ -254,11 +266,16 @@ static const int kSubtitleOffset = 14;
                 minScale = midScale;
             }
             else {
-                return midScale;
+                returnVal = midScale;
             }
         }
-        
-        return minScale;
+        if(returnVal < 0) {
+            returnVal = minScale;
+        }
+        if(returnVal*pathSize.height > maxHeight) {
+            return maxHeight/pathSize.height;
+        }
+        return returnVal;
     }
     return 1;
 }

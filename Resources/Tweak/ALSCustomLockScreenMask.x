@@ -1,10 +1,12 @@
 #import "ALSCustomLockScreenMask.h"
 
 #import "ALSCustomLockScreenClock.h"
+#import "ALSPreferencesManager.h"
 #import "ALSProxyTarget.h"
 
 @interface ALSCustomLockScreenMask()
 
+//general properties
 @property (nonatomic, strong) CAShapeLayer *circleMaskLayer;
 @property (nonatomic, strong) ALSCustomLockScreenClock *clock;
 @property (nonatomic) NSInteger currentHour;
@@ -14,17 +16,23 @@
 @property (nonatomic) CGFloat largeCircleMaxInternalPaddingIncrement;
 @property (nonatomic) CGFloat largeCircleMaxRadiusIncrement;
 @property (nonatomic, strong) NSTimer *minuteTimer;
+@property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
+
+//preference properties
+@property (nonatomic) int largeCircleInnerPadding;
+@property (nonatomic) int largeCircleMinRadius;
 
 @end
 
 @implementation ALSCustomLockScreenMask
 
-static const int kLargeCircleInnerPadding = 10;
-static const int kLargeCircleMinRadius = 100;
-
-- (instancetype)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame preferencesManager:(ALSPreferencesManager *)preferencesManager {
     self = [super init];
     if(self) {
+        _preferencesManager = preferencesManager;
+        _largeCircleInnerPadding = [[preferencesManager preferenceForKey:@"clockInnerPadding"] intValue];
+        _largeCircleMinRadius = [[preferencesManager preferenceForKey:@"clockRadius"] intValue];
+        
         _currentHour = 0;
         _currentMinute = 0;
         _currentPercentage = 0;
@@ -35,7 +43,7 @@ static const int kLargeCircleMinRadius = 100;
         [_internalLayer setFillRule:kCAFillRuleEvenOdd];
         [_internalLayer setMask:_circleMaskLayer];
         
-        _clock = [[ALSCustomLockScreenClock alloc] initWithRadius:kLargeCircleMinRadius-kLargeCircleInnerPadding type:ALSClockTypeText];
+        _clock = [[ALSCustomLockScreenClock alloc] initWithRadius:_largeCircleMinRadius-_largeCircleInnerPadding type:ALSClockTypeText preferencesManager:_preferencesManager];
         
         [self setFrame:frame];
         [self addSublayer:self.internalLayer];
@@ -53,8 +61,8 @@ static const int kLargeCircleMinRadius = 100;
     [self.circleMaskLayer setFrame:self.frame];
     [self.internalLayer setFrame:self.frame];
     
-    self.largeCircleMaxRadiusIncrement = ceilf(sqrt(self.bounds.size.width*self.bounds.size.width+self.bounds.size.height*self.bounds.size.height)/2)-kLargeCircleMinRadius;
-    self.largeCircleMaxInternalPaddingIncrement = ((self.largeCircleMaxRadiusIncrement+kLargeCircleMinRadius)/(CGFloat)kLargeCircleMinRadius)*kLargeCircleInnerPadding-kLargeCircleInnerPadding;
+    self.largeCircleMaxRadiusIncrement = ceilf(sqrt(self.bounds.size.width*self.bounds.size.width+self.bounds.size.height*self.bounds.size.height)/2)-self.largeCircleMinRadius;
+    self.largeCircleMaxInternalPaddingIncrement = ((self.largeCircleMaxRadiusIncrement+self.largeCircleMinRadius)/(CGFloat)self.largeCircleMinRadius)*self.largeCircleInnerPadding-self.largeCircleInnerPadding;
 }
 
 + (UIBezierPath *)pathForCircleWithRadius:(CGFloat)radius center:(CGPoint)center {
@@ -94,7 +102,7 @@ static const int kLargeCircleMinRadius = 100;
     CGFloat largeCircleIncrement = self.largeCircleMaxRadiusIncrement*percentage;
     
     //mask the whole thing to the large outer circle
-    [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:kLargeCircleMinRadius+largeCircleIncrement center:boundsCenter].CGPath];
+    [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:self.largeCircleMinRadius+largeCircleIncrement center:boundsCenter].CGPath];
     
     //add clock to middle
     UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute];

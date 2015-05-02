@@ -5,9 +5,11 @@
  which portions of our custom lock screen's colored overlay are transparent.
  */
 
+@class ALSPreferencesManager;
+
 @interface ALSCustomLockScreenMask : CAShapeLayer
 
-- (instancetype)initWithFrame:(CGRect)frame;
+- (instancetype)initWithFrame:(CGRect)frame preferencesManager:(ALSPreferencesManager *)preferencesManager;
 - (void)resetMask;
 - (void)updateMaskWithPercentage:(CGFloat)percentage;
 

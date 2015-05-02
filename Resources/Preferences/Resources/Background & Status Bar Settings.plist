@@ -102,7 +102,7 @@
 			<key>confirmation</key>
 			<dict>
 				<key>prompt</key>
-				<string>Reset All Background &amp; Status Bar Settings?</string>
+				<string>Reset the above Settings?</string>
 				<key>title</key>
 				<string>Reset</string>
 				<key>cancelTitle</key>
