@@ -120,7 +120,7 @@
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>label</key>
-			<string>Reset Clock Face Settings</string>
+			<string>Reset Above Face Settings</string>
 			<key>action</key>
 			<string>resetSettings</string>
 			<key>isDestructive</key>

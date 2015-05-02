@@ -91,7 +91,7 @@
 Example Alert
  
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Title" message:@"Message" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+    [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:NO];
  
 Example Logging
  

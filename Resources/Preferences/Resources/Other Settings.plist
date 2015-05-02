@@ -8,81 +8,67 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Background Color</string>
+			<string>Change these at your own risk</string>
 		</dict>
 		<dict>
 			<key>cell</key>
-			<string>PSSwitchCell</string>
+			<string>PSEditTextCell</string>
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
-			<string>Add Color to Background</string>
+			<string>Clock Inner Padding:</string>
 			<key>key</key>
-			<string>shouldColorBackground</string>
+			<string>clockInnerPadding</string>
+			<key>isNumeric</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>cell</key>
-			<string>PSDefaultCell</string>
+			<string>PSEditTextCell</string>
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
-			<string>Background Overlay Color</string>
-			<key>cellClass</key>
-			<string>ALSPreferencesColorCell</string>
+			<string>Clock Radius:</string>
 			<key>key</key>
-			<string>backgroundColor</string>
+			<string>clockRadius</string>
+			<key>isNumeric</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>label</key>
-			<string>Background Color Visibility</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSliderCell</string>
-			<key>defaults</key>
-			<string>com.brycepauken.aeurials</string>
-			<key>key</key>
-			<string>backgroundColorVisiblity</string>
-			<key>min</key>
-			<real>0</real>
-			<key>max</key>
-			<real>1</real>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>label</key>
-			<string>Background Blur</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
+			<string>PSEditTextCell</string>
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
-			<string>Add Blur to Background</string>
+			<string>Clock Subtitle Offset:</string>
 			<key>key</key>
-			<string>shouldBlurBackground</string>
+			<string>clockSubtitleOffset</string>
+			<key>isNumeric</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>label</key>
-			<string>Background Blur Strength</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSliderCell</string>
+			<string>PSEditTextCell</string>
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Max Subtitle Size:</string>
 			<key>key</key>
-			<string>backgroundBlurStrength</string>
-			<key>min</key>
-			<real>0</real>
-			<key>max</key>
-			<real>20</real>
+			<string>maxSubtitleHeight</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Max Title Size:</string>
+			<key>key</key>
+			<string>maxTitleHeight</string>
+			<key>isNumeric</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -102,7 +88,7 @@
 			<key>confirmation</key>
 			<dict>
 				<key>prompt</key>
-				<string>Reset All Background &amp; Status Bar Settings?</string>
+				<string>Reset All Clock Face Settings?</string>
 				<key>title</key>
 				<string>Reset</string>
 				<key>cancelTitle</key>
@@ -111,6 +97,6 @@
 		</dict>
 	</array>
 	<key>title</key>
-	<string>Background &amp; Status Bar</string>
+	<string>Other Settings</string>
 </dict>
 </plist>

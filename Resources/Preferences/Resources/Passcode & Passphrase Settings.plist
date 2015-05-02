@@ -8,7 +8,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Background Color</string>
+			<string>Hides the &quot;Enter Passcode&quot; (or Passphrase) text</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -16,45 +16,15 @@
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
-			<string>Add Color to Background</string>
+			<string>Hide &quot;Enter...&quot; Text</string>
 			<key>key</key>
-			<string>shouldColorBackground</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSDefaultCell</string>
-			<key>defaults</key>
-			<string>com.brycepauken.aeurials</string>
-			<key>label</key>
-			<string>Background Overlay Color</string>
-			<key>cellClass</key>
-			<string>ALSPreferencesColorCell</string>
-			<key>key</key>
-			<string>backgroundColor</string>
+			<string>shouldHideSecurityText</string>
 		</dict>
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Background Color Visibility</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSliderCell</string>
-			<key>defaults</key>
-			<string>com.brycepauken.aeurials</string>
-			<key>key</key>
-			<string>backgroundColorVisiblity</string>
-			<key>min</key>
-			<real>0</real>
-			<key>max</key>
-			<real>1</real>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>label</key>
-			<string>Background Blur</string>
+			<string>Hides the &apos;Zero&apos; button, but does not disable it (button is still tappable)</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -62,27 +32,25 @@
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
-			<string>Add Blur to Background</string>
+			<string>Hide &apos;Zero&apos; Button</string>
 			<key>key</key>
-			<string>shouldBlurBackground</string>
+			<string>shouldHideZeroButton</string>
 		</dict>
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Background Blur Strength</string>
+			<string>Useful for longer numeric-only passphrases, which are more secure than 4 digit passcodes</string>
 		</dict>
 		<dict>
 			<key>cell</key>
-			<string>PSSliderCell</string>
+			<string>PSSwitchCell</string>
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Always Use Numeric Entry</string>
 			<key>key</key>
-			<string>backgroundBlurStrength</string>
-			<key>min</key>
-			<real>0</real>
-			<key>max</key>
-			<real>20</real>
+			<string>shouldUseNumericEntry</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -102,7 +70,7 @@
 			<key>confirmation</key>
 			<dict>
 				<key>prompt</key>
-				<string>Reset All Background &amp; Status Bar Settings?</string>
+				<string>Reset All Clock Face Settings?</string>
 				<key>title</key>
 				<string>Reset</string>
 				<key>cancelTitle</key>
@@ -111,6 +79,6 @@
 		</dict>
 	</array>
 	<key>title</key>
-	<string>Background &amp; Status Bar</string>
+	<string>Passcode Settings</string>
 </dict>
 </plist>

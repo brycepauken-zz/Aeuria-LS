@@ -38,6 +38,34 @@
 			<key>label</key>
 			<string>Background &amp; Status Bar Settings</string>
 		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Change passcode page settings</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkCell</string>
+			<key>detail</key>
+			<string>ALSPreferencesSubListController</string>
+			<key>label</key>
+			<string>Passcode &amp; Passphrase Settings</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Fine-tune like crazy</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkCell</string>
+			<key>detail</key>
+			<string>ALSPreferencesSubListController</string>
+			<key>label</key>
+			<string>Other Settings</string>
+		</dict>
 	</array>
 	<key>title</key>
 	<string> </string>

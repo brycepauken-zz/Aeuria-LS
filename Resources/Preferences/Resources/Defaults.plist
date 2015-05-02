@@ -8,6 +8,12 @@
 	<string>#000000</string>
 	<key>backgroundColorVisiblity</key>
 	<real>0.5</real>
+	<key>clockInnerPadding</key>
+	<integer>10</integer>
+	<key>clockRadius</key>
+	<integer>100</integer>
+	<key>clockSubtitleOffset</key>
+	<integer>14</integer>
 	<key>clockType</key>
 	<integer>0</integer>
 	<key>colorVisiblity</key>
@@ -16,12 +22,22 @@
 	<string>#FFFFFF</string>
 	<key>mainFont</key>
 	<string>AvenirNext-DemiBold</string>
+	<key>maxSubtitleHeight</key>
+	<integer>30</integer>
+	<key>maxTitleHeight</key>
+	<integer>38</integer>
 	<key>secondaryFont</key>
 	<string>Georgia-Italic</string>
 	<key>shouldBlurBackground</key>
 	<false/>
 	<key>shouldColorBackground</key>
 	<true/>
+	<key>shouldHideSecurityText</key>
+	<false/>
+	<key>shouldHideZeroButton</key>
+	<false/>
+	<key>shouldUseNumericEntry</key>
+	<false/>
 	<key>twentyFourHour</key>
 	<false/>
 </dict>
