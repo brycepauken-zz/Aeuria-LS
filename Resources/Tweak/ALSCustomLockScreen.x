@@ -28,17 +28,15 @@
         _filledOverlayMask = [[ALSCustomLockScreenMask alloc] initWithFrame:self.bounds preferencesManager:_preferencesManager];
         _filledOverlay = [[UIView alloc] initWithFrame:self.bounds];
         [_filledOverlay setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
-        [_filledOverlay setBackgroundColor:[UIColor whiteColor]];
+        [_filledOverlay setBackgroundColor:[_preferencesManager preferenceForKey:@"faceColor"]];
         [_filledOverlay.layer setMask:_filledOverlayMask];
         
-        ALSProxyTarget *proxyTarget = [ALSProxyTarget proxyForTarget:self selector:@selector(updateViews)];
+        /*ALSProxyTarget *proxyTarget = [ALSProxyTarget proxyForTarget:self selector:@selector(updateViews)];
         _displayLink = [CADisplayLink displayLinkWithTarget:proxyTarget selector:@selector(tick:)];
         [_displayLink setFrameInterval:1];
-        [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+        [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];*/
         
         [self addSubview:_filledOverlay];
-        
-        [self setUserInteractionEnabled:NO];
     }
     return self;
 }
@@ -49,6 +47,7 @@
 
 - (void)setPercentage:(CGFloat)percentage {
     _percentage = MAX(0, percentage);
+    [self.filledOverlayMask updateMaskWithPercentage:_percentage];
 }
 
 - (void)updateScrollPercentage:(CGFloat)percentage {

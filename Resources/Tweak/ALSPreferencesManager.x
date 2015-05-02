@@ -9,7 +9,7 @@
 
 @interface ALSPreferencesManager()
 
-@property (nonatomic, strong) NSDictionary *preferences;
+@property (nonatomic, strong) NSMutableDictionary *preferences;
 
 @end
 
@@ -27,7 +27,7 @@ void preferencesChanged(CFNotificationCenterRef center, void *observer, CFString
         //freed automatically by ARC
         NSDictionary *newPreferences = CFBridgingRelease(CFPreferencesCopyMultiple(keyList, bundleID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
         if(newPreferences) {
-            preferencesManager.preferences = newPreferences;
+            [preferencesManager setPreferences:(NSMutableDictionary *)newPreferences];
         }
         CFRelease(keyList);
     }
@@ -42,6 +42,14 @@ void preferencesChanged(CFNotificationCenterRef center, void *observer, CFString
     return self;
 }
 
++ (UIColor *)colorFromHexString:(NSString *)string {
+    unsigned rgbValue = 0;
+    NSScanner *scanner = [NSScanner scannerWithString:string];
+    [scanner setScanLocation:1];
+    [scanner scanHexInt:&rgbValue];
+    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
+}
+
 - (void)dealloc {
     CFNotificationCenterRemoveEveryObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge void *)self);
 }
@@ -50,7 +58,12 @@ void preferencesChanged(CFNotificationCenterRef center, void *observer, CFString
     if(!self.preferences) {
         return nil;
     }
-    return [self.preferences objectForKey:key];
+    id preference = [self.preferences objectForKey:key];
+    if([preference isKindOfClass:[NSString class]] && [preference length]==7 && [preference characterAtIndex:0]=='#') {
+        preference = [[self class] colorFromHexString:preference];
+        [self.preferences setObject:preference forKey:key];
+    }
+    return preference;
 }
 
 - (void)setPreferences:(NSDictionary *)preferences {
