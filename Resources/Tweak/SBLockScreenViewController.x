@@ -6,14 +6,14 @@
 
 #import "SBLockScreenViewController.h"
 
-#import "ALSCustomLockScreen.h"
+#import "ALSCustomLockScreenContainer.h"
 #import <objc/runtime.h>
 
 @interface SBLockScreenViewController()
 
-@property (nonatomic, strong) ALSCustomLockScreen *customLockScreen;
+@property (nonatomic, strong) ALSCustomLockScreenContainer *customLockScreenContainer;
 
-- (void)addCustomLockScreenAboveView:(UIView *)view;
+- (void)addCustomLockScreenScrollViewAboveView:(UIView *)view;
 
 @end
 
@@ -24,20 +24,8 @@
  This is the getter.
  */
 %new
-- (id)customLockScreen {
-    return objc_getAssociatedObject(self, @selector(customLockScreen));
-}
-
-/*
- Called when the main lock screen scroll view is scrolling.
- Passes a percentage argument that represents, on a scale of 0-1
- (not including bouncing past that scale), how far the user has
- scrolled from the default position to the passcode view.
- */
-- (void)lockScreenViewDidScrollWithNewScrollPercentage:(CGFloat)percentage tracking:(BOOL)tracking {
-    if(self.customLockScreen) {
-        [self.customLockScreen updateScrollPercentage:percentage];
-    }
+- (id)customLockScreenContainer {
+    return objc_getAssociatedObject(self, @selector(customLockScreenContainer));
 }
 
 /*
@@ -45,8 +33,8 @@
  This is the setter.
  */
 %new
-- (void)setCustomLockScreen:(id)customLockScreen {
-    objc_setAssociatedObject(self, @selector(customLockScreen), customLockScreen, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setCustomLockScreenContainer:(id)customLockScreenContainer {
+    objc_setAssociatedObject(self, @selector(customLockScreenContainer), customLockScreenContainer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 /*
@@ -56,7 +44,7 @@
 - (void)startLockScreenFadeInAnimationForSource:(int)arg1 {
     %orig;
     
-    [self.customLockScreen resetView];
+    //[self.customLockScreen resetView];
 }
 
 /*
@@ -73,17 +61,16 @@
 - (void)viewDidAppear:(BOOL)view {
     %orig;
     
-    //get objects
-    //recursive dbug description?
     
-    if(self.customLockScreen && self.customLockScreen.superview) {
-        [self.customLockScreen removeFromSuperview];
+    if(self.customLockScreenContainer && self.customLockScreenContainer.superview) {
+        [self.customLockScreenContainer removeFromSuperview];
     }
     
-    self.customLockScreen = [[ALSCustomLockScreen alloc] initWithFrame:[[self lockScreenView] bounds]];
-    [self.customLockScreen setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
-    [self.customLockScreen.layer setZPosition:MAXFLOAT];
-    [[self lockScreenView] addSubview:self.customLockScreen];
+    self.customLockScreenContainer = [[ALSCustomLockScreenContainer alloc] initWithFrame:[[self lockScreenView] bounds]];
+    [self.customLockScreenContainer setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
+    [self.customLockScreenContainer.layer setZPosition:MAXFLOAT];
+    
+    [[self lockScreenView] addSubview:self.customLockScreenContainer];
 }
 
 /*
