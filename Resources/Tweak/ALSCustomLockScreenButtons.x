@@ -6,8 +6,8 @@
 
 //preference properties
 @property (nonatomic) int buttonDistanceFromEdge;
-@property (nonatomic) int buttonRadius;
 @property (nonatomic) int buttonPadding;
+@property (nonatomic) int buttonRadius;
 @property (nonatomic) float clockInvisibleAt;
 
 @end
@@ -21,8 +21,8 @@
     self = [super initWithPreferencesManager:preferencesManager];
     if(self) {
         _buttonDistanceFromEdge = 20;
-        _buttonRadius = 44;
         _buttonPadding = 10;
+        _buttonRadius = 44;
         _clockInvisibleAt = [[preferencesManager preferenceForKey:@"clockInvisibleAt"] floatValue];
     }
     return self;

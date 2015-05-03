@@ -10,6 +10,7 @@
 @interface ALSCustomLockScreenMask : CAShapeLayer
 
 - (instancetype)initWithFrame:(CGRect)frame preferencesManager:(ALSPreferencesManager *)preferencesManager;
+- (void)buttonAtIndex:(int)index setHighlighted:(BOOL)highlighted;
 - (void)resetMask;
 - (void)updateMaskWithPercentage:(CGFloat)percentage;
 

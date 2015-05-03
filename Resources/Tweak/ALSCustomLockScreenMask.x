@@ -14,6 +14,8 @@
 @property (nonatomic) NSInteger currentHour;
 @property (nonatomic) NSInteger currentMinute;
 @property (nonatomic) CGFloat currentPercentage;
+@property (nonatomic, strong) NSMutableArray *highlightedButtonIndexes;
+@property (nonatomic, strong) CAShapeLayer *highlightedButtonLayer;
 @property (nonatomic, strong) CAShapeLayer *internalLayer;
 @property (nonatomic) CGFloat largeCircleMaxInternalPaddingIncrement;
 @property (nonatomic) CGFloat largeCircleMaxRadiusIncrement;
@@ -21,9 +23,12 @@
 @property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
 
 //preference properties
+@property (nonatomic) int buttonPadding;
+@property (nonatomic) int buttonRadius;
 @property (nonatomic) float clockInvisibleAt;
 @property (nonatomic) int largeCircleInnerPadding;
 @property (nonatomic) int largeCircleMinRadius;
+@property (nonatomic) float pressedButtonAlpha;
 
 @end
 
@@ -33,13 +38,17 @@
     self = [super init];
     if(self) {
         _preferencesManager = preferencesManager;
+        _buttonPadding = 10;
+        _buttonRadius = 44;
         _clockInvisibleAt = [[preferencesManager preferenceForKey:@"clockInvisibleAt"] floatValue];
         _largeCircleInnerPadding = [[preferencesManager preferenceForKey:@"clockInnerPadding"] intValue];
         _largeCircleMinRadius = [[preferencesManager preferenceForKey:@"clockRadius"] intValue];
+        _pressedButtonAlpha = 0.25;
         
         _currentHour = 0;
         _currentMinute = 0;
         _currentPercentage = 0;
+        _highlightedButtonIndexes = [[NSMutableArray alloc] init];
         
         _circleMaskLayer = [[CAShapeLayer alloc] init];
         _internalLayer = [[CAShapeLayer alloc] init];
@@ -47,11 +56,15 @@
         [_internalLayer setFillRule:kCAFillRuleEvenOdd];
         [_internalLayer setMask:_circleMaskLayer];
         
+        _highlightedButtonLayer = [[CAShapeLayer alloc] init];
+        [_highlightedButtonLayer setFillColor:[[UIColor colorWithWhite:0 alpha:_pressedButtonAlpha] CGColor]];
+        
         _clock = [[ALSCustomLockScreenClock alloc] initWithRadius:_largeCircleMinRadius-_largeCircleInnerPadding type:ALSClockTypeText preferencesManager:_preferencesManager];
         _buttons = [[ALSCustomLockScreenButtons alloc] initWithPreferencesManager:_preferencesManager];
         
         [self setFrame:frame];
-        [self addSublayer:self.internalLayer];
+        [self addSublayer:_internalLayer];
+        [self addSublayer:_highlightedButtonLayer];
         [self layoutSublayers];
         
         [self setupTimer];
@@ -60,11 +73,24 @@
     return self;
 }
 
+- (void)buttonAtIndex:(int)index setHighlighted:(BOOL)highlighted {
+    @synchronized(self.highlightedButtonIndexes) {
+        NSUInteger buttonIndex = [self.highlightedButtonIndexes indexOfObject:@(index)];
+        if(highlighted && buttonIndex==NSNotFound) {
+            [self.highlightedButtonIndexes addObject:@(index)];
+        }
+        else if(!highlighted && buttonIndex!=NSNotFound) {
+            [self.highlightedButtonIndexes removeObjectAtIndex:buttonIndex];
+        }
+    }
+}
+
 - (void)layoutSublayers {
     [super layoutSublayers];
     
     [self.circleMaskLayer setFrame:self.frame];
     [self.internalLayer setFrame:self.frame];
+    [self.highlightedButtonLayer setFrame:self.frame];
     
     self.largeCircleMaxRadiusIncrement = ceilf(sqrt(self.bounds.size.width*self.bounds.size.width+self.bounds.size.height*self.bounds.size.height)/2)-self.largeCircleMinRadius;
     self.largeCircleMaxInternalPaddingIncrement = ((self.largeCircleMaxRadiusIncrement+self.largeCircleMinRadius)/(CGFloat)self.largeCircleMinRadius)*self.largeCircleInnerPadding-self.largeCircleInnerPadding;
@@ -124,6 +150,16 @@
     [mask appendPath:buttonsPath];
     
     [self.internalLayer setPath:mask.CGPath];
+    
+    //highlight the needed buttons
+    UIBezierPath *highlightedButtonsPath = [UIBezierPath bezierPath];
+    for(NSNumber *highlightedButtonNumber in self.highlightedButtonIndexes) {
+        int buttonIndex = [highlightedButtonNumber intValue];
+        CGFloat xOffset = (buttonIndex%3-1)*(self.buttonRadius*2+self.buttonPadding);
+        CGFloat yOffset = (buttonIndex/3-1)*(self.buttonRadius*2+self.buttonPadding);
+        [highlightedButtonsPath appendPath:[[self class] pathForCircleWithRadius:self.buttonRadius center:CGPointMake(boundsCenter.x+xOffset, boundsCenter.y+yOffset)]];
+    }
+    [self.highlightedButtonLayer setPath:highlightedButtonsPath.CGPath];
 }
 
 - (void)updateTimeOnMinute {

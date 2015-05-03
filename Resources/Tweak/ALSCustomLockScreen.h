@@ -8,8 +8,6 @@
 
 @interface ALSCustomLockScreen : UIView <UIScrollViewDelegate>
 
-//- (void)animateOut;
-//- (void)setKeypadDelegate:(id<SBUIPasscodeLockNumberPad>)keypadDelegate;
 - (void)resetView;
 - (void)updateScrollPercentage:(CGFloat)percentage;
 

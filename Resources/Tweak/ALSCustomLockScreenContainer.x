@@ -1,11 +1,12 @@
 #import "ALSCustomLockScreenContainer.h"
 
 #import "ALSCustomLockScreen.h"
+#import "ALSCustomLockScreenOverlay.h"
 
 @interface ALSCustomLockScreenContainer()
 
 @property (nonatomic, strong) ALSCustomLockScreen *customLockScreen;
-@property (nonatomic, strong) UIScrollView *scrollView;
+@property (nonatomic, strong) ALSCustomLockScreenOverlay *scrollView;
 
 @end
 
@@ -18,7 +19,7 @@
         [_customLockScreen setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
         [self addSubview:_customLockScreen];
         
-        _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
+        _scrollView = [[ALSCustomLockScreenOverlay alloc] initWithFrame:self.bounds];
         [_scrollView setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
         [_scrollView setContentSize:CGSizeMake(self.bounds.size.width*2, self.bounds.size.height)];
         [_scrollView setContentOffset:CGPointMake(self.bounds.size.width, 0)];
@@ -27,8 +28,20 @@
         [_scrollView setShowsHorizontalScrollIndicator:NO];
         [_scrollView setShowsVerticalScrollIndicator:NO];
         [self addSubview:_scrollView];
+        
+        UIView *overlayView = [[UIView alloc] initWithFrame:self.bounds];
+        [overlayView setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
+        [self addSubview:overlayView];
     }
     return self;
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    UIView *tappedButton = [self.customLockScreen hitTest:point withEvent:event];
+    if(tappedButton) {
+        return self.customLockScreen;
+    }
+    return self.scrollView;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {

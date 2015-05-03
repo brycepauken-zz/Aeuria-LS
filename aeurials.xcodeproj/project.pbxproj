@@ -61,6 +61,10 @@
 		02A101511AEF3B42003296EB /* PSListItemsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PSListItemsController.h; sourceTree = "<group>"; };
 		02AC49791AE8ECD000426584 /* ALSPreferencesProxyTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesProxyTarget.h; sourceTree = "<group>"; };
 		02AC497A1AE8ECD000426584 /* ALSPreferencesProxyTarget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesProxyTarget.m; sourceTree = "<group>"; };
+		02B7DB4D1AF6B2D30011724E /* ALSCustomLockScreenOverlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenOverlay.h; sourceTree = "<group>"; };
+		02B7DB4E1AF6B2D30011724E /* ALSCustomLockScreenOverlay.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreenOverlay.x; sourceTree = "<group>"; };
+		02B7DB4F1AF6BB880011724E /* ALSImmediatePanGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSImmediatePanGestureRecognizer.h; sourceTree = "<group>"; };
+		02B7DB501AF6BB880011724E /* ALSImmediatePanGestureRecognizer.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSImmediatePanGestureRecognizer.x; sourceTree = "<group>"; };
 		02BED8D71AD3B86D0075EAB0 /* ALSPreferencesHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesHeader.h; sourceTree = "<group>"; };
 		02BED8D81AD3B86D0075EAB0 /* ALSPreferencesHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesHeader.m; sourceTree = "<group>"; };
 		02BED8D91AD3B86D0075EAB0 /* ALSPreferencesListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesListController.h; sourceTree = "<group>"; };
@@ -115,6 +119,10 @@
 				020532F11AF5761100602F6D /* ALSCustomLockScreenElement.x */,
 				0237241A1AC25213007FAFC1 /* ALSCustomLockScreenMask.h */,
 				0237241B1AC25213007FAFC1 /* ALSCustomLockScreenMask.x */,
+				02B7DB4D1AF6B2D30011724E /* ALSCustomLockScreenOverlay.h */,
+				02B7DB4E1AF6B2D30011724E /* ALSCustomLockScreenOverlay.x */,
+				02B7DB4F1AF6BB880011724E /* ALSImmediatePanGestureRecognizer.h */,
+				02B7DB501AF6BB880011724E /* ALSImmediatePanGestureRecognizer.x */,
 				022130AA1AE1BDE800054A1A /* ALSPreferencesManager.h */,
 				022130AB1AE1BDE800054A1A /* ALSPreferencesManager.x */,
 				0298578B1AE859980014B5C2 /* ALSProxyTarget.h */,
