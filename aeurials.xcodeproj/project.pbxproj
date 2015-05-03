@@ -9,6 +9,10 @@
 /* Begin PBXFileReference section */
 		020532EC1AF53D6400602F6D /* ALSCustomLockScreenContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenContainer.h; sourceTree = "<group>"; };
 		020532ED1AF53D6400602F6D /* ALSCustomLockScreenContainer.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreenContainer.x; sourceTree = "<group>"; };
+		020532EE1AF575BB00602F6D /* ALSCustomLockScreenButtons.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenButtons.h; sourceTree = "<group>"; };
+		020532EF1AF575BB00602F6D /* ALSCustomLockScreenButtons.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreenButtons.x; sourceTree = "<group>"; };
+		020532F01AF5761100602F6D /* ALSCustomLockScreenElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenElement.h; sourceTree = "<group>"; };
+		020532F11AF5761100602F6D /* ALSCustomLockScreenElement.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreenElement.x; sourceTree = "<group>"; };
 		0206009E1AF1946F00F5597A /* Background & Status Bar Settings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Background & Status Bar Settings.plist"; sourceTree = "<group>"; };
 		022130AA1AE1BDE800054A1A /* ALSPreferencesManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesManager.h; sourceTree = "<group>"; };
 		022130AB1AE1BDE800054A1A /* ALSPreferencesManager.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSPreferencesManager.x; sourceTree = "<group>"; };
@@ -101,12 +105,16 @@
 			children = (
 				023724181AC25213007FAFC1 /* ALSCustomLockScreen.h */,
 				023724191AC25213007FAFC1 /* ALSCustomLockScreen.x */,
+				020532EE1AF575BB00602F6D /* ALSCustomLockScreenButtons.h */,
+				020532EF1AF575BB00602F6D /* ALSCustomLockScreenButtons.x */,
 				02C859091AC35CEC00C5B920 /* ALSCustomLockScreenClock.h */,
 				02C8590A1AC35CEC00C5B920 /* ALSCustomLockScreenClock.x */,
-				0237241A1AC25213007FAFC1 /* ALSCustomLockScreenMask.h */,
-				0237241B1AC25213007FAFC1 /* ALSCustomLockScreenMask.x */,
 				020532EC1AF53D6400602F6D /* ALSCustomLockScreenContainer.h */,
 				020532ED1AF53D6400602F6D /* ALSCustomLockScreenContainer.x */,
+				020532F01AF5761100602F6D /* ALSCustomLockScreenElement.h */,
+				020532F11AF5761100602F6D /* ALSCustomLockScreenElement.x */,
+				0237241A1AC25213007FAFC1 /* ALSCustomLockScreenMask.h */,
+				0237241B1AC25213007FAFC1 /* ALSCustomLockScreenMask.x */,
 				022130AA1AE1BDE800054A1A /* ALSPreferencesManager.h */,
 				022130AB1AE1BDE800054A1A /* ALSPreferencesManager.x */,
 				0298578B1AE859980014B5C2 /* ALSProxyTarget.h */,

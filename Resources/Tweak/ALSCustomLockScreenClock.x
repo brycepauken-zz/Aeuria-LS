@@ -1,12 +1,10 @@
 #import "ALSCustomLockScreenClock.h"
 
 #import "ALSPreferencesManager.h"
-#import <CoreText/CoreText.h>
 
 @interface ALSCustomLockScreenClock()
 
 //general properties
-@property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
 @property (nonatomic) CGFloat radius;
 @property (nonatomic) ALSClockType type;
 
@@ -27,17 +25,12 @@
 
 @implementation ALSCustomLockScreenClock
 
-static const int kPathDefaultFontSize = 256;
-static const CGFloat kScaleSearchAcceptablePointDifference = 0.1;
-static const CGFloat kScaleSearchAcceptableScaleDifference = 0.001;
-
 /*
  The init method — simply save our clock's type and radius.
  */
 - (instancetype)initWithRadius:(CGFloat)radius type:(ALSClockType)type preferencesManager:(ALSPreferencesManager *)preferencesManager {
-    self = [super init];
+    self = [super initWithPreferencesManager:preferencesManager];
     if(self) {
-        _preferencesManager = preferencesManager;
         _maxSubtitleHeight = [[preferencesManager preferenceForKey:@"maxSubtitleHeight"] intValue];
         _maxTitleHeight = [[preferencesManager preferenceForKey:@"maxTitleHeight"] intValue];
         _subtitleOffset = [[preferencesManager preferenceForKey:@"clockSubtitleOffset"] intValue];
@@ -84,9 +77,9 @@ static const CGFloat kScaleSearchAcceptableScaleDifference = 0.001;
         
         //get paths representing the hour and minute strings (rendered in a large font)
         //freed before return
-        CGPathRef largeHourPath = [self createPathForText:hourString isTitle:YES];
+        CGPathRef largeHourPath = [self createPathForText:hourString fontName:@"AvenirNext-DemiBold"];
         //freed before return
-        CGPathRef largeMinutePath = [self createPathForText:minuteString isTitle:NO];
+        CGPathRef largeMinutePath = [self createPathForText:minuteString fontName:@"Georgia-Italic"];
         
         CGSize largeHourPathSize = CGPathGetPathBoundingBox(largeHourPath).size;
         CGFloat hourScale = [self scaleForPathOfSize:largeHourPathSize withinRadius:radius isHalfCircle:YES withOffsetFromCenter:0 maxHeight:maxTitleHeight];
@@ -110,62 +103,6 @@ static const CGFloat kScaleSearchAcceptableScaleDifference = 0.001;
         return returnPath;
     }
     return nil;
-}
-
-/*
- Creates a path for the given text, rendered at the font size given by kPathDefaultFontSize.
- The isTitle parameter only determines which font to use.
- */
-+ (CGPathRef)createPathForText:(NSString *)text isTitle:(BOOL)isTitle {
-    //freed before return
-    CGMutablePathRef path = CGPathCreateMutable();
-    
-    static NSDictionary *titleStringAttributes;
-    static NSDictionary *subtitleStringAttributes;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        //freed near-immediately
-        CTFontRef titleFontRef = CTFontCreateWithName(CFSTR("AvenirNext-DemiBold"), kPathDefaultFontSize, NULL);
-        titleStringAttributes = [NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)titleFontRef, kCTFontAttributeName, @(0.01), kCTKernAttributeName, nil];
-        CFRelease(titleFontRef);
-        
-        //freed near-immediately
-        CTFontRef subtitleFontRef = CTFontCreateWithName(CFSTR("Georgia-Italic"), kPathDefaultFontSize, NULL);
-        subtitleStringAttributes = [NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)subtitleFontRef, kCTFontAttributeName, @(0.01), kCTKernAttributeName, nil];
-        CFRelease(subtitleFontRef);
-    });
-    
-    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:text attributes:(isTitle?titleStringAttributes:subtitleStringAttributes)];
-    //freed after loop
-    CTLineRef line = CTLineCreateWithAttributedString((CFAttributedStringRef)attributedString);
-    CFArrayRef runArray = CTLineGetGlyphRuns(line);
-    for(CFIndex i=0; i<CFArrayGetCount(runArray); i++) {
-        CTRunRef run = (CTRunRef)CFArrayGetValueAtIndex(runArray, i);
-        CTFontRef runFont = CFDictionaryGetValue(CTRunGetAttributes(run), kCTFontAttributeName);
-        for(CFIndex j=0; j<CTRunGetGlyphCount(run); j++) {
-            CFRange thisGlyphRange = CFRangeMake(j, 1);
-            CGGlyph glyph;
-            CGPoint position;
-            CTRunGetGlyphs(run, thisGlyphRange, &glyph);
-            CTRunGetPositions(run, thisGlyphRange, &position);
-            
-            //freed near-immediately
-            CGPathRef letter = CTFontCreatePathForGlyph(runFont, glyph, NULL);
-            CGAffineTransform t = CGAffineTransformMakeTranslation(position.x, position.y);
-            t = CGAffineTransformScale(t, 1, -1);
-            CGPathAddPath(path, &t, letter);
-            CGPathRelease(letter);
-        }
-    }
-    CFRelease(line);
-    
-    CGRect pathBounds = CGPathGetPathBoundingBox(path);
-    CGAffineTransform pathTranslation = CGAffineTransformMakeTranslation(-pathBounds.origin.x, -pathBounds.origin.y);
-    
-    //not freed here; owned by caller of method
-    CGPathRef returnPath = CGPathCreateCopyByTransformingPath(path, &pathTranslation);
-    CGPathRelease(path);
-    return returnPath;
 }
 
 /*
@@ -233,51 +170,6 @@ static const CGFloat kScaleSearchAcceptableScaleDifference = 0.001;
  */
 - (CGFloat)radius {
     return _radius;
-}
-
-/*
- Returns the factor needed to scale the given size to fit within the given radius.
- The isHalfCircle parameter dictates whether or not the size should be limited to
- half of the circle rather than its entirety, and if so, the offset parameter dictates
- how far from the center the path will be. Due to the complexities introduced by the
- offset parameter, the scale must be determined using a binary search type algorithm
- rather than with math alone.
- */
-+ (CGFloat)scaleForPathOfSize:(CGSize)pathSize withinRadius:(CGFloat)radius isHalfCircle:(BOOL)isHalfCircle withOffsetFromCenter:(CGFloat)offset maxHeight:(int)maxHeight {
-    if(isHalfCircle) {
-        pathSize.width/=2;
-        CGFloat radiusSquared = radius*radius;
-        CGFloat minScale = 0;
-        CGFloat maxScale = 1;
-        CGFloat midScale, scaledWidth, scaledHeight, distanceFromCircle;
-        CGFloat returnVal = -1;
-        int tries = 0;
-        while(maxScale-minScale > kScaleSearchAcceptableScaleDifference) {
-            ++tries;
-            midScale = (minScale+maxScale)/2;
-            scaledWidth = pathSize.width*midScale;
-            scaledHeight = pathSize.height*midScale+offset;
-            distanceFromCircle = radiusSquared-(scaledWidth*scaledWidth+scaledHeight*scaledHeight);
-            
-            if(distanceFromCircle < 0) {
-                maxScale = midScale;
-            }
-            else if(distanceFromCircle > kScaleSearchAcceptablePointDifference) {
-                minScale = midScale;
-            }
-            else {
-                returnVal = midScale;
-            }
-        }
-        if(returnVal < 0) {
-            returnVal = minScale;
-        }
-        if(returnVal*pathSize.height > maxHeight) {
-            return maxHeight/pathSize.height;
-        }
-        return returnVal;
-    }
-    return 1;
 }
 
 @end

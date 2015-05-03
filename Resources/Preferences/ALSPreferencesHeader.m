@@ -139,6 +139,7 @@ static CGFloat _wallpaperViewHeight;
             UILabel *label = [self.descriptionLabels objectAtIndex:i];
             [label setAttributedText:attributedString];
             [label setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin];
+            [label setBackgroundColor:[UIColor whiteColor]];
             [label setFont:[UIFont systemFontOfSize:13]];
             [label setTextColor:[UIColor lightGrayColor]];
             [label setTag:i];

@@ -10,6 +10,8 @@
 	<real>0.5</real>
 	<key>clockInnerPadding</key>
 	<integer>10</integer>
+	<key>clockInvisibleAt</key>
+	<real>0.5</real>
 	<key>clockRadius</key>
 	<integer>100</integer>
 	<key>clockSubtitleOffset</key>

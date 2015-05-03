@@ -28,6 +28,18 @@
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
+			<string>Clock Invisible At:</string>
+			<key>key</key>
+			<string>clockInvisibleAt</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
 			<string>Clock Radius:</string>
 			<key>key</key>
 			<string>clockRadius</string>

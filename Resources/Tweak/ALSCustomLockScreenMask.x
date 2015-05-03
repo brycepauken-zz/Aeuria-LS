@@ -1,5 +1,6 @@
 #import "ALSCustomLockScreenMask.h"
 
+#import "ALSCustomLockScreenButtons.h"
 #import "ALSCustomLockScreenClock.h"
 #import "ALSPreferencesManager.h"
 #import "ALSProxyTarget.h"
@@ -7,6 +8,7 @@
 @interface ALSCustomLockScreenMask()
 
 //general properties
+@property (nonatomic, strong) ALSCustomLockScreenButtons *buttons;
 @property (nonatomic, strong) CAShapeLayer *circleMaskLayer;
 @property (nonatomic, strong) ALSCustomLockScreenClock *clock;
 @property (nonatomic) NSInteger currentHour;
@@ -19,6 +21,7 @@
 @property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
 
 //preference properties
+@property (nonatomic) float clockInvisibleAt;
 @property (nonatomic) int largeCircleInnerPadding;
 @property (nonatomic) int largeCircleMinRadius;
 
@@ -30,6 +33,7 @@
     self = [super init];
     if(self) {
         _preferencesManager = preferencesManager;
+        _clockInvisibleAt = [[preferencesManager preferenceForKey:@"clockInvisibleAt"] floatValue];
         _largeCircleInnerPadding = [[preferencesManager preferenceForKey:@"clockInnerPadding"] intValue];
         _largeCircleMinRadius = [[preferencesManager preferenceForKey:@"clockRadius"] intValue];
         
@@ -44,6 +48,7 @@
         [_internalLayer setMask:_circleMaskLayer];
         
         _clock = [[ALSCustomLockScreenClock alloc] initWithRadius:_largeCircleMinRadius-_largeCircleInnerPadding type:ALSClockTypeText preferencesManager:_preferencesManager];
+        _buttons = [[ALSCustomLockScreenButtons alloc] initWithPreferencesManager:_preferencesManager];
         
         [self setFrame:frame];
         [self addSublayer:self.internalLayer];
@@ -100,14 +105,23 @@
     
     //find how much to add to the minimum circle size
     CGFloat largeCircleIncrement = self.largeCircleMaxRadiusIncrement*percentage;
+    CGFloat largeRadius = self.largeCircleMinRadius+largeCircleIncrement;
     
     //mask the whole thing to the large outer circle
-    [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:self.largeCircleMinRadius+largeCircleIncrement center:boundsCenter].CGPath];
+    [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
     
     //add clock to middle
+    CGFloat clockScale = MAX(0,(1-percentage/self.clockInvisibleAt));
+    CGFloat clockRadiusScaled = self.clock.radius*clockScale;
     UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute];
-    [clockPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-self.clock.radius, boundsCenter.y-self.clock.radius)];
+    [clockPath applyTransform:CGAffineTransformMakeScale(clockScale, clockScale)];
+    [clockPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-clockRadiusScaled, boundsCenter.y-clockRadiusScaled)];
     [mask appendPath:clockPath];
+    
+    //add buttons to middle
+    UIBezierPath *buttonsPath = [self.buttons buttonsPathForRadius:largeRadius middleButtonStartingRadius:(self.largeCircleMinRadius+self.largeCircleMaxRadiusIncrement*self.clockInvisibleAt)];
+    [buttonsPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x, boundsCenter.y)];
+    [mask appendPath:buttonsPath];
     
     [self.internalLayer setPath:mask.CGPath];
 }

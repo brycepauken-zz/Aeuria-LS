@@ -1,4 +1,4 @@
-#import <UIKit/UIKit.h>
+#import "ALSCustomLockScreenElement.h"
 
 /*
  The ALSCustomLockScreenClock represents our clock.
@@ -10,9 +10,7 @@ typedef NS_ENUM(NSInteger, ALSClockType) {
     ALSClockTypeAnalog
 };
 
-@class ALSPreferencesManager;
-
-@interface ALSCustomLockScreenClock : NSObject
+@interface ALSCustomLockScreenClock : ALSCustomLockScreenElement
 
 - (instancetype)initWithRadius:(CGFloat)radius type:(ALSClockType)clockType preferencesManager:(ALSPreferencesManager *)preferencesManager;
 - (UIBezierPath *)clockPathForHour:(NSInteger)hour minute:(NSInteger)minute;
