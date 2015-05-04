@@ -24,7 +24,7 @@
         _buttonDistanceFromEdge = 20;
         _buttonPadding = 10;
         _buttonRadius = 44;
-        _buttonTextHeight = 28;
+        _buttonTextHeight = 32;
         _clockInvisibleAt = [[preferencesManager preferenceForKey:@"clockInvisibleAt"] floatValue];
     }
     return self;

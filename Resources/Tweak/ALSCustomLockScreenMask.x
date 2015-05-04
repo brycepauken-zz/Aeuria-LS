@@ -16,6 +16,8 @@
 @property (nonatomic) CGFloat currentPercentage;
 @property (nonatomic, strong) NSMutableArray *highlightedButtonIndexes;
 @property (nonatomic, strong) CAShapeLayer *highlightedButtonLayer;
+@property (nonatomic, strong) NSString *instructions;
+@property (nonatomic, strong) UIBezierPath *instructionsPath;
 @property (nonatomic, strong) CAShapeLayer *internalLayer;
 @property (nonatomic) CGFloat largeCircleMaxInternalPaddingIncrement;
 @property (nonatomic) CGFloat largeCircleMaxRadiusIncrement;
@@ -26,6 +28,7 @@
 @property (nonatomic) int buttonPadding;
 @property (nonatomic) int buttonRadius;
 @property (nonatomic) float clockInvisibleAt;
+@property (nonatomic) int instructionsHeight;
 @property (nonatomic) int largeCircleInnerPadding;
 @property (nonatomic) int largeCircleMinRadius;
 @property (nonatomic) float pressedButtonAlpha;
@@ -41,6 +44,7 @@
         _buttonPadding = 10;
         _buttonRadius = 44;
         _clockInvisibleAt = [[preferencesManager preferenceForKey:@"clockInvisibleAt"] floatValue];
+        _instructionsHeight = 30;
         _largeCircleInnerPadding = [[preferencesManager preferenceForKey:@"clockInnerPadding"] intValue];
         _largeCircleMinRadius = [[preferencesManager preferenceForKey:@"clockRadius"] intValue];
         _pressedButtonAlpha = 0.25;
@@ -67,6 +71,7 @@
         [self addSublayer:_highlightedButtonLayer];
         [self layoutSublayers];
         
+        [self setInstructions:@"Enter Passcode"];
         [self setupTimer];
         [self updateMaskWithPercentage:0];
     }
@@ -105,6 +110,16 @@
     [self setupTimer];
 }
 
+- (void)setInstructions:(NSString *)instructions {
+    if(![instructions isEqualToString:_instructions]) {
+        _instructions = instructions;
+        //freed near-immediately
+        CGPathRef instructionsPathRef = [ALSCustomLockScreenElement createPathForText:instructions fontName:@"AvenirNext-Medium"];
+        self.instructionsPath = [UIBezierPath bezierPathWithCGPath:instructionsPathRef];
+        CGPathRelease(instructionsPathRef);
+    }
+}
+
 - (void)setupTimer {
     if(self.minuteTimer && [self.minuteTimer isValid]) {
         [self.minuteTimer invalidate];
@@ -136,7 +151,7 @@
     //mask the whole thing to the large outer circle
     [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
     
-    //add clock to middle
+    //add clock to internal path
     CGFloat clockScale = MAX(0,(1-percentage/self.clockInvisibleAt));
     CGFloat clockRadiusScaled = self.clock.radius*clockScale;
     UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute];
@@ -144,10 +159,18 @@
     [clockPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-clockRadiusScaled, boundsCenter.y-clockRadiusScaled)];
     [mask appendPath:clockPath];
     
-    //add buttons to middle
+    //add buttons to internal path
     UIBezierPath *buttonsPath = [self.buttons buttonsPathForRadius:largeRadius middleButtonStartingRadius:(self.largeCircleMinRadius+self.largeCircleMaxRadiusIncrement*self.clockInvisibleAt)];
     [buttonsPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x, boundsCenter.y)];
     [mask appendPath:buttonsPath];
+    
+    //add instructions to internal path
+    UIBezierPath *instructionsPath = [self.instructionsPath copy];
+    CGSize instructionsPathSize = CGPathGetPathBoundingBox(instructionsPath.CGPath).size;
+    CGFloat instructionsPathScale = (self.instructionsHeight/instructionsPathSize.height);
+    [instructionsPath applyTransform:CGAffineTransformMakeScale(instructionsPathScale, instructionsPathScale)];
+    [instructionsPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-(instructionsPathSize.width*instructionsPathScale)/2, (boundsCenter.y-self.buttonRadius*3-self.buttonPadding)/2-(instructionsPathSize.height*instructionsPathScale)/2)];
+    [mask appendPath:instructionsPath];
     
     [self.internalLayer setPath:mask.CGPath];
     
