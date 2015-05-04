@@ -7,17 +7,27 @@
 #import "SBLockScreenViewController.h"
 
 #import "ALSCustomLockScreenContainer.h"
+#import "ALSProxyPasscodeHandler.h"
+#import "SBUIPasscodeLockViewBase.h"
 #import <objc/runtime.h>
 
 @interface SBLockScreenViewController()
 
 @property (nonatomic, strong) ALSCustomLockScreenContainer *customLockScreenContainer;
 
+- (void)passcodeLockViewPasscodeEnteredViaMesa:(id)arg1;
+- (void)passcodeLockViewPasscodeEntered:(id)arg1;
+- (void)passcodeLockViewPasscodeDidChange:(id)arg1;
+
 - (void)addCustomLockScreenScrollViewAboveView:(UIView *)view;
 
 @end
 
 %hook SBLockScreenViewController
+
+- (void)passcodeLockViewPasscodeEntered:(id)arg1 {
+    %orig;
+}
 
 /*
  We use associated objects to hold our custom lock screen as a property.
@@ -61,13 +71,21 @@
 - (void)viewDidAppear:(BOOL)view {
     %orig;
     
-    
     if(self.customLockScreenContainer && self.customLockScreenContainer.superview) {
         [self.customLockScreenContainer removeFromSuperview];
     }
     
+    __weak SBLockScreenViewController *weakSelf = self;
     self.customLockScreenContainer = [[ALSCustomLockScreenContainer alloc] initWithFrame:[[self lockScreenView] bounds]];
     [self.customLockScreenContainer setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
+    [self.customLockScreenContainer setPasscodeEntered:^(NSString *passcode) {
+        //create a proxy passcode handler (returns the entered passcode, forwards all other requests)
+        id passcodeView = [[weakSelf lockScreenView] passcodeView];
+        ALSProxyPasscodeHandler *proxyPasscodeHandler = [[ALSProxyPasscodeHandler alloc] init];
+        [proxyPasscodeHandler setPasscode:passcode];
+        [proxyPasscodeHandler setPasscodeView:passcodeView];
+        [weakSelf passcodeLockViewPasscodeEntered:proxyPasscodeHandler];
+    }];
     [self.customLockScreenContainer.layer setZPosition:MAXFLOAT];
     
     [[self lockScreenView] addSubview:self.customLockScreenContainer];

@@ -13,6 +13,8 @@
 @property (nonatomic, strong) ALSCustomLockScreenMask *filledOverlayMask;
 @property (nonatomic) int highlightedButtonIndex;
 @property (nonatomic) BOOL needsUpdate;
+@property (nonatomic) NSMutableString *passcode;
+@property (nonatomic, copy) void (^passcodeEntered)(NSString *passcode);
 @property (nonatomic) CGFloat percentage;
 @property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
 @property (nonatomic) CGFloat previousPercentage;
@@ -33,6 +35,7 @@
         _buttonPadding = 10;
         _buttonRadius = 44;
         
+        _passcode = [[NSMutableString alloc] init];
         _percentage = 0;
         _previousPercentage = 0;
         
@@ -119,6 +122,20 @@
                 [self.filledOverlayMask buttonAtIndex:self.highlightedButtonIndex setHighlighted:NO];
                 self.buttonHighlighted = NO;
                 self.needsUpdate = YES;
+                
+                if(self.highlightedButtonIndex<9) {
+                    [self.passcode appendFormat:@"%i",self.highlightedButtonIndex+1];
+                }
+                else if(self.highlightedButtonIndex==10) {
+                    [self.passcode appendString:@"0"];
+                }
+                if(self.passcode.length == 4) {
+                    if(self.passcodeEntered) {
+                        NSString *fullPasscode = [self.passcode copy];
+                        self.passcode = [[NSMutableString alloc] init];
+                        self.passcodeEntered(fullPasscode);
+                    }
+                }
             }
         }
     }

@@ -57,4 +57,8 @@
     }
 }
 
+- (void)setPasscodeEntered:(void (^)(NSString *passcode))passcodeEntered {
+    [self.customLockScreen setPasscodeEntered:passcodeEntered];
+}
+
 @end

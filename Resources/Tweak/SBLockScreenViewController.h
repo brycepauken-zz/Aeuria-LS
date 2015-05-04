@@ -5,6 +5,12 @@
  Hooking it allows us to respond to events from the lock screen.
  */
 
+@interface SBLockScreenView : UIView
+
+- (id)passcodeView;
+
+@end
+
 @interface SBLockScreenViewController : NSObject
 
 - (id)lockScreenScrollView;
