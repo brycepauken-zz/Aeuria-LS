@@ -8,6 +8,7 @@
 @property (nonatomic) int buttonDistanceFromEdge;
 @property (nonatomic) int buttonPadding;
 @property (nonatomic) int buttonRadius;
+@property (nonatomic) int buttonTextHeight;
 @property (nonatomic) float clockInvisibleAt;
 
 @end
@@ -23,6 +24,7 @@
         _buttonDistanceFromEdge = 20;
         _buttonPadding = 10;
         _buttonRadius = 44;
+        _buttonTextHeight = 28;
         _clockInvisibleAt = [[preferencesManager preferenceForKey:@"clockInvisibleAt"] floatValue];
     }
     return self;
@@ -68,7 +70,21 @@
             [distances setObject:distNumber forKey:distSquaredNumber];
         }
         CGFloat buttonRadius = MAX(0,MIN(self.buttonRadius,radius-self.buttonDistanceFromEdge-[distNumber floatValue]-self.buttonRadius));
-        [returnPath appendPath:[[self class] pathForCircleWithRadius:buttonRadius center:CGPointMake(xOffset, yOffset)]];
+        
+        if(buttonRadius > 0) {
+            [returnPath appendPath:[[self class] pathForCircleWithRadius:buttonRadius center:CGPointMake(xOffset, yOffset)]];
+            
+            //freed at end of if statement
+            CGPathRef textPathRef = [[self class] createPathForText:[NSString stringWithFormat:@"%i",(i==10?0:i+1)] fontName:@"AvenirNext-Medium"];
+            CGSize textPathSize = CGPathGetPathBoundingBox(textPathRef).size;
+            CGFloat textPathScale = (self.buttonTextHeight/textPathSize.height)*(buttonRadius/self.buttonRadius);
+            UIBezierPath *textPath = [UIBezierPath bezierPathWithCGPath:textPathRef];
+            [textPath applyTransform:CGAffineTransformMakeScale(textPathScale, textPathScale)];
+            [textPath applyTransform:CGAffineTransformMakeTranslation(xOffset-(textPathSize.width*textPathScale)/2, yOffset-(textPathSize.height*textPathScale)/2)];
+            
+            [returnPath appendPath:textPath];
+            CGPathRelease(textPathRef);
+        }
     }
     
     return returnPath;
