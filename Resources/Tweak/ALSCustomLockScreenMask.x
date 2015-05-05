@@ -14,6 +14,8 @@
 @property (nonatomic) NSInteger currentHour;
 @property (nonatomic) NSInteger currentMinute;
 @property (nonatomic) CGFloat currentPercentage;
+@property (nonatomic, strong) CAShapeLayer *dotsDisplayLayer;
+@property (nonatomic, strong) CAShapeLayer *dotsLayer;
 @property (nonatomic, strong) NSMutableArray *highlightedButtonIndexes;
 @property (nonatomic, strong) CAShapeLayer *highlightedButtonLayer;
 @property (nonatomic, strong) NSString *instructions;
@@ -28,6 +30,9 @@
 @property (nonatomic) int buttonPadding;
 @property (nonatomic) int buttonRadius;
 @property (nonatomic) float clockInvisibleAt;
+@property (nonatomic) int dotPadding;
+@property (nonatomic) int dotRadius;
+@property (nonatomic) int dotVerticalOffset;
 @property (nonatomic) int instructionsHeight;
 @property (nonatomic) int largeCircleInnerPadding;
 @property (nonatomic) int largeCircleMinRadius;
@@ -44,6 +49,9 @@
         _buttonPadding = 10;
         _buttonRadius = 44;
         _clockInvisibleAt = [[preferencesManager preferenceForKey:@"clockInvisibleAt"] floatValue];
+        _dotPadding = 16;
+        _dotRadius = 8;
+        _dotVerticalOffset = 18;
         _instructionsHeight = 30;
         _largeCircleInnerPadding = [[preferencesManager preferenceForKey:@"clockInnerPadding"] intValue];
         _largeCircleMinRadius = [[preferencesManager preferenceForKey:@"clockRadius"] intValue];
@@ -54,11 +62,23 @@
         _currentPercentage = 0;
         _highlightedButtonIndexes = [[NSMutableArray alloc] init];
         
+        //masks to outer bounds
         _circleMaskLayer = [[CAShapeLayer alloc] init];
+        [_circleMaskLayer setFillColor:[[UIColor blackColor] CGColor]];
+        
+        //holds main mask (clock & buttons)
         _internalLayer = [[CAShapeLayer alloc] init];
         [_internalLayer setFillColor:[[UIColor blackColor] CGColor]];
         [_internalLayer setFillRule:kCAFillRuleEvenOdd];
         [_internalLayer setMask:_circleMaskLayer];
+        
+        //holds dots above passcode entry
+        _dotsLayer = [[CAShapeLayer alloc] init];
+        [_dotsLayer setFillColor:[[UIColor blackColor] CGColor]];
+        [_internalLayer addSublayer:_dotsLayer];
+        _dotsDisplayLayer = [[CAShapeLayer alloc] init];
+        [_dotsDisplayLayer setFillColor:[[UIColor blackColor] CGColor]];
+        [_internalLayer addSublayer:_dotsDisplayLayer];
         
         _highlightedButtonLayer = [[CAShapeLayer alloc] init];
         [_highlightedButtonLayer setFillColor:[[UIColor colorWithWhite:0 alpha:_pressedButtonAlpha] CGColor]];
@@ -71,11 +91,52 @@
         [self addSublayer:_highlightedButtonLayer];
         [self layoutSublayers];
         
+        /*for(int i=0;i<5;i++) {
+            [self addDot];
+        }*/
+        
         [self setInstructions:@"Enter Passcode"];
         [self setupTimer];
         [self updateMaskWithPercentage:0];
     }
     return self;
+}
+
+- (void)addDot {
+    //create new dot
+    int existingDotCount = (int)self.dotsLayer.sublayers.count;
+    
+    CGFloat newDotOffset = (self.dotsLayer.bounds.size.width+(self.dotRadius*2*existingDotCount)+(self.dotPadding*(MAX(1,existingDotCount)-1)))/2+self.dotPadding+self.dotRadius*2;
+    CAShapeLayer *dot = [[CAShapeLayer alloc] init];
+    [dot setBounds:CGRectMake(0, 0, self.dotRadius*2, self.dotRadius*2)];
+    [dot setFillColor:[[UIColor blackColor] CGColor]];
+    [dot setPath:[[self class] pathForCircleWithRadius:self.dotRadius center:CGPointMake(self.dotRadius, self.dotRadius)].CGPath];
+    [dot setPosition:CGPointMake(newDotOffset, self.dotRadius)];
+    [dot setValue:@(existingDotCount) forKey:@"indexNum"];
+    [self.dotsLayer addSublayer:dot];
+    
+    //animate alpha
+    CABasicAnimation *opacityAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
+    [opacityAnimation setDuration:0.1];
+    [opacityAnimation setFromValue:@(0)];
+    [opacityAnimation setToValue:@(1)];
+    [dot addAnimation:opacityAnimation forKey:@"opacity"];
+    
+    //animate position of all dots
+    existingDotCount++;
+    CGFloat firstDotOffset = (self.dotsLayer.bounds.size.width-(self.dotRadius*2*existingDotCount)-(self.dotPadding*(existingDotCount-1)))/2+self.dotRadius;
+    for(CALayer *subdot in self.dotsLayer.sublayers) {
+        int dotIndex = [[subdot valueForKey:@"indexNum"] intValue];
+        
+        CGFloat newPositionX = firstDotOffset+(self.dotRadius*2+self.dotPadding)*dotIndex;
+        CABasicAnimation *positionAnimation = [CABasicAnimation animationWithKeyPath:@"position.x"];
+        [positionAnimation setDuration:0.1];
+        [positionAnimation setFromValue:@(subdot==dot?dot.position.x:[subdot.presentationLayer position].x)];
+        [positionAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut]];
+        [positionAnimation setToValue:@(newPositionX)];
+        [subdot addAnimation:positionAnimation forKey:@"position"];
+        [subdot setPosition:CGPointMake(newPositionX, self.dotRadius)];
+    }
 }
 
 - (void)buttonAtIndex:(int)index setHighlighted:(BOOL)highlighted {
@@ -90,12 +151,68 @@
     }
 }
 
+- (void)drawDots {
+    static const int bytesPerPixel = 4;
+    static const int bitsPerComponent = 8;
+    static CGColorSpaceRef colorSpace;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        colorSpace = CGColorSpaceCreateDeviceRGB();
+    });
+    
+    //create a data-backed context, and draw the dots layer inside
+    CGFloat screenScale = [UIScreen mainScreen].scale;
+    int width = floor(self.dotsLayer.bounds.size.width)*screenScale;
+    int height = floor(self.dotsLayer.bounds.size.height)*screenScale;
+    int bytesPerRow = width * bytesPerPixel;
+    unsigned char *data = calloc(width * height * bytesPerPixel, 1);
+    CGContextRef ctx = CGBitmapContextCreate(data, width, height, bitsPerComponent, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast|kCGBitmapByteOrder32Big);
+    CGContextScaleCTM(ctx, screenScale, screenScale);
+    [self.dotsLayer.presentationLayer renderInContext:ctx];
+    
+    //reverse alpha value
+    for(int y=0;y<height;y++) {
+        int yOffset = y*width;
+        for(int x=0;x<width;x++) {
+            int offset = (yOffset+x)*bytesPerPixel;
+            data[offset+3] = 255-data[offset+3];
+        }
+    }
+    
+    //get image
+    CGImageRef imageRef = CGBitmapContextCreateImage(ctx);
+    UIImage *image = [UIImage imageWithCGImage:imageRef];
+    CGImageRelease(imageRef);
+    CGContextRelease(ctx);
+    free(data);
+    
+    //[image drawInRect:self.bounds];
+    self.dotsDisplayLayer.contents = (id)image.CGImage;
+}
+
+- (BOOL)isAnimating {
+    for(CALayer *layer in self.dotsLayer.sublayers) {
+        if(layer.animationKeys.count) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 - (void)layoutSublayers {
     [super layoutSublayers];
     
-    [self.circleMaskLayer setFrame:self.frame];
-    [self.internalLayer setFrame:self.frame];
-    [self.highlightedButtonLayer setFrame:self.frame];
+    [self.circleMaskLayer setFrame:self.bounds];
+    [self.internalLayer setFrame:self.bounds];
+    [self.highlightedButtonLayer setFrame:self.bounds];
+    
+    //dotsLayer's frame is a long horizontal bar placed dotVerticalOffset pixels above the highest button
+    CGSize screenSize = [[UIScreen mainScreen] bounds].size;
+    CGFloat maxScreenDimension = MAX(screenSize.width, screenSize.height);
+    CGRect dotsLayerFrame = CGRectMake((self.bounds.size.width-maxScreenDimension)/2, self.bounds.size.height/2-self.buttonRadius*3-self.buttonPadding-self.dotVerticalOffset-self.dotRadius*2, maxScreenDimension, self.dotRadius*2);
+    [self.dotsDisplayLayer setFrame:dotsLayerFrame];
+    dotsLayerFrame.origin.y = -dotsLayerFrame.size.height*2;
+    [self.dotsLayer setFrame:dotsLayerFrame];
     
     self.largeCircleMaxRadiusIncrement = ceilf(sqrt(self.bounds.size.width*self.bounds.size.width+self.bounds.size.height*self.bounds.size.height)/2)-self.largeCircleMinRadius;
     self.largeCircleMaxInternalPaddingIncrement = ((self.largeCircleMaxRadiusIncrement+self.largeCircleMinRadius)/(CGFloat)self.largeCircleMinRadius)*self.largeCircleInnerPadding-self.largeCircleInnerPadding;
@@ -103,6 +220,22 @@
 
 + (UIBezierPath *)pathForCircleWithRadius:(CGFloat)radius center:(CGPoint)center {
     return [UIBezierPath bezierPathWithRoundedRect:CGRectMake(center.x-radius, center.y-radius, radius*2, radius*2) byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(radius, radius)];
+}
+
+- (void)removeAllDots {
+    for(CALayer *subdot in self.dotsLayer.sublayers) {
+        [CATransaction begin];
+        [CATransaction setCompletionBlock:^{
+            [subdot removeFromSuperlayer];
+        }];
+        CABasicAnimation *scaleAnimation = [CABasicAnimation animationWithKeyPath:@"transform"];
+        [scaleAnimation setDuration:0.1];
+        [scaleAnimation setFromValue:[NSValue valueWithCATransform3D:CATransform3DIdentity]];
+        [scaleAnimation setToValue:[NSValue valueWithCATransform3D:CATransform3DMakeScale(0, 0, 1)]];
+        [subdot addAnimation:scaleAnimation forKey:@"transform"];
+        [subdot setTransform:CATransform3DMakeScale(0, 0, 1)];
+        [CATransaction commit];
+    }
 }
 
 - (void)resetMask {
@@ -142,7 +275,6 @@
     self.currentPercentage = percentage;
     
     CGPoint boundsCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
-    UIBezierPath *mask = [UIBezierPath bezierPathWithRect:self.bounds];
     
     //find how much to add to the minimum circle size
     CGFloat largeCircleIncrement = self.largeCircleMaxRadiusIncrement*percentage;
@@ -152,6 +284,7 @@
     [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
     
     //add clock to internal path
+    UIBezierPath *mask = [UIBezierPath bezierPathWithRect:self.bounds];
     CGFloat clockScale = MAX(0,(1-percentage/self.clockInvisibleAt));
     CGFloat clockRadiusScaled = self.clock.radius*clockScale;
     UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute];
@@ -171,6 +304,10 @@
     [instructionsPath applyTransform:CGAffineTransformMakeScale(instructionsPathScale, instructionsPathScale)];
     [instructionsPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-(instructionsPathSize.width*instructionsPathScale)/2, (boundsCenter.y-self.buttonRadius*3-self.buttonPadding)/2-(instructionsPathSize.height*instructionsPathScale)/2)];
     [mask appendPath:instructionsPath];
+    
+    //draw dots and remove area behind it
+    [self drawDots];
+    [mask appendPath:[UIBezierPath bezierPathWithRect:self.dotsDisplayLayer.frame]];
     
     [self.internalLayer setPath:mask.CGPath];
     

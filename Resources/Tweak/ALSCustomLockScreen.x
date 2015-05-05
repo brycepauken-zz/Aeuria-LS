@@ -123,6 +123,7 @@
                 self.buttonHighlighted = NO;
                 self.needsUpdate = YES;
                 
+                [self.filledOverlayMask addDot];
                 if(self.highlightedButtonIndex<9) {
                     [self.passcode appendFormat:@"%i",self.highlightedButtonIndex+1];
                 }
@@ -130,6 +131,9 @@
                     [self.passcode appendString:@"0"];
                 }
                 if(self.passcode.length == 4) {
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                        [self.filledOverlayMask removeAllDots];
+                    });
                     if(self.passcodeEntered) {
                         NSString *fullPasscode = [self.passcode copy];
                         self.passcode = [[NSMutableString alloc] init];
@@ -160,7 +164,7 @@
 }
 
 - (void)updateViews {
-    if(self.percentage != self.previousPercentage || self.needsUpdate) {
+    if(self.percentage != self.previousPercentage || self.filledOverlayMask.isAnimating || self.needsUpdate) {
         self.needsUpdate = NO;
         self.previousPercentage = self.percentage;
         [self.filledOverlayMask updateMaskWithPercentage:self.percentage];
