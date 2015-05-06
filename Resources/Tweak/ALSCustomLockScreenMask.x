@@ -92,10 +92,6 @@
         [self addSublayer:_highlightedButtonLayer];
         [self layoutSublayers];
         
-        /*for(int i=0;i<5;i++) {
-            [self addDot];
-        }*/
-        
         [self setInstructions:@"Enter Passcode"];
         [self setupTimer];
         [self updateMaskWithPercentage:0];
@@ -107,12 +103,12 @@
     //create new dot
     int existingDotCount = (int)self.dotsLayer.sublayers.count;
     
-    CGFloat newDotOffset = (self.dotsLayer.bounds.size.width+(self.dotRadius*2*existingDotCount)+(self.dotPadding*(MAX(1,existingDotCount)-1)))/2+self.dotPadding+self.dotRadius*2;
+    CGFloat newDotOffset = (self.dotsLayer.bounds.size.width+(self.dotRadius*2*existingDotCount)+(self.dotPadding*(MAX(1,existingDotCount)-1)))/2+self.dotPadding+self.dotRadius*3/2+1;
     CAShapeLayer *dot = [[CAShapeLayer alloc] init];
     [dot setBounds:CGRectMake(0, 0, self.dotRadius*2, self.dotRadius*2)];
     [dot setFillColor:[[UIColor blackColor] CGColor]];
     [dot setPath:[[self class] pathForCircleWithRadius:self.dotRadius center:CGPointMake(self.dotRadius, self.dotRadius)].CGPath];
-    [dot setPosition:CGPointMake(newDotOffset, self.dotRadius)];
+    [dot setPosition:CGPointMake(newDotOffset, self.dotRadius+4)];
     [dot setValue:@(existingDotCount) forKey:@"indexNum"];
     [self.dotsLayer addSublayer:dot];
     
@@ -125,7 +121,7 @@
     
     //animate position of all dots
     existingDotCount++;
-    CGFloat firstDotOffset = (self.dotsLayer.bounds.size.width-(self.dotRadius*2*existingDotCount)-(self.dotPadding*(existingDotCount-1)))/2+self.dotRadius;
+    CGFloat firstDotOffset = (self.dotsLayer.bounds.size.width-(self.dotRadius*2*existingDotCount)-(self.dotPadding*(existingDotCount-1)))/2+self.dotRadius+1;
     for(CALayer *subdot in [self.dotsLayer.sublayers copy]) {
         int dotIndex = [[subdot valueForKey:@"indexNum"] intValue];
         
@@ -136,7 +132,7 @@
         [positionAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut]];
         [positionAnimation setToValue:@(newPositionX)];
         [subdot addAnimation:positionAnimation forKey:@"position"];
-        [subdot setPosition:CGPointMake(newPositionX, self.dotRadius)];
+        [subdot setPosition:CGPointMake(newPositionX, self.dotRadius+4)];
     }
 }
 
@@ -152,7 +148,16 @@
     }
 }
 
-- (void)drawDots {
+/*
+ Draws an inverted-alpha version of self.dotsLayer in self.dotsDisplayLater,
+ and returns a CGRect containing the x offset and width.
+ */
+- (CGRect)drawDots {
+    if(!self.dotsLayer.sublayers.count) {
+        self.dotsDisplayLayer.contents = nil;
+        return CGRectZero;
+    }
+    
     static const int bytesPerPixel = 4;
     static const int bitsPerComponent = 8;
     static CGColorSpaceRef colorSpace;
@@ -171,10 +176,28 @@
     CGContextScaleCTM(ctx, screenScale, screenScale);
     [self.dotsLayer.presentationLayer renderInContext:ctx];
     
+    //find starting and ending x values
+    int startingX = 0, endingX = width, returnStartingX = 0, returnEndingX = width;
+    int midYOffset = (height/2)*width;
+    for(int x=startingX;x<width;x++) {
+        if(data[(midYOffset+x)*bytesPerPixel+3]>0) {
+            startingX = MAX(startingX, x-4-self.dotRadius*5);
+            returnStartingX = x-2-self.dotRadius*2;
+            break;
+        }
+    }
+    for(int x=endingX;x>=startingX;x--) {
+        if(data[(midYOffset+x)*bytesPerPixel+3]>0) {
+            endingX = MIN(endingX, x+4+self.dotRadius*6+self.dotPadding*3);
+            returnEndingX = x+2+self.dotRadius;
+            break;
+        }
+    }
+    
     //reverse alpha value
     for(int y=0;y<height;y++) {
         int yOffset = y*width;
-        for(int x=0;x<width;x++) {
+        for(int x=startingX;x<endingX;x++) {
             int offset = (yOffset+x)*bytesPerPixel;
             data[offset+3] = 255-data[offset+3];
         }
@@ -187,8 +210,9 @@
     CGContextRelease(ctx);
     free(data);
     
-    //[image drawInRect:self.bounds];
     self.dotsDisplayLayer.contents = (id)image.CGImage;
+    
+    return CGRectMake(returnStartingX/screenScale, 0, (returnEndingX-returnStartingX)/screenScale, height);
 }
 
 - (BOOL)isAnimating {
@@ -210,7 +234,7 @@
     //dotsLayer's frame is a long horizontal bar placed dotVerticalOffset pixels above the highest button
     CGSize screenSize = [[UIScreen mainScreen] bounds].size;
     CGFloat maxScreenDimension = MAX(screenSize.width, screenSize.height);
-    CGRect dotsLayerFrame = CGRectMake((self.bounds.size.width-maxScreenDimension)/2, self.bounds.size.height/2-self.buttonRadius*3-self.buttonPadding-self.dotVerticalOffset-self.dotRadius*2, maxScreenDimension, self.dotRadius*2);
+    CGRect dotsLayerFrame = CGRectMake((self.bounds.size.width-maxScreenDimension)/2, self.bounds.size.height/2-self.buttonRadius*3-self.buttonPadding-self.dotVerticalOffset-self.dotRadius*2-4, maxScreenDimension, self.dotRadius*2+8);
     [self.dotsDisplayLayer setFrame:dotsLayerFrame];
     dotsLayerFrame.origin.y = -dotsLayerFrame.size.height*2;
     [self.dotsLayer setFrame:dotsLayerFrame];
@@ -310,8 +334,10 @@
     [mask appendPath:instructionsPath];
     
     //draw dots and remove area behind it
-    [self drawDots];
-    [mask appendPath:[UIBezierPath bezierPathWithRect:self.dotsDisplayLayer.frame]];
+    CGRect dotsRect = [self drawDots];
+    if(dotsRect.size.width && dotsRect.size.width<self.bounds.size.width) {
+        [mask appendPath:[UIBezierPath bezierPathWithRect:CGRectMake(self.dotsDisplayLayer.frame.origin.x+dotsRect.origin.x+2, self.dotsDisplayLayer.frame.origin.y+2, dotsRect.size.width, self.dotsDisplayLayer.frame.size.height-4)]];
+    }
     
     [self.internalLayer setPath:mask.CGPath];
     
