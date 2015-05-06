@@ -94,7 +94,12 @@
 }
 
 - (void)resetView {
+    self.needsUpdate = YES;
+    self.passcode = [[NSMutableString alloc] init];
+    self.previousPercentage = 0;
     [self.filledOverlayMask resetMask];
+    [self updateViews];
+    
 }
 
 - (void)panGestureRecognizerCalled:(UIPanGestureRecognizer *)gestureRecognizer {

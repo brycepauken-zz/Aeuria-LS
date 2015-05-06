@@ -44,6 +44,11 @@
     return self.scrollView;
 }
 
+- (void)resetView {
+    [self.scrollView setContentOffset:CGPointMake(self.bounds.size.width, 0)];
+    [self.customLockScreen resetView];
+}
+
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     CGFloat percentage = 1-(scrollView.contentOffset.x/self.bounds.size.width);
     [self.customLockScreen updateScrollPercentage:percentage];

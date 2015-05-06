@@ -54,7 +54,7 @@
 - (void)startLockScreenFadeInAnimationForSource:(int)arg1 {
     %orig;
     
-    //[self.customLockScreen resetView];
+    [self.customLockScreenContainer resetView];
 }
 
 /*

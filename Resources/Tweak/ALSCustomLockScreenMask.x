@@ -125,7 +125,7 @@
     //animate position of all dots
     existingDotCount++;
     CGFloat firstDotOffset = (self.dotsLayer.bounds.size.width-(self.dotRadius*2*existingDotCount)-(self.dotPadding*(existingDotCount-1)))/2+self.dotRadius;
-    for(CALayer *subdot in self.dotsLayer.sublayers) {
+    for(CALayer *subdot in [self.dotsLayer.sublayers copy]) {
         int dotIndex = [[subdot valueForKey:@"indexNum"] intValue];
         
         CGFloat newPositionX = firstDotOffset+(self.dotRadius*2+self.dotPadding)*dotIndex;
@@ -191,7 +191,7 @@
 }
 
 - (BOOL)isAnimating {
-    for(CALayer *layer in self.dotsLayer.sublayers) {
+    for(CALayer *layer in [self.dotsLayer.sublayers copy]) {
         if(layer.animationKeys.count) {
             return YES;
         }
@@ -223,7 +223,7 @@
 }
 
 - (void)removeAllDots {
-    for(CALayer *subdot in self.dotsLayer.sublayers) {
+    for(CALayer *subdot in [self.dotsLayer.sublayers copy]) {
         [CATransaction begin];
         [CATransaction setCompletionBlock:^{
             [subdot removeFromSuperlayer];
@@ -240,6 +240,9 @@
 
 - (void)resetMask {
     self.currentPercentage = 0;
+    for(CALayer *subdot in [self.dotsLayer.sublayers copy]) {
+        [subdot removeFromSuperlayer];
+    }
     [self setupTimer];
 }
 
