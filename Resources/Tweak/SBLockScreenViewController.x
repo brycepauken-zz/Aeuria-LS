@@ -88,7 +88,15 @@
     }];
     [self.customLockScreenContainer.layer setZPosition:MAXFLOAT];
     
-    [[self lockScreenView] addSubview:self.customLockScreenContainer];
+    UIView *rightView;
+    for(UIView *view in [[self lockScreenScrollView] subviews]) {
+        if(view.frame.origin.x > 0) {
+            if(!rightView || view.frame.size.width>rightView.frame.size.width) {
+                rightView = view;
+            }
+        }
+    }
+    [(rightView?:[self lockScreenView]) addSubview:self.customLockScreenContainer];
 }
 
 /*
