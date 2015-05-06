@@ -13,8 +13,10 @@
 - (void)addDot;
 - (void)buttonAtIndex:(int)index setHighlighted:(BOOL)highlighted;
 - (BOOL)isAnimating;
+- (BOOL)needsUpdate;
 - (void)removeAllDots;
 - (void)resetMask;
+- (void)setNeedsUpdate:(BOOL)needsUpdate;
 - (void)updateMaskWithPercentage:(CGFloat)percentage;
 
 @end

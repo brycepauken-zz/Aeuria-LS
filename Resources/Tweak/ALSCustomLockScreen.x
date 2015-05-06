@@ -169,8 +169,9 @@
 }
 
 - (void)updateViews {
-    if(self.percentage != self.previousPercentage || self.filledOverlayMask.isAnimating || self.needsUpdate) {
+    if(self.percentage != self.previousPercentage || self.filledOverlayMask.isAnimating || self.needsUpdate || self.filledOverlayMask.needsUpdate) {
         self.needsUpdate = NO;
+        self.filledOverlayMask.needsUpdate = NO;
         self.previousPercentage = self.percentage;
         [self.filledOverlayMask updateMaskWithPercentage:self.percentage];
     }

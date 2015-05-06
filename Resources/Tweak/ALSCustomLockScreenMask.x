@@ -24,6 +24,7 @@
 @property (nonatomic) CGFloat largeCircleMaxInternalPaddingIncrement;
 @property (nonatomic) CGFloat largeCircleMaxRadiusIncrement;
 @property (nonatomic, strong) NSTimer *minuteTimer;
+@property (nonatomic) BOOL needsUpdate;
 @property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
 
 //preference properties
@@ -346,6 +347,7 @@
     self.currentMinute = currentMinute;
     
     [self updateMaskWithPercentage:self.currentPercentage];
+    self.needsUpdate = YES;
     
     //preload the mask for the next minute
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
