@@ -40,12 +40,34 @@
 }
 
 - (void)addNotificationView:(UIView *)notificationView {
+    //cut notificiation view height in half
+    CGRect notificationViewFrame = notificationView.frame;
+    notificationViewFrame.size.height /= 2;
+    [notificationView setFrame:notificationViewFrame];
+    
+    //remove all non-tableview subviews
+    for(UIView *subview in [notificationView.subviews copy]) {
+        if(!([subview isKindOfClass:[%c(UITableViewWrapperView) class]] || [subview isKindOfClass:[UITableView class]])) {
+            [subview removeFromSuperview];
+        }
+    }
+    
     [self setNotificationView:notificationView];
     [self.scrollView addSubview:notificationView];
     
     [self setNotificationViewBackground:[[UIView alloc] initWithFrame:notificationView.frame]];
     [self.notificationViewBackground setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
     [self insertSubview:self.notificationViewBackground belowSubview:self.scrollView];
+    
+    [self notificationViewChanged];
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    UIView *tappedButton = [self.customLockScreen hitTest:point withEvent:event];
+    if(tappedButton) {
+        return self.customLockScreen;
+    }
+    return self.scrollView;
 }
 
 - (void)layoutSubviews {
@@ -55,12 +77,11 @@
     [self.notificationViewBackground setFrame:CGRectMake(0, self.scrollView.bounds.size.height-self.notificationView.frame.size.height, self.scrollView.bounds.size.width, self.notificationView.frame.size.height)];
 }
 
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-    UIView *tappedButton = [self.customLockScreen hitTest:point withEvent:event];
-    if(tappedButton) {
-        return self.customLockScreen;
-    }
-    return self.scrollView;
+- (void)notificationViewChanged {
+    //CGSize contentSize = [(UITableView *)self.notificationView contentSize];
+    BOOL shouldHideNotificationView = [((UITableView *)self.notificationView).dataSource tableView:(UITableView *)self.notificationView numberOfRowsInSection:0]==0;
+    [self.notificationView setHidden:shouldHideNotificationView];
+    [self.notificationViewBackground setHidden:shouldHideNotificationView];
 }
 
 - (void)resetView {
