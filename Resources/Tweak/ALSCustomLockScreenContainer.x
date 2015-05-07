@@ -6,6 +6,8 @@
 @interface ALSCustomLockScreenContainer()
 
 @property (nonatomic, strong) ALSCustomLockScreen *customLockScreen;
+@property (nonatomic, strong) UIView *mediaControlsView;
+@property (nonatomic, strong) UIView *mediaControlsViewBackground;
 @property (nonatomic, strong) UIView *notificationView;
 @property (nonatomic, strong) UIView *notificationViewBackground;
 @property (nonatomic, strong) ALSCustomLockScreenOverlay *scrollView;
@@ -28,6 +30,7 @@
         [_scrollView setContentOffset:CGPointMake(self.bounds.size.width, 0)];
         [_scrollView setDelegate:self];
         [_scrollView setPagingEnabled:YES];
+        //[_scrollView setScrollEnabled:NO];
         [_scrollView setShowsHorizontalScrollIndicator:NO];
         [_scrollView setShowsVerticalScrollIndicator:NO];
         [self addSubview:_scrollView];
@@ -37,6 +40,15 @@
         [self addSubview:overlayView];
     }
     return self;
+}
+
+- (void)addMediaControlsView:(UIView *)mediaControlsView {
+    [self setMediaControlsView:mediaControlsView];
+    [self.scrollView addSubview:mediaControlsView];
+    
+    [self setMediaControlsViewBackground:[[UIView alloc] initWithFrame:mediaControlsView.frame]];
+    [self.mediaControlsViewBackground setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
+    [self insertSubview:self.mediaControlsViewBackground belowSubview:self.scrollView];
 }
 
 - (void)addNotificationView:(UIView *)notificationView {
@@ -67,14 +79,24 @@
     if(tappedButton) {
         return self.customLockScreen;
     }
-    return self.scrollView;
+    
+    if((!self.notificationViewBackground.hidden && CGRectContainsPoint(self.notificationView.frame, [self.scrollView convertPoint:point fromView:self])) ||
+       (!self.mediaControlsViewBackground.hidden && CGRectContainsPoint(self.mediaControlsView.frame, [self.scrollView convertPoint:point fromView:self]))) {
+        [self.scrollView setScrollEnabled:NO];
+    }
+    else {
+        [self.scrollView setScrollEnabled:YES];
+    }
+    return [self.scrollView hitTest:[self.scrollView convertPoint:point fromView:self] withEvent:event];
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    [self.notificationView setFrame:CGRectMake(self.scrollView.bounds.size.width, self.scrollView.bounds.size.height-self.notificationView.frame.size.height, self.scrollView.bounds.size.width, self.notificationView.frame.size.height)];
-    [self.notificationViewBackground setFrame:CGRectMake(0, self.scrollView.bounds.size.height-self.notificationView.frame.size.height, self.scrollView.bounds.size.width, self.notificationView.frame.size.height)];
+    [self.notificationView setFrame:CGRectMake(self.scrollView.bounds.size.width, 0, self.scrollView.bounds.size.width, self.notificationView.frame.size.height)];
+    [self.notificationViewBackground setFrame:CGRectMake(0, 0, self.scrollView.bounds.size.width, self.notificationView.frame.size.height)];
+    [self.mediaControlsView setFrame:CGRectMake(self.scrollView.bounds.size.width, self.scrollView.bounds.size.height-self.mediaControlsView.frame.size.height-20, self.scrollView.bounds.size.width, self.mediaControlsView.frame.size.height)];
+    [self.mediaControlsViewBackground setFrame:CGRectMake(0, self.scrollView.bounds.size.height-self.mediaControlsView.frame.size.height-20, self.scrollView.bounds.size.width, self.mediaControlsView.frame.size.height+20)];
 }
 
 - (void)notificationViewChanged {
@@ -95,6 +117,8 @@
     [self.customLockScreen updateScrollPercentage:percentage];
     [self.notificationView setAlpha:1-percentage];
     [self.notificationViewBackground setAlpha:1-percentage];
+    [self.mediaControlsView setAlpha:1-percentage];
+    [self.mediaControlsViewBackground setAlpha:1-percentage];
 }
 
 - (void)setFrame:(CGRect)frame {

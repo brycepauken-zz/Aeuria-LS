@@ -11,7 +11,7 @@
     }
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
     if(!self.dragging) {
         [self.nextResponder touchesMoved:touches withEvent:event];
     }

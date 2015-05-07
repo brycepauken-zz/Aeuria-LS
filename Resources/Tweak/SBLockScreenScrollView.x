@@ -10,11 +10,44 @@
 
 @interface SBLockScreenScrollView()
 
-- (id)findNotificationViewInView:(UIView *)view maxDepth:(int)depth;
+@property (nonatomic, strong) UIScrollView *customScrollView;
+
+- (id)findViewOfClass:(Class)class inView:(UIView *)view maxDepth:(int)depth;
 
 @end
 
 %hook SBLockScreenScrollView
+
+%new
+- (id)customScrollView {
+    return objc_getAssociatedObject(self, @selector(customScrollView));
+}
+
+%new
+- (id)findViewOfClass:(Class)class inView:(UIView *)view maxDepth:(int)depth {
+    if (depth == 0 || [view isKindOfClass:[ALSCustomLockScreenContainer class]]) {
+        return nil;
+    }
+    
+    NSInteger count = depth;
+    while(count > 0) {
+        for(UIView *subview in view.subviews) {
+            if ([subview isKindOfClass:class]) {
+                return subview;
+            }
+        }
+        
+        count--;
+        for(UIView *subview in view.subviews) {
+            UIView *notificationView = [self findViewOfClass:class inView:subview maxDepth:count];
+            if(notificationView) {
+                return notificationView;
+            }
+        }
+    }
+    
+    return nil;
+}
 
 - (void)layoutSubviews {
     [self setScrollEnabled:NO];
@@ -24,7 +57,8 @@
             [view setHidden:YES];
         }
         else {
-            UIView *notificationView = [self findNotificationViewInView:self maxDepth:5];
+            UIView *notificationView = [self findViewOfClass:[%c(SBLockScreenNotificationTableView) class] inView:self maxDepth:5];
+            UIView *mediaControlsView = [self findViewOfClass:[%c(MPUSystemMediaControlsView) class] inView:self maxDepth:8];
             
             //remove tap/press gesture recognizers
             UIView *currentView = view;
@@ -38,9 +72,14 @@
             //hide all subviews that aren't our custom lock screen container
             for(UIView *subview in view.subviews) {
                 if([subview isKindOfClass:[ALSCustomLockScreenContainer class]]) {
+                    [self setCustomScrollView:[(ALSCustomLockScreenContainer *)subview scrollView]];
                     if(notificationView) {
                         [notificationView removeFromSuperview];
                         [((ALSCustomLockScreenContainer *)subview) addNotificationView:notificationView];
+                    }
+                    if(mediaControlsView) {
+                        [mediaControlsView removeFromSuperview];
+                        [((ALSCustomLockScreenContainer *)subview) addMediaControlsView:mediaControlsView];
                     }
                 }
                 else {
@@ -52,31 +91,13 @@
 }
 
 %new
-- (id)findNotificationViewInView:(UIView *)view maxDepth:(int)depth {
-    if (depth == 0 || [view isKindOfClass:[ALSCustomLockScreenContainer class]]) {
-        return nil;
-    }
-    
-    NSInteger count = depth;
-    while(count > 0) {
-        for(UIView *subview in view.subviews) {
-            if ([subview isKindOfClass:[%c(SBLockScreenNotificationTableView) class]]) {
-                return subview;
-            }
-        }
-        
-        count--;
-        for(UIView *subview in view.subviews) {
-            UIView *notificationView = [self findNotificationViewInView:subview maxDepth:count];
-            if(notificationView) {
-                return notificationView;
-            }
-        }
-    }
-    
-    return nil;
+- (void)setCustomScrollView:(id)customScrollView {
+    objc_setAssociatedObject(self, @selector(customScrollView), customScrollView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-
+- (void)setContentOffset:(CGPoint)offset {
+    %orig(CGPointMake(self.bounds.size.width, 0));
+    [self.customScrollView setContentOffset:offset];
+};
 
 %end
