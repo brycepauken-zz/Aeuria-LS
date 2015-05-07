@@ -53,6 +53,7 @@
 		027F9B531AF7041100180368 /* SBUIPasscodeLockViewBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBUIPasscodeLockViewBase.h; sourceTree = "<group>"; };
 		027F9B541AF71C7500180368 /* ALSProxyPasscodeHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSProxyPasscodeHandler.h; sourceTree = "<group>"; };
 		027F9B551AF71C7500180368 /* ALSProxyPasscodeHandler.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSProxyPasscodeHandler.x; sourceTree = "<group>"; };
+		027FFDAB1AFA9E0400FA1486 /* SBUIPasscodeLockViewBase.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBUIPasscodeLockViewBase.x; sourceTree = "<group>"; };
 		0280F2621AEB264D0048BF91 /* ALSPreferencesColorCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesColorCell.h; sourceTree = "<group>"; };
 		0280F2631AEB264D0048BF91 /* ALSPreferencesColorCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesColorCell.m; sourceTree = "<group>"; };
 		028285EE1AF0836D0079E923 /* Defaults.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
@@ -141,6 +142,7 @@
 				023724221AC25213007FAFC1 /* SBLockScreenViewController.h */,
 				023724231AC25213007FAFC1 /* SBLockScreenViewController.x */,
 				027F9B531AF7041100180368 /* SBUIPasscodeLockViewBase.h */,
+				027FFDAB1AFA9E0400FA1486 /* SBUIPasscodeLockViewBase.x */,
 				023724241AC25213007FAFC1 /* SBWallpaperEffectView.h */,
 				023724251AC25213007FAFC1 /* SBWallpaperEffectView.x */,
 			);
