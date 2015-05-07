@@ -8,8 +8,10 @@
 @property (nonatomic, strong) ALSCustomLockScreen *customLockScreen;
 @property (nonatomic, strong) UIView *mediaControlsView;
 @property (nonatomic, strong) UIView *mediaControlsViewBackground;
+@property (nonatomic, strong) UIView *mediaControlsViewOriginalSuperview;
 @property (nonatomic, strong) UIView *notificationView;
 @property (nonatomic, strong) UIView *notificationViewBackground;
+@property (nonatomic, strong) UIView *notificationViewOriginalSuperview;
 @property (nonatomic, strong) ALSCustomLockScreenOverlay *scrollView;
 
 @end
@@ -42,20 +44,24 @@
     return self;
 }
 
-- (void)addMediaControlsView:(UIView *)mediaControlsView {
+- (void)addMediaControlsView:(UIView *)mediaControlsView fromSuperView:(UIView *)superView {
     [self setMediaControlsView:mediaControlsView];
+    [mediaControlsView removeFromSuperview];
     [self.scrollView addSubview:mediaControlsView];
     
     [self setMediaControlsViewBackground:[[UIView alloc] initWithFrame:mediaControlsView.frame]];
     [self.mediaControlsViewBackground setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
     [self insertSubview:self.mediaControlsViewBackground belowSubview:self.scrollView];
+    
+    [self setMediaControlsViewOriginalSuperview:superView];
 }
 
-- (void)addNotificationView:(UIView *)notificationView {
+- (void)addNotificationView:(UIView *)notificationView fromSuperView:(UIView *)superView {
     //cut notificiation view height in half
     CGRect notificationViewFrame = notificationView.frame;
     notificationViewFrame.size.height /= 2;
     [notificationView setFrame:notificationViewFrame];
+    [(UITableView *)notificationView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     
     //remove all non-tableview subviews
     for(UIView *subview in [notificationView.subviews copy]) {
@@ -65,13 +71,26 @@
     }
     
     [self setNotificationView:notificationView];
+    [notificationView removeFromSuperview];
     [self.scrollView addSubview:notificationView];
     
     [self setNotificationViewBackground:[[UIView alloc] initWithFrame:notificationView.frame]];
     [self.notificationViewBackground setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
     [self insertSubview:self.notificationViewBackground belowSubview:self.scrollView];
     
+    [self setNotificationViewOriginalSuperview:superView];
+    
     [self notificationViewChanged];
+}
+
+- (void)dealloc {
+    [self.mediaControlsView removeFromSuperview];
+    [self.mediaControlsViewOriginalSuperview addSubview:self.mediaControlsView];
+    self.mediaControlsViewOriginalSuperview = nil;
+    
+    [self.notificationView removeFromSuperview];
+    [self.notificationViewOriginalSuperview addSubview:self.notificationView];
+    self.notificationViewOriginalSuperview = nil;
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {

@@ -2,6 +2,11 @@
 
 @implementation ALSCustomLockScreenOverlay
 
+- (void)setContentOffset:(CGPoint)offset {
+    [super setContentOffset:offset];
+    
+}
+
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     if(!self.dragging) {
         [self.nextResponder touchesBegan:touches withEvent:event];

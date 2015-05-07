@@ -74,12 +74,10 @@
                 if([subview isKindOfClass:[ALSCustomLockScreenContainer class]]) {
                     [self setCustomScrollView:[(ALSCustomLockScreenContainer *)subview scrollView]];
                     if(notificationView) {
-                        [notificationView removeFromSuperview];
-                        [((ALSCustomLockScreenContainer *)subview) addNotificationView:notificationView];
+                        [((ALSCustomLockScreenContainer *)subview) addNotificationView:notificationView fromSuperView:notificationView.superview];
                     }
                     if(mediaControlsView) {
-                        [mediaControlsView removeFromSuperview];
-                        [((ALSCustomLockScreenContainer *)subview) addMediaControlsView:mediaControlsView];
+                        [((ALSCustomLockScreenContainer *)subview) addMediaControlsView:mediaControlsView fromSuperView:mediaControlsView.superview];
                     }
                 }
                 else {
@@ -97,7 +95,9 @@
 
 - (void)setContentOffset:(CGPoint)offset {
     %orig(CGPointMake(self.bounds.size.width, 0));
-    [self.customScrollView setContentOffset:offset];
+    if(!self.customScrollView.dragging) {
+        [self.customScrollView setContentOffset:offset];
+    }
 };
 
 %end
