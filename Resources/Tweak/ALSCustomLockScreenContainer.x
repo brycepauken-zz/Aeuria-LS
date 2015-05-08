@@ -32,7 +32,6 @@
         [_scrollView setContentOffset:CGPointMake(self.bounds.size.width, 0)];
         [_scrollView setDelegate:self];
         [_scrollView setPagingEnabled:YES];
-        //[_scrollView setScrollEnabled:NO];
         [_scrollView setShowsHorizontalScrollIndicator:NO];
         [_scrollView setShowsVerticalScrollIndicator:NO];
         [self addSubview:_scrollView];

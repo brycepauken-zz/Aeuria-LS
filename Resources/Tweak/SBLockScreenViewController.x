@@ -8,6 +8,7 @@
 
 #import "ALSCustomLockScreenContainer.h"
 #import "ALSProxyPasscodeHandler.h"
+#import "SBLockScreenScrollView.h"
 #import "SBUIPasscodeLockViewBase.h"
 #import <objc/runtime.h>
 
@@ -88,15 +89,7 @@
     }];
     [self.customLockScreenContainer.layer setZPosition:MAXFLOAT];
     
-    UIView *rightView;
-    for(UIView *view in [[self lockScreenScrollView] subviews]) {
-        if(view.frame.origin.x > 0) {
-            if(!rightView || view.frame.size.width>rightView.frame.size.width) {
-                rightView = view;
-            }
-        }
-    }
-    [(rightView?:[self lockScreenView]) addSubview:self.customLockScreenContainer];
+    [[[self lockScreenScrollView] superview] addSubview:self.customLockScreenContainer];
 }
 
 /*

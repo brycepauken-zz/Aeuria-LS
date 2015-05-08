@@ -25,8 +25,6 @@
 		0237241D1AC25213007FAFC1 /* SBChevronView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBChevronView.x; sourceTree = "<group>"; };
 		0237241E1AC25213007FAFC1 /* SBFLockScreenDateView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBFLockScreenDateView.h; sourceTree = "<group>"; };
 		0237241F1AC25213007FAFC1 /* SBFLockScreenDateView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBFLockScreenDateView.x; sourceTree = "<group>"; };
-		023724201AC25213007FAFC1 /* SBLockScreenScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBLockScreenScrollView.h; sourceTree = "<group>"; };
-		023724211AC25213007FAFC1 /* SBLockScreenScrollView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBLockScreenScrollView.x; sourceTree = "<group>"; };
 		023724221AC25213007FAFC1 /* SBLockScreenViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBLockScreenViewController.h; sourceTree = "<group>"; };
 		023724231AC25213007FAFC1 /* SBLockScreenViewController.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBLockScreenViewController.x; sourceTree = "<group>"; };
 		023724241AC25213007FAFC1 /* SBWallpaperEffectView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBWallpaperEffectView.h; sourceTree = "<group>"; };
@@ -65,6 +63,8 @@
 		02A1014F1AEF3AE8003296EB /* ALSPreferencesListItemsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesListItemsController.h; sourceTree = "<group>"; };
 		02A101501AEF3AE8003296EB /* ALSPreferencesListItemsController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesListItemsController.m; sourceTree = "<group>"; };
 		02A101511AEF3B42003296EB /* PSListItemsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PSListItemsController.h; sourceTree = "<group>"; };
+		02A99F1A1AFD1FFF00B197D7 /* SBLockScreenScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBLockScreenScrollView.h; sourceTree = "<group>"; };
+		02A99F1B1AFD1FFF00B197D7 /* SBLockScreenScrollView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBLockScreenScrollView.x; sourceTree = "<group>"; };
 		02AC49791AE8ECD000426584 /* ALSPreferencesProxyTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesProxyTarget.h; sourceTree = "<group>"; };
 		02AC497A1AE8ECD000426584 /* ALSPreferencesProxyTarget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesProxyTarget.m; sourceTree = "<group>"; };
 		02B7DB4D1AF6B2D30011724E /* ALSCustomLockScreenOverlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenOverlay.h; sourceTree = "<group>"; };
@@ -141,8 +141,8 @@
 				0237241F1AC25213007FAFC1 /* SBFLockScreenDateView.x */,
 				027FFDAC1AFAEA1200FA1486 /* SBLockScreenNotificationListView.h */,
 				027FFDAD1AFAEA1200FA1486 /* SBLockScreenNotificationListView.x */,
-				023724201AC25213007FAFC1 /* SBLockScreenScrollView.h */,
-				023724211AC25213007FAFC1 /* SBLockScreenScrollView.x */,
+				02A99F1A1AFD1FFF00B197D7 /* SBLockScreenScrollView.h */,
+				02A99F1B1AFD1FFF00B197D7 /* SBLockScreenScrollView.x */,
 				023724221AC25213007FAFC1 /* SBLockScreenViewController.h */,
 				023724231AC25213007FAFC1 /* SBLockScreenViewController.x */,
 				027F9B531AF7041100180368 /* SBUIPasscodeLockViewBase.h */,
