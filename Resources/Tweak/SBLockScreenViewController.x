@@ -6,6 +6,7 @@
 
 #import "SBLockScreenViewController.h"
 
+#import "ALSCustomLockScreen.h"
 #import "ALSCustomLockScreenContainer.h"
 #import "ALSProxyPasscodeHandler.h"
 #import "SBLockScreenScrollView.h"
@@ -37,6 +38,16 @@
 %new
 - (id)customLockScreenContainer {
     return objc_getAssociatedObject(self, @selector(customLockScreenContainer));
+}
+
+%new
+- (void)failedBio {
+    [self.customLockScreenContainer.customLockScreen failedEntry];
+}
+
+%new
+- (void)failedPasscode {
+    [self.customLockScreenContainer.customLockScreen failedEntry];
 }
 
 /*

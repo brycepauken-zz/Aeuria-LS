@@ -8,6 +8,7 @@
 
 @interface ALSCustomLockScreen : UIView <UIScrollViewDelegate>
 
+- (void)failedEntry;
 - (void)resetView;
 - (void)setPasscodeEntered:(void (^)(NSString *passcode))passcodeEntered;
 - (void)updateScrollPercentage:(CGFloat)percentage;

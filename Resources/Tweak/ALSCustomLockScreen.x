@@ -64,6 +64,18 @@
     return fabs(xOffset-(point.x-self.bounds.size.width/2)) < self.buttonRadius*2 && fabs(yOffset-(point.y-self.bounds.size.height/2)) < self.buttonRadius*2;
 }
 
+- (void)failedEntry {
+    if(self.percentage < 0.5) {
+        CABasicAnimation *shakeAnimation = [CABasicAnimation animationWithKeyPath:@"position"];
+        [shakeAnimation setAutoreverses:YES];
+        [shakeAnimation setDuration:0.05];
+        [shakeAnimation setFromValue:[NSValue valueWithCGPoint:CGPointMake(self.center.x-10, self.center.y)]];
+        [shakeAnimation setRepeatCount:4];
+        [shakeAnimation setToValue:[NSValue valueWithCGPoint:CGPointMake(self.center.x+10, self.center.y)]];
+        [self.layer addAnimation:shakeAnimation forKey:@"position"];
+    }
+}
+
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
     if(self.percentage < 1) {
         return nil;
@@ -128,7 +140,7 @@
                 self.buttonHighlighted = NO;
                 self.needsUpdate = YES;
                 
-                [self.filledOverlayMask addDot];
+                [self.filledOverlayMask addDotAndAnimate:YES];
                 if(self.highlightedButtonIndex<9) {
                     [self.passcode appendFormat:@"%i",self.highlightedButtonIndex+1];
                 }

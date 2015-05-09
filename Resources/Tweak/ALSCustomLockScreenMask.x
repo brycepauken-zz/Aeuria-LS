@@ -99,7 +99,7 @@
     return self;
 }
 
-- (void)addDot {
+- (void)addDotAndAnimate:(BOOL)animate {
     //create new dot
     int existingDotCount = (int)self.dotsLayer.sublayers.count;
     
@@ -114,7 +114,7 @@
     
     //animate alpha
     CABasicAnimation *opacityAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
-    [opacityAnimation setDuration:0.1];
+    [opacityAnimation setDuration:animate?0.1:0];
     [opacityAnimation setFromValue:@(0)];
     [opacityAnimation setToValue:@(1)];
     [dot addAnimation:opacityAnimation forKey:@"opacity"];
@@ -127,7 +127,7 @@
         
         CGFloat newPositionX = firstDotOffset+(self.dotRadius*2+self.dotPadding)*dotIndex;
         CABasicAnimation *positionAnimation = [CABasicAnimation animationWithKeyPath:@"position.x"];
-        [positionAnimation setDuration:0.1];
+        [positionAnimation setDuration:animate?0.1:0];
         [positionAnimation setFromValue:@(subdot==dot?dot.position.x:[subdot.presentationLayer position].x)];
         [positionAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut]];
         [positionAnimation setToValue:@(newPositionX)];

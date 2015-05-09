@@ -18,4 +18,7 @@
 - (long long)statusBarStyle;
 - (void)viewWillAppear:(BOOL)view;
 
+- (void)failedBio;
+- (void)failedPasscode;
+
 @end

@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-@interface SBUIPasscodeLockViewBase : NSObject {
+@interface SBUIPasscodeLockViewBase : UIView {
     NSString *_passcode;
 }
 

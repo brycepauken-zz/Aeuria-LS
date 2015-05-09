@@ -10,7 +10,7 @@
 @interface ALSCustomLockScreenMask : CAShapeLayer
 
 - (instancetype)initWithFrame:(CGRect)frame preferencesManager:(ALSPreferencesManager *)preferencesManager;
-- (void)addDot;
+- (void)addDotAndAnimate:(BOOL)animate;
 - (void)buttonAtIndex:(int)index setHighlighted:(BOOL)highlighted;
 - (BOOL)isAnimating;
 - (BOOL)needsUpdate;
