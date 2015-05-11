@@ -74,6 +74,9 @@
         [shakeAnimation setToValue:[NSValue valueWithCGPoint:CGPointMake(self.center.x+10, self.center.y)]];
         [self.layer addAnimation:shakeAnimation forKey:@"position"];
     }
+    else {
+        [self.filledOverlayMask shakeDots];
+    }
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
@@ -183,7 +186,6 @@
 - (void)updateViews {
     if(self.percentage != self.previousPercentage || self.filledOverlayMask.isAnimating || self.needsUpdate || self.filledOverlayMask.needsUpdate) {
         self.needsUpdate = NO;
-        self.filledOverlayMask.needsUpdate = NO;
         self.previousPercentage = self.percentage;
         [self.filledOverlayMask updateMaskWithPercentage:self.percentage];
     }

@@ -16,7 +16,7 @@
 - (BOOL)needsUpdate;
 - (void)removeAllDots;
 - (void)resetMask;
-- (void)setNeedsUpdate:(BOOL)needsUpdate;
+- (void)shakeDots;
 - (void)updateMaskWithPercentage:(CGFloat)percentage;
 
 @end

@@ -24,8 +24,8 @@
 @property (nonatomic) CGFloat largeCircleMaxInternalPaddingIncrement;
 @property (nonatomic) CGFloat largeCircleMaxRadiusIncrement;
 @property (nonatomic, strong) NSTimer *minuteTimer;
-@property (nonatomic) BOOL needsUpdate;
 @property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
+@property (nonatomic) NSTimeInterval updateUntilTime;
 
 //preference properties
 @property (nonatomic) int buttonPadding;
@@ -57,6 +57,7 @@
         _largeCircleInnerPadding = [[preferencesManager preferenceForKey:@"clockInnerPadding"] intValue];
         _largeCircleMinRadius = [[preferencesManager preferenceForKey:@"clockRadius"] intValue];
         _pressedButtonAlpha = 0.25;
+        _updateUntilTime = -1;
         
         _currentHour = 0;
         _currentMinute = 0;
@@ -243,6 +244,17 @@
     self.largeCircleMaxInternalPaddingIncrement = ((self.largeCircleMaxRadiusIncrement+self.largeCircleMinRadius)/(CGFloat)self.largeCircleMinRadius)*self.largeCircleInnerPadding-self.largeCircleInnerPadding;
 }
 
+- (BOOL)needsUpdate {
+    if(self.updateUntilTime < 0) {
+        return NO;
+    }
+    if(CACurrentMediaTime() < self.updateUntilTime) {
+        return YES;
+    }
+    self.updateUntilTime = -1;
+    return NO;
+}
+
 + (UIBezierPath *)pathForCircleWithRadius:(CGFloat)radius center:(CGPoint)center {
     return [UIBezierPath bezierPathWithRoundedRect:CGRectMake(center.x-radius, center.y-radius, radius*2, radius*2) byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(radius, radius)];
 }
@@ -297,6 +309,16 @@
         [self updateTimeOnMinute];
     });
     [self updateTimeWithDate:[NSDate date]];
+}
+
+- (void)shakeDots {
+    CABasicAnimation *shakeAnimation = [CABasicAnimation animationWithKeyPath:@"position"];
+    [shakeAnimation setAutoreverses:YES];
+    [shakeAnimation setDuration:0.05];
+    [shakeAnimation setFromValue:[NSValue valueWithCGPoint:CGPointMake(self.dotsDisplayLayer.position.x-10, self.dotsDisplayLayer.position.y)]];
+    [shakeAnimation setRepeatCount:4];
+    [shakeAnimation setToValue:[NSValue valueWithCGPoint:CGPointMake(self.dotsDisplayLayer.position.x+10, self.dotsDisplayLayer.position.y)]];
+    [self.dotsDisplayLayer addAnimation:shakeAnimation forKey:@"position"];
 }
 
 - (void)updateMaskWithPercentage:(CGFloat)percentage {
@@ -373,7 +395,7 @@
     self.currentMinute = currentMinute;
     
     [self updateMaskWithPercentage:self.currentPercentage];
-    self.needsUpdate = YES;
+    self.updateUntilTime = CACurrentMediaTime()+0.1;
     
     //preload the mask for the next minute
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
