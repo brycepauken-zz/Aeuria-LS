@@ -90,11 +90,11 @@
     //tell the lock screen view controller if we've found the notification or media controls views
     if([self lockScreenViewController]) {
         UIView *mediaControlsView = [[self.customProperties objectForKey:@"mediaControlsView"] object];
-        if(mediaControlsView && ![mediaControlsView.superview isKindOfClass:[%c(ALSCustomLockScreenOverlay) class]]) {
+        if(mediaControlsView) {
             [[[self lockScreenViewController] customLockScreenContainer] addMediaControlsView:mediaControlsView fromSuperView:mediaControlsView.superview];
         }
         UIView *notificationView = [[self.customProperties objectForKey:@"notificationView"] object];
-        if(notificationView && ![notificationView.superview isKindOfClass:[%c(ALSCustomLockScreenOverlay) class]]) {
+        if(notificationView) {
             [[[self lockScreenViewController] customLockScreenContainer] addNotificationView:notificationView fromSuperView:notificationView.superview];
         }
     }
