@@ -18,6 +18,7 @@
 - (long long)statusBarStyle;
 - (void)viewWillAppear:(BOOL)view;
 
+- (id)customLockScreenContainer;
 - (void)failedBio;
 - (void)failedPasscode;
 - (void)setCustomLockScreenHidden:(BOOL)hidden;

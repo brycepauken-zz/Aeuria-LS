@@ -22,6 +22,7 @@
 //preference properties
 @property (nonatomic) int buttonPadding;
 @property (nonatomic) int buttonRadius;
+@property (nonatomic) BOOL shouldShowWithNotifications;
 
 @end
 
@@ -34,6 +35,7 @@
         
         _buttonPadding = 10;
         _buttonRadius = 44;
+        _shouldShowWithNotifications = YES;
         
         _passcode = [[NSMutableString alloc] init];
         _percentage = 0;

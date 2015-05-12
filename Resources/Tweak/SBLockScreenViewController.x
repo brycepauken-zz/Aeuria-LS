@@ -94,6 +94,11 @@
 
 %new
 - (void)setCustomLockScreenHidden:(BOOL)hidden {
+    if([[self.customLockScreenContainer customLockScreen] shouldShowWithNotifications]) {
+        [[self lockScreenScrollView] setHidden:YES];
+        return;
+    }
+    
     objc_setAssociatedObject(self, @selector(customLockScreenHidden), @(hidden), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     [[self.customLockScreenContainer customLockScreen] setDisplayLinkPaused:hidden];
     if(hidden) {

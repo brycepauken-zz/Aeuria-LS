@@ -44,6 +44,10 @@
 }
 
 - (void)addMediaControlsView:(UIView *)mediaControlsView fromSuperView:(UIView *)superView {
+    if(![self.customLockScreen shouldShowWithNotifications]) {
+        return;
+    }
+    
     [self setMediaControlsView:mediaControlsView];
     [mediaControlsView removeFromSuperview];
     [self.scrollView addSubview:mediaControlsView];
@@ -56,6 +60,10 @@
 }
 
 - (void)addNotificationView:(UIView *)notificationView fromSuperView:(UIView *)superView {
+    if(![self.customLockScreen shouldShowWithNotifications]) {
+        return;
+    }
+    
     //cut notificiation view height in half
     CGRect notificationViewFrame = notificationView.frame;
     notificationViewFrame.size.height /= 2;

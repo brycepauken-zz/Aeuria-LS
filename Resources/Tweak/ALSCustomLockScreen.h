@@ -12,6 +12,7 @@
 - (void)resetView;
 - (void)setDisplayLinkPaused:(BOOL)paused;
 - (void)setPasscodeEntered:(void (^)(NSString *passcode))passcodeEntered;
+- (BOOL)shouldShowWithNotifications;
 - (void)updateScrollPercentage:(CGFloat)percentage;
 
 @end

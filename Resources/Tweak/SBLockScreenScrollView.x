@@ -17,6 +17,7 @@
 - (void)checkShouldShowCustomLockScreen;
 - (id)findViewOfClass:(Class)class inView:(UIView *)view maxDepth:(int)depth;
 - (id)lockScreenViewController;
+- (void)searchSubviews;
 
 @end
 
@@ -24,11 +25,7 @@
 
 %new
 - (void)checkShouldShowCustomLockScreen {
-    UIView *mediaControlsView = [[self.customProperties objectForKey:@"mediaControlsView"] object];
-    if(!mediaControlsView) {
-        mediaControlsView = [self findViewOfClass:[%c(MPUSystemMediaControlsView) class] inView:self maxDepth:9];
-        [self.customProperties setObject:[ALSProxyObject proxyOfType:ALSProxyObjectWeakReference forObject:mediaControlsView] forKey:@"mediaControlsView"];
-    }
+    [self searchSubviews];
     
     NSNumber *shouldShowCustomLockScreenExistingNum = [[self.customProperties objectForKey:@"shouldShowCustomLockScreen"] object];
     BOOL shouldShowCustomLockScreenExisting = [shouldShowCustomLockScreenExistingNum boolValue];
@@ -36,6 +33,7 @@
     NSNumber *notificationViewFilledNum = [[self.customProperties objectForKey:@"notificationViewFilled"] object];
     BOOL notificationViewFilled = [notificationViewFilledNum boolValue];
     
+    UIView *mediaControlsView = [[self.customProperties objectForKey:@"mediaControlsView"] object];
     BOOL shouldShowCustomLockScreen = !mediaControlsView && (notificationViewFilledNum && !notificationViewFilled);
     
     if(!shouldShowCustomLockScreenExistingNum || shouldShowCustomLockScreenExisting!=shouldShowCustomLockScreen) {
@@ -86,7 +84,22 @@
 - (void)layoutSubviews {
     %orig;
     
-    if(![[self.customProperties objectForKey:@"notificationView"] object]) {
+    BOOL notificationViewNotFound = ![[self.customProperties objectForKey:@"notificationView"] object];
+    [self searchSubviews];
+    
+    //tell the lock screen view controller if we've found the notification or media controls views
+    if([self lockScreenViewController]) {
+        UIView *mediaControlsView = [[self.customProperties objectForKey:@"mediaControlsView"] object];
+        if(mediaControlsView && ![mediaControlsView.superview isKindOfClass:[%c(ALSCustomLockScreenOverlay) class]]) {
+            [[[self lockScreenViewController] customLockScreenContainer] addMediaControlsView:mediaControlsView fromSuperView:mediaControlsView.superview];
+        }
+        UIView *notificationView = [[self.customProperties objectForKey:@"notificationView"] object];
+        if(notificationView && ![notificationView.superview isKindOfClass:[%c(ALSCustomLockScreenOverlay) class]]) {
+            [[[self lockScreenViewController] customLockScreenContainer] addNotificationView:notificationView fromSuperView:notificationView.superview];
+        }
+    }
+    
+    if(notificationViewNotFound && [[self.customProperties objectForKey:@"notificationView"] object]) {
         [self notificationViewChanged];
     }
     [self checkShouldShowCustomLockScreen];
@@ -109,15 +122,22 @@
 
 %new
 - (void)notificationViewChanged {
-    UIView *notificationView = [[self.customProperties objectForKey:@"notificationView"] object];
-    if(!notificationView) {
-        notificationView = [self findViewOfClass:[%c(SBLockScreenNotificationTableView) class] inView:self maxDepth:6];
-        [self.customProperties setObject:[ALSProxyObject proxyOfType:ALSProxyObjectWeakReference forObject:notificationView] forKey:@"notificationView"];
-    }
+    [self searchSubviews];
     
+    UIView *notificationView = [[self.customProperties objectForKey:@"notificationView"] object];
     if(notificationView) {
         [self.customProperties setObject:[ALSProxyObject proxyOfType:ALSProxyObjectStrongReference forObject:@([((UITableView *)notificationView).dataSource tableView:(UITableView *)notificationView numberOfRowsInSection:0]>0)] forKey:@"notificationViewFilled"];
         [self checkShouldShowCustomLockScreen];
+    }
+}
+
+%new
+- (void)searchSubviews {
+    if(![[self.customProperties objectForKey:@"mediaControlsView"] object]) {
+        [self.customProperties setObject:[ALSProxyObject proxyOfType:ALSProxyObjectWeakReference forObject:[self findViewOfClass:[%c(MPUSystemMediaControlsView) class] inView:self maxDepth:9]] forKey:@"mediaControlsView"];
+    }
+    if(![[self.customProperties objectForKey:@"notificationView"] object]) {
+        [self.customProperties setObject:[ALSProxyObject proxyOfType:ALSProxyObjectWeakReference forObject:[self findViewOfClass:[%c(SBLockScreenNotificationTableView) class] inView:self maxDepth:6]] forKey:@"notificationView"];
     }
 }
 
