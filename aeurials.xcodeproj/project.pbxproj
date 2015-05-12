@@ -40,6 +40,8 @@
 		02530BF21ADF1940004F3488 /* Clock Face Settings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Clock Face Settings.plist"; sourceTree = "<group>"; };
 		02530BF31ADF1C5E004F3488 /* ALSPreferencesSubListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesSubListController.h; sourceTree = "<group>"; };
 		02530BF41ADF1C5E004F3488 /* ALSPreferencesSubListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesSubListController.m; sourceTree = "<group>"; };
+		025915741B0156AE00B0FE29 /* ALSProxyObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSProxyObject.h; sourceTree = "<group>"; };
+		025915751B0156AE00B0FE29 /* ALSProxyObject.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSProxyObject.x; sourceTree = "<group>"; };
 		0260B5F41AF42E51003AE8C5 /* Passcode & Passphrase Settings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Passcode & Passphrase Settings.plist"; sourceTree = "<group>"; };
 		0260B5F51AF4324A003AE8C5 /* Other Settings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Other Settings.plist"; sourceTree = "<group>"; };
 		027E66601AF029DF00B77D65 /* ALSPreferencesFontCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesFontCell.h; sourceTree = "<group>"; };
@@ -131,6 +133,8 @@
 				02B7DB501AF6BB880011724E /* ALSImmediatePanGestureRecognizer.x */,
 				022130AA1AE1BDE800054A1A /* ALSPreferencesManager.h */,
 				022130AB1AE1BDE800054A1A /* ALSPreferencesManager.x */,
+				025915741B0156AE00B0FE29 /* ALSProxyObject.h */,
+				025915751B0156AE00B0FE29 /* ALSProxyObject.x */,
 				027F9B541AF71C7500180368 /* ALSProxyPasscodeHandler.h */,
 				027F9B551AF71C7500180368 /* ALSProxyPasscodeHandler.x */,
 				0298578B1AE859980014B5C2 /* ALSProxyTarget.h */,

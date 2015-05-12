@@ -10,6 +10,7 @@
 
 - (void)failedEntry;
 - (void)resetView;
+- (void)setDisplayLinkPaused:(BOOL)paused;
 - (void)setPasscodeEntered:(void (^)(NSString *passcode))passcodeEntered;
 - (void)updateScrollPercentage:(CGFloat)percentage;
 

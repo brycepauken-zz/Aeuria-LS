@@ -2,4 +2,8 @@
 
 @interface SBLockScreenScrollView : UIScrollView
 
+- (id)customScrollView;
+- (void)notificationViewChanged;
+- (void)setCustomScrollView:(id)customScrollView;
+
 @end

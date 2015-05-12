@@ -20,5 +20,6 @@
 
 - (void)failedBio;
 - (void)failedPasscode;
+- (void)setCustomLockScreenHidden:(BOOL)hidden;
 
 @end

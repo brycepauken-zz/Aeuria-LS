@@ -165,6 +165,10 @@
     }
 }
 
+- (void)setDisplayLinkPaused:(BOOL)paused {
+    [self.displayLink setPaused:paused];
+}
+
 - (void)setPercentage:(CGFloat)percentage {
     _percentage = MAX(0, percentage);
 }
@@ -184,6 +188,9 @@
 }
 
 - (void)updateViews {
+    if(self.hidden || !self.superview || self.superview.hidden) {
+        return;
+    }
     if(self.percentage != self.previousPercentage || self.filledOverlayMask.isAnimating || self.needsUpdate || self.filledOverlayMask.needsUpdate) {
         self.needsUpdate = NO;
         self.previousPercentage = self.percentage;
