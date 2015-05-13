@@ -144,6 +144,7 @@
 - (void)startLockScreenFadeInAnimationForSource:(int)arg1 {
     %orig;
     
+    [self setHintGestureRecognizersEnabled:![[self lockScreenScrollView] isHidden]];
     [self.customLockScreenContainer resetView];
 }
 
