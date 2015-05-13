@@ -24,6 +24,7 @@
 @property (nonatomic, strong) CAShapeLayer *internalLayerOverlay;
 @property (nonatomic) CGFloat largeCircleMaxInternalPaddingIncrement;
 @property (nonatomic) CGFloat largeCircleMaxRadiusIncrement;
+@property (nonatomic, strong) CAShapeLayer *maskLayer;
 @property (nonatomic, strong) NSTimer *minuteTimer;
 @property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
 @property (nonatomic) ALSLockScreenSecurityType securityType;
@@ -66,37 +67,40 @@
         _currentPercentage = 0;
         _highlightedButtonIndexes = [[NSMutableArray alloc] init];
         
+        _internalLayer = [[CAShapeLayer alloc] init];
+        
         //masks to outer bounds
         _circleMaskLayer = [[CAShapeLayer alloc] init];
         [_circleMaskLayer setFillColor:[[UIColor blackColor] CGColor]];
+        [_internalLayer setMask:_circleMaskLayer];
         
         //holds main mask (clock & buttons)
-        _internalLayer = [[CAShapeLayer alloc] init];
-        [_internalLayer setFillColor:[[UIColor blackColor] CGColor]];
-        [_internalLayer setFillRule:kCAFillRuleEvenOdd];
-        [_internalLayer setMask:_circleMaskLayer];
+        _maskLayer = [[CAShapeLayer alloc] init];
+        [_maskLayer setFillColor:[[UIColor blackColor] CGColor]];
+        [_maskLayer setFillRule:kCAFillRuleEvenOdd];
+        [_internalLayer addSublayer:_maskLayer];
         
         _internalLayerOverlay = [[CAShapeLayer alloc] init];
         [_internalLayerOverlay setFillColor:[[UIColor blackColor] CGColor]];
+        [_internalLayer addSublayer:_internalLayerOverlay];
         
         //holds dots above passcode entry
         _dotsLayer = [[CAShapeLayer alloc] init];
         [_dotsLayer setFillColor:[[UIColor blackColor] CGColor]];
-        [_internalLayer addSublayer:_dotsLayer];
+        [_maskLayer addSublayer:_dotsLayer];
         _dotsDisplayLayer = [[CAShapeLayer alloc] init];
         [_dotsDisplayLayer setFillColor:[[UIColor blackColor] CGColor]];
-        [_internalLayer addSublayer:_dotsDisplayLayer];
+        [_maskLayer addSublayer:_dotsDisplayLayer];
         
         _highlightedButtonLayer = [[CAShapeLayer alloc] init];
         [_highlightedButtonLayer setFillColor:[[UIColor colorWithWhite:0 alpha:_pressedButtonAlpha] CGColor]];
+        [_internalLayer addSublayer:_highlightedButtonLayer];
         
         _clock = [[ALSCustomLockScreenClock alloc] initWithRadius:_largeCircleMinRadius-_largeCircleInnerPadding type:ALSClockTypeText preferencesManager:_preferencesManager];
         _buttons = [[ALSCustomLockScreenButtons alloc] initWithPreferencesManager:_preferencesManager];
         
         [self setFrame:frame];
         [self addSublayer:_internalLayer];
-        [self addSublayer:_internalLayerOverlay];
-        [self addSublayer:_highlightedButtonLayer];
         [self layoutSublayers];
         
         [self setInstructions:@"Enter Passcode"];
@@ -235,9 +239,10 @@
     [super layoutSublayers];
     
     [self.circleMaskLayer setFrame:self.bounds];
+    [self.highlightedButtonLayer setFrame:self.bounds];
     [self.internalLayer setFrame:self.bounds];
     [self.internalLayerOverlay setFrame:self.bounds];
-    [self.highlightedButtonLayer setFrame:self.bounds];
+    [self.maskLayer setFrame:self.bounds];
     
     //dotsLayer's frame is a long horizontal bar placed dotVerticalOffset pixels above the highest button
     CGSize screenSize = [[UIScreen mainScreen] bounds].size;
@@ -336,16 +341,16 @@
     
     CGPoint boundsCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
     
+    UIBezierPath *mask = [UIBezierPath bezierPathWithRect:self.bounds];
+    
     //find how much to add to the minimum circle size
     CGFloat largeCircleIncrement = self.largeCircleMaxRadiusIncrement*percentage;
     CGFloat largeRadius = self.largeCircleMinRadius+largeCircleIncrement;
     
-    //mask the whole thing to the large outer circle
-    [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
-    
-    UIBezierPath *mask = [UIBezierPath bezierPathWithRect:self.bounds];
-    
     if(self.securityType == ALSLockScreenSecurityTypeCode) {
+        //mask the whole thing to the large outer circle
+        [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
+    
         //add clock to internal path
         CGFloat clockScale = MAX(0,(1-percentage/self.clockInvisibleAt));
         CGFloat clockRadiusScaled = self.clock.radius*clockScale;
@@ -383,7 +388,13 @@
         }
         [self.highlightedButtonLayer setPath:highlightedButtonsPath.CGPath];
     }
+    else if(self.securityType == ALSLockScreenSecurityTypePhrase) {
+        [self.circleMaskLayer setPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(boundsCenter.x-largeRadius, boundsCenter.y-self.largeCircleMinRadius, largeRadius*2, self.largeCircleMinRadius*2) byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(self.largeCircleMinRadius, self.largeCircleMinRadius)].CGPath];
+    }
     else if(self.securityType == ALSLockScreenSecurityTypeNone) {
+        //mask the whole thing to the large outer circle
+        [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
+    
         //add clock to internal path
         CGFloat clockScale = largeCircleIncrement/self.largeCircleMinRadius+1;
         CGFloat clockRadiusScaled = self.clock.radius*clockScale;
@@ -399,7 +410,7 @@
         [CATransaction commit];
     }
     
-    [self.internalLayer setPath:mask.CGPath];
+    [self.maskLayer setPath:mask.CGPath];
 }
 
 - (void)updateTimeOnMinute {

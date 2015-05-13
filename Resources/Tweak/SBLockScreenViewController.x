@@ -168,7 +168,7 @@
             securityType = ALSLockScreenSecurityTypeCode;
             break;
         }
-        else if([view isKindOfClass:[%c(SBUIPasscodeLockViewSimple4DigitKeypad) class]]) {
+        else if([view isKindOfClass:[%c(SBUIPasscodeLockViewWithKeyboard) class]]) {
             securityType = ALSLockScreenSecurityTypePhrase;
             break;
         }
@@ -184,13 +184,7 @@
     %orig;
     
     [self addCustomLockScreen];
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [[self.view performSelector:@selector(recursiveDescription)] writeToFile:@"/var/mobile/Documents/out9.txt" atomically:NO encoding:NSStringEncodingConversionAllowLossy error:nil];
-        
-    });
 }
-
 /*
  
 Example Alert
