@@ -259,20 +259,23 @@
     return [UIBezierPath bezierPathWithRoundedRect:CGRectMake(center.x-radius, center.y-radius, radius*2, radius*2) byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(radius, radius)];
 }
 
-- (void)removeAllDots {
+- (void)removeAllDotsWithCompletion:(void (^)())completion {
+    [CATransaction begin];
+    [CATransaction setCompletionBlock:^{
+        self.dotsLayer.sublayers = nil;
+        if(completion) {
+            completion();
+        }
+    }];
     for(CALayer *subdot in [self.dotsLayer.sublayers copy]) {
-        [CATransaction begin];
-        [CATransaction setCompletionBlock:^{
-            [subdot removeFromSuperlayer];
-        }];
         CABasicAnimation *scaleAnimation = [CABasicAnimation animationWithKeyPath:@"transform"];
         [scaleAnimation setDuration:0.1];
         [scaleAnimation setFromValue:[NSValue valueWithCATransform3D:CATransform3DIdentity]];
         [scaleAnimation setToValue:[NSValue valueWithCATransform3D:CATransform3DMakeScale(0, 0, 1)]];
         [subdot addAnimation:scaleAnimation forKey:@"transform"];
         [subdot setTransform:CATransform3DMakeScale(0, 0, 1)];
-        [CATransaction commit];
     }
+    [CATransaction commit];
 }
 
 - (void)resetMask {

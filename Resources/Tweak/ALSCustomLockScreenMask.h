@@ -14,7 +14,7 @@
 - (void)buttonAtIndex:(int)index setHighlighted:(BOOL)highlighted;
 - (BOOL)isAnimating;
 - (BOOL)needsUpdate;
-- (void)removeAllDots;
+- (void)removeAllDotsWithCompletion:(void (^)())completion;
 - (void)resetMask;
 - (void)shakeDots;
 - (void)updateMaskWithPercentage:(CGFloat)percentage;

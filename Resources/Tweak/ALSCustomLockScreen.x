@@ -82,7 +82,7 @@
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-    if(self.percentage < 1) {
+    if(self.percentage < 1 || self.passcode.length >= 4) {
         return nil;
     }
     
@@ -108,15 +108,6 @@
     }
     
     return nil;
-}
-
-- (void)resetView {
-    self.needsUpdate = YES;
-    self.passcode = [[NSMutableString alloc] init];
-    self.previousPercentage = 0;
-    [self.filledOverlayMask resetMask];
-    [self updateViews];
-    
 }
 
 - (void)panGestureRecognizerCalled:(UIPanGestureRecognizer *)gestureRecognizer {
@@ -154,17 +145,26 @@
                 }
                 if(self.passcode.length == 4) {
                     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                        [self.filledOverlayMask removeAllDots];
+                        [self.filledOverlayMask removeAllDotsWithCompletion:^{
+                            self.passcode = [[NSMutableString alloc] init];
+                        }];
                     });
                     if(self.passcodeEntered) {
-                        NSString *fullPasscode = [self.passcode copy];
-                        self.passcode = [[NSMutableString alloc] init];
-                        self.passcodeEntered(fullPasscode);
+                        self.passcodeEntered([self.passcode copy]);
                     }
                 }
             }
         }
     }
+}
+
+- (void)resetView {
+    self.needsUpdate = YES;
+    self.passcode = [[NSMutableString alloc] init];
+    self.previousPercentage = 0;
+    [self.filledOverlayMask resetMask];
+    [self updateViews];
+    
 }
 
 - (void)setDisplayLinkPaused:(BOOL)paused {
