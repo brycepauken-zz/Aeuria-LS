@@ -32,6 +32,27 @@
     return proxyObject;
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    ALSProxyObject *copy = [[ALSProxyObject alloc] init];
+    if(copy) {
+        [copy setType:self.type];
+        switch(copy.type) {
+            case ALSProxyObjectStrongReference:
+                [copy setStrongReference:copy.strongReference];
+                break;
+            case ALSProxyObjectWeakReference:
+                [copy setWeakReference:copy.weakReference];
+                break;
+            case ALSProxyObjectCopyReference:
+                [copy setCopiedReference:copy.copiedReference];
+                break;
+            default:
+                break;
+        }
+    }
+    return copy;
+}
+
 - (id)object {
     switch(self.type) {
         case ALSProxyObjectStrongReference:

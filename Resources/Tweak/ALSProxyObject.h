@@ -6,7 +6,7 @@ typedef NS_ENUM(NSInteger, ALSProxyObjectType) {
     ALSProxyObjectCopyReference
 };
 
-@interface ALSProxyObject : NSObject
+@interface ALSProxyObject : NSObject <NSCopying>
 
 + (instancetype)proxyOfType:(ALSProxyObjectType)type forObject:(id)object;
 - (id)object;

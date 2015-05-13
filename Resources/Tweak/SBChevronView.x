@@ -1,4 +1,5 @@
 #import "SBChevronView.h"
+#import "ALSHideableViewManager.h"
 
 /*
  The SBChevronView class represents the chevrons on the top and bottom
@@ -10,13 +11,15 @@
 - (id)initWithFrame:(CGRect)frame {
     id selfID = %orig;
     if(selfID) {
-        [selfID setHidden:YES];
+        [ALSHideableViewManager addView:selfID];
+        [selfID setHidden:[selfID isHidden]];
     }
     return selfID;
 }
 
 - (void)setHidden:(BOOL)hidden {
-    %orig(YES);
+    [ALSHideableViewManager setViewHidden:hidden forView:self];
+    %orig([ALSHideableViewManager shouldHide]?YES:[ALSHideableViewManager viewHidden:self]);
 }
 
 %end

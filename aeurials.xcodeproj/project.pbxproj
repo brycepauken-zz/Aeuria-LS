@@ -67,6 +67,8 @@
 		02A101511AEF3B42003296EB /* PSListItemsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PSListItemsController.h; sourceTree = "<group>"; };
 		02A99F1A1AFD1FFF00B197D7 /* SBLockScreenScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBLockScreenScrollView.h; sourceTree = "<group>"; };
 		02A99F1B1AFD1FFF00B197D7 /* SBLockScreenScrollView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBLockScreenScrollView.x; sourceTree = "<group>"; };
+		02A9EFBE1B02D7E500A2DDA3 /* ALSHideableViewManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSHideableViewManager.h; sourceTree = "<group>"; };
+		02A9EFBF1B02D7E500A2DDA3 /* ALSHideableViewManager.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSHideableViewManager.x; sourceTree = "<group>"; };
 		02AC49791AE8ECD000426584 /* ALSPreferencesProxyTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesProxyTarget.h; sourceTree = "<group>"; };
 		02AC497A1AE8ECD000426584 /* ALSPreferencesProxyTarget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesProxyTarget.m; sourceTree = "<group>"; };
 		02B7DB4D1AF6B2D30011724E /* ALSCustomLockScreenOverlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenOverlay.h; sourceTree = "<group>"; };
@@ -129,6 +131,8 @@
 				0237241B1AC25213007FAFC1 /* ALSCustomLockScreenMask.x */,
 				02B7DB4D1AF6B2D30011724E /* ALSCustomLockScreenOverlay.h */,
 				02B7DB4E1AF6B2D30011724E /* ALSCustomLockScreenOverlay.x */,
+				02A9EFBE1B02D7E500A2DDA3 /* ALSHideableViewManager.h */,
+				02A9EFBF1B02D7E500A2DDA3 /* ALSHideableViewManager.x */,
 				02B7DB4F1AF6BB880011724E /* ALSImmediatePanGestureRecognizer.h */,
 				02B7DB501AF6BB880011724E /* ALSImmediatePanGestureRecognizer.x */,
 				022130AA1AE1BDE800054A1A /* ALSPreferencesManager.h */,

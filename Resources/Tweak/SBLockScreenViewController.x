@@ -8,6 +8,7 @@
 
 #import "ALSCustomLockScreen.h"
 #import "ALSCustomLockScreenContainer.h"
+#import "ALSHideableViewManager.h"
 #import "ALSProxyPasscodeHandler.h"
 #import "SBLockScreenScrollView.h"
 #import "SBUIPasscodeLockViewBase.h"
@@ -95,6 +96,7 @@
 %new
 - (void)setCustomLockScreenHidden:(BOOL)hidden {
     if([[self.customLockScreenContainer customLockScreen] shouldShowWithNotifications]) {
+        [ALSHideableViewManager setShouldHide:YES];
         [[self lockScreenScrollView] setHidden:YES];
         return;
     }
@@ -103,9 +105,11 @@
     [[self.customLockScreenContainer customLockScreen] setDisplayLinkPaused:hidden];
     if(hidden) {
         [self.customLockScreenContainer removeFromSuperview];
+        [ALSHideableViewManager setShouldHide:NO];
         [[self lockScreenScrollView] setHidden:NO];
     }
     else {
+        [ALSHideableViewManager setShouldHide:YES];
         [[self lockScreenScrollView] setHidden:YES];
         [self addCustomLockScreen];
     }
