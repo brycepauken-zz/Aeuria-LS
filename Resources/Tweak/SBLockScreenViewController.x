@@ -24,6 +24,7 @@
 
 - (void)addCustomLockScreen;
 - (BOOL)customLockScreenHidden;
+- (void)setHintGestureRecognizersEnabled:(BOOL)enabled;
 
 @end
 
@@ -35,6 +36,8 @@
         return;
     }
     
+    [self setHintGestureRecognizersEnabled:NO];
+    [ALSHideableViewManager setShouldHide:YES];
     if(self.customLockScreenContainer && self.customLockScreenContainer.superview) {
         [self.customLockScreenContainer removeFromSuperview];
     }
@@ -98,6 +101,7 @@
     if([[self.customLockScreenContainer customLockScreen] shouldShowWithNotifications]) {
         [ALSHideableViewManager setShouldHide:YES];
         [[self lockScreenScrollView] setHidden:YES];
+        [self setHintGestureRecognizersEnabled:NO];
         return;
     }
     
@@ -107,11 +111,26 @@
         [self.customLockScreenContainer removeFromSuperview];
         [ALSHideableViewManager setShouldHide:NO];
         [[self lockScreenScrollView] setHidden:NO];
+        [self setHintGestureRecognizersEnabled:YES];
     }
     else {
         [ALSHideableViewManager setShouldHide:YES];
         [[self lockScreenScrollView] setHidden:YES];
+        [self setHintGestureRecognizersEnabled:NO];
         [self addCustomLockScreen];
+    }
+}
+
+%new
+- (void)setHintGestureRecognizersEnabled:(BOOL)enabled {
+    UIView *currentView = self.view;
+    while(currentView) {
+        for(UIGestureRecognizer *gestureRecognizer in currentView.gestureRecognizers) {
+            if([gestureRecognizer isKindOfClass:[UITapGestureRecognizer class]] || [gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]]) {
+                [gestureRecognizer setEnabled:enabled];
+            }
+        }
+        currentView = currentView.superview;
     }
 }
 

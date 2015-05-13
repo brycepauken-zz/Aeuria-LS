@@ -143,11 +143,16 @@
 }
 
 - (void)setContentOffset:(CGPoint)offset {
-    %orig(CGPointMake(self.bounds.size.width, 0));
-    UIScrollView *customScrollView = [[[self lockScreenViewController] customLockScreenContainer] scrollView];
-    if(customScrollView.contentOffset.x > offset.x) {
-        [[[[[self lockScreenViewController] customLockScreenContainer] customLockScreen] layer] removeAnimationForKey:@"position"];
-        [customScrollView setContentOffset:offset];
+    if(self.hidden) {
+        %orig(CGPointMake(self.bounds.size.width, 0));
+        UIScrollView *customScrollView = [[[self lockScreenViewController] customLockScreenContainer] scrollView];
+        if(customScrollView.contentOffset.x > offset.x) {
+            [[[[[self lockScreenViewController] customLockScreenContainer] customLockScreen] layer] removeAnimationForKey:@"position"];
+            [customScrollView setContentOffset:offset];
+        }
+    }
+    else {
+        %orig;
     }
 };
 
