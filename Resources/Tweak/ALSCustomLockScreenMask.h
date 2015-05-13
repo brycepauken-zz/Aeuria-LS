@@ -5,6 +5,12 @@
  which portions of our custom lock screen's colored overlay are transparent.
  */
 
+typedef NS_ENUM(NSInteger, ALSLockScreenSecurityType) {
+    ALSLockScreenSecurityTypeNone,
+    ALSLockScreenSecurityTypeCode,
+    ALSLockScreenSecurityTypePhrase
+};
+
 @class ALSPreferencesManager;
 
 @interface ALSCustomLockScreenMask : CAShapeLayer
@@ -16,6 +22,8 @@
 - (BOOL)needsUpdate;
 - (void)removeAllDotsWithCompletion:(void (^)())completion;
 - (void)resetMask;
+- (ALSLockScreenSecurityType)securityType;
+- (void)setSecurityType:(ALSLockScreenSecurityType)securityType;
 - (void)shakeDots;
 - (void)updateMaskWithPercentage:(CGFloat)percentage;
 

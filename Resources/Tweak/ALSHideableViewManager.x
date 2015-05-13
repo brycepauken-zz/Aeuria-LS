@@ -14,11 +14,15 @@ static BOOL _shouldHide;
 }
 
 + (void)addView:(UIView *)view {
-    NSArray *keys = [[self hideableObjects] allKeys];
-    NSUInteger index = [keys indexOfObjectPassingTest:^(id obj, NSUInteger i, BOOL *stop) {
-        return (BOOL)([obj respondsToSelector:@selector(object)] && ([obj object]==view));
-    }];
-    if(index == NSNotFound) {
+    UIView *currentView = view.superview;
+    while(currentView && ![currentView isKindOfClass:[%c(SBLockScreenView) class]]) {
+        currentView = currentView.superview;
+    }
+    if(!currentView) {
+        return;
+    }
+    
+    if([self indexOfView:view] == NSNotFound) {
         ALSProxyObject *proxyObject = [ALSProxyObject proxyOfType:ALSProxyObjectWeakReference forObject:view];
         [[self hideableObjects] setObject:@(view.hidden) forKey:proxyObject];
     }
@@ -33,6 +37,14 @@ static BOOL _shouldHide;
     return hideableObjects;
 }
 
++ (NSUInteger)indexOfView:(UIView *)view {
+    NSArray *keys = [[self hideableObjects] allKeys];
+    NSUInteger index = [keys indexOfObjectPassingTest:^(id obj, NSUInteger i, BOOL *stop) {
+        return (BOOL)([obj respondsToSelector:@selector(object)] && ([obj object]==view));
+    }];
+    return index;
+}
+
 + (void)setShouldHide:(BOOL)shouldHide {
     _shouldHide = shouldHide;
     for(ALSProxyObject *key in [[self hideableObjects] allKeys]) {
@@ -42,9 +54,7 @@ static BOOL _shouldHide;
 
 + (void)setViewHidden:(BOOL)hidden forView:(UIView *)view {
     NSArray *keys = [[self hideableObjects] allKeys];
-    NSUInteger index = [keys indexOfObjectPassingTest:^(id obj, NSUInteger i, BOOL *stop) {
-        return (BOOL)([obj respondsToSelector:@selector(object)] && ([obj object]==view));
-    }];
+    NSInteger index = [self indexOfView:view];
     if(index != NSNotFound) {
         [[self hideableObjects] setObject:@(hidden) forKey:[keys objectAtIndex:index]];
     }
@@ -56,9 +66,7 @@ static BOOL _shouldHide;
 
 + (BOOL)viewHidden:(UIView *)view {
     NSArray *keys = [[self hideableObjects] allKeys];
-    NSUInteger index = [keys indexOfObjectPassingTest:^(id obj, NSUInteger i, BOOL *stop) {
-        return (BOOL)([obj respondsToSelector:@selector(object)] && ([obj object]==view));
-    }];
+    NSInteger index = [self indexOfView:view];
     if(index != NSNotFound) {
         [[self hideableObjects] objectForKey:[keys objectAtIndex:index]];
     }

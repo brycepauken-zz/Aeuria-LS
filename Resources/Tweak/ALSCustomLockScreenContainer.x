@@ -140,6 +140,7 @@
 }
 
 - (void)resetView {
+    [self setUserInteractionEnabled:YES];
     [self.scrollView setContentOffset:CGPointMake(self.bounds.size.width, 0)];
     [self.customLockScreen resetView];
     [self setNeedsLayout];

@@ -8,6 +8,7 @@
 
 #import "ALSCustomLockScreen.h"
 #import "ALSCustomLockScreenContainer.h"
+#import "ALSCustomLockScreenMask.h"
 #import "ALSHideableViewManager.h"
 #import "ALSProxyPasscodeHandler.h"
 #import "SBLockScreenScrollView.h"
@@ -25,6 +26,7 @@
 - (void)addCustomLockScreen;
 - (BOOL)customLockScreenHidden;
 - (void)setHintGestureRecognizersEnabled:(BOOL)enabled;
+- (void)updateSecurityType;
 
 @end
 
@@ -54,6 +56,8 @@
         [weakSelf passcodeLockViewPasscodeEntered:proxyPasscodeHandler];
     }];
     [self.customLockScreenContainer.layer setZPosition:MAXFLOAT];
+    
+    [self updateSecurityType];
     
     [[[self lockScreenScrollView] superview] addSubview:self.customLockScreenContainer];
 }
@@ -145,6 +149,7 @@
     %orig;
     
     [self setHintGestureRecognizersEnabled:![[self lockScreenScrollView] isHidden]];
+    [self updateSecurityType];
     [self.customLockScreenContainer resetView];
 }
 
@@ -155,6 +160,22 @@
     return 3;
 }
 
+%new
+- (void)updateSecurityType {
+    ALSLockScreenSecurityType securityType = ALSLockScreenSecurityTypeNone;
+    for(UIView *view in [[self lockScreenScrollView] subviews]) {
+        if([view isKindOfClass:[%c(SBUIPasscodeLockViewSimple4DigitKeypad) class]]) {
+            securityType = ALSLockScreenSecurityTypeCode;
+            break;
+        }
+        else if([view isKindOfClass:[%c(SBUIPasscodeLockViewSimple4DigitKeypad) class]]) {
+            securityType = ALSLockScreenSecurityTypePhrase;
+            break;
+        }
+    }
+    [self.customLockScreenContainer.customLockScreen setSecurityType:securityType];
+}
+
 /*
  Called when the lock screen first appears. Add our
  custom lock screen to the top of its window.
@@ -163,6 +184,11 @@
     %orig;
     
     [self addCustomLockScreen];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[self.view performSelector:@selector(recursiveDescription)] writeToFile:@"/var/mobile/Documents/out9.txt" atomically:NO encoding:NSStringEncodingConversionAllowLossy error:nil];
+        
+    });
 }
 
 /*

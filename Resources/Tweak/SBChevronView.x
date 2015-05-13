@@ -16,7 +16,7 @@
 
 - (void)setHidden:(BOOL)hidden {
     [ALSHideableViewManager setViewHidden:hidden forView:self];
-    %orig([ALSHideableViewManager shouldHide]?YES:[ALSHideableViewManager viewHidden:self]);
+    %orig(([ALSHideableViewManager shouldHide])?YES:[ALSHideableViewManager viewHidden:self]);
 }
 
 %end

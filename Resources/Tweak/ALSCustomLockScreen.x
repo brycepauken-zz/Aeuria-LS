@@ -1,5 +1,6 @@
 #import "ALSCustomLockScreen.h"
 
+#import "ALSCustomLockScreenContainer.h"
 #import "ALSCustomLockScreenMask.h"
 #import "ALSImmediatePanGestureRecognizer.h"
 #import "ALSPreferencesManager.h"
@@ -67,6 +68,7 @@
 }
 
 - (void)failedEntry {
+    [self.superview setUserInteractionEnabled:YES];
     if(self.percentage < 0.5) {
         CABasicAnimation *shakeAnimation = [CABasicAnimation animationWithKeyPath:@"position"];
         [shakeAnimation setAutoreverses:YES];
@@ -82,7 +84,7 @@
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-    if(self.percentage < 1 || self.passcode.length >= 4) {
+    if(self.filledOverlayMask.securityType!=ALSLockScreenSecurityTypeCode || self.percentage < 1 || self.passcode.length >= 4) {
         return nil;
     }
     
@@ -150,6 +152,11 @@
                         }];
                     });
                     if(self.passcodeEntered) {
+                        [self.superview setUserInteractionEnabled:NO];
+                        UIScrollView *scrollView = ((ALSCustomLockScreenContainer *)self.superview).scrollView;
+                        [scrollView setScrollEnabled:NO];
+                        [scrollView setScrollEnabled:YES];
+                        [scrollView setContentOffset:CGPointZero];
                         self.passcodeEntered([self.passcode copy]);
                     }
                 }
@@ -175,6 +182,10 @@
     _percentage = MAX(0, percentage);
 }
 
+- (void)setSecurityType:(NSInteger)securityType {
+    [self.filledOverlayMask setSecurityType:securityType];
+}
+
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     UIView *tappedButton = [self hitTest:[[touches anyObject] locationInView:self] withEvent:event];
     if(tappedButton) {
@@ -187,6 +198,16 @@
 
 - (void)updateScrollPercentage:(CGFloat)percentage {
     self.percentage = percentage;
+    if(self.filledOverlayMask.securityType==ALSLockScreenSecurityTypeNone && percentage > 0.9) {
+        if(self.passcodeEntered) {
+            [self.superview setUserInteractionEnabled:NO];
+            UIScrollView *scrollView = ((ALSCustomLockScreenContainer *)self.superview).scrollView;
+            [scrollView setScrollEnabled:NO];
+            [scrollView setScrollEnabled:YES];
+            [scrollView setContentOffset:CGPointZero];
+            self.passcodeEntered(@"");
+        }
+    }
 }
 
 - (void)updateViews {

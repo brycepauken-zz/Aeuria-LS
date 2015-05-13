@@ -21,10 +21,12 @@
 @property (nonatomic, strong) NSString *instructions;
 @property (nonatomic, strong) UIBezierPath *instructionsPath;
 @property (nonatomic, strong) CAShapeLayer *internalLayer;
+@property (nonatomic, strong) CAShapeLayer *internalLayerOverlay;
 @property (nonatomic) CGFloat largeCircleMaxInternalPaddingIncrement;
 @property (nonatomic) CGFloat largeCircleMaxRadiusIncrement;
 @property (nonatomic, strong) NSTimer *minuteTimer;
 @property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
+@property (nonatomic) ALSLockScreenSecurityType securityType;
 @property (nonatomic) NSTimeInterval updateUntilTime;
 
 //preference properties
@@ -74,6 +76,9 @@
         [_internalLayer setFillRule:kCAFillRuleEvenOdd];
         [_internalLayer setMask:_circleMaskLayer];
         
+        _internalLayerOverlay = [[CAShapeLayer alloc] init];
+        [_internalLayerOverlay setFillColor:[[UIColor blackColor] CGColor]];
+        
         //holds dots above passcode entry
         _dotsLayer = [[CAShapeLayer alloc] init];
         [_dotsLayer setFillColor:[[UIColor blackColor] CGColor]];
@@ -90,6 +95,7 @@
         
         [self setFrame:frame];
         [self addSublayer:_internalLayer];
+        [self addSublayer:_internalLayerOverlay];
         [self addSublayer:_highlightedButtonLayer];
         [self layoutSublayers];
         
@@ -230,6 +236,7 @@
     
     [self.circleMaskLayer setFrame:self.bounds];
     [self.internalLayer setFrame:self.bounds];
+    [self.internalLayerOverlay setFrame:self.bounds];
     [self.highlightedButtonLayer setFrame:self.bounds];
     
     //dotsLayer's frame is a long horizontal bar placed dotVerticalOffset pixels above the highest button
@@ -336,45 +343,63 @@
     //mask the whole thing to the large outer circle
     [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
     
-    //add clock to internal path
     UIBezierPath *mask = [UIBezierPath bezierPathWithRect:self.bounds];
-    CGFloat clockScale = MAX(0,(1-percentage/self.clockInvisibleAt));
-    CGFloat clockRadiusScaled = self.clock.radius*clockScale;
-    UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute];
-    [clockPath applyTransform:CGAffineTransformMakeScale(clockScale, clockScale)];
-    [clockPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-clockRadiusScaled, boundsCenter.y-clockRadiusScaled)];
-    [mask appendPath:clockPath];
     
-    //add buttons to internal path
-    UIBezierPath *buttonsPath = [self.buttons buttonsPathForRadius:largeRadius middleButtonStartingRadius:(self.largeCircleMinRadius+self.largeCircleMaxRadiusIncrement*self.clockInvisibleAt)];
-    [buttonsPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x, boundsCenter.y)];
-    [mask appendPath:buttonsPath];
-    
-    //add instructions to internal path
-    UIBezierPath *instructionsPath = [self.instructionsPath copy];
-    CGSize instructionsPathSize = CGPathGetPathBoundingBox(instructionsPath.CGPath).size;
-    CGFloat instructionsPathScale = (self.instructionsHeight/instructionsPathSize.height);
-    [instructionsPath applyTransform:CGAffineTransformMakeScale(instructionsPathScale, instructionsPathScale)];
-    [instructionsPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-(instructionsPathSize.width*instructionsPathScale)/2, (boundsCenter.y-self.buttonRadius*3-self.buttonPadding)/2-(instructionsPathSize.height*instructionsPathScale)/2)];
-    [mask appendPath:instructionsPath];
-    
-    //draw dots and remove area behind it
-    CGRect dotsRect = [self drawDots];
-    if(dotsRect.size.width && dotsRect.size.width<self.bounds.size.width) {
-        [mask appendPath:[UIBezierPath bezierPathWithRect:CGRectMake(self.dotsDisplayLayer.frame.origin.x+dotsRect.origin.x+2, self.dotsDisplayLayer.frame.origin.y+2, dotsRect.size.width, self.dotsDisplayLayer.frame.size.height-4)]];
+    if(self.securityType == ALSLockScreenSecurityTypeCode) {
+        //add clock to internal path
+        CGFloat clockScale = MAX(0,(1-percentage/self.clockInvisibleAt));
+        CGFloat clockRadiusScaled = self.clock.radius*clockScale;
+        UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute];
+        [clockPath applyTransform:CGAffineTransformMakeScale(clockScale, clockScale)];
+        [clockPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-clockRadiusScaled, boundsCenter.y-clockRadiusScaled)];
+        [mask appendPath:clockPath];
+        
+        //add buttons to internal path
+        UIBezierPath *buttonsPath = [self.buttons buttonsPathForRadius:largeRadius middleButtonStartingRadius:(self.largeCircleMinRadius+self.largeCircleMaxRadiusIncrement*self.clockInvisibleAt)];
+        [buttonsPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x, boundsCenter.y)];
+        [mask appendPath:buttonsPath];
+        
+        //add instructions to internal path
+        UIBezierPath *instructionsPath = [self.instructionsPath copy];
+        CGSize instructionsPathSize = CGPathGetPathBoundingBox(instructionsPath.CGPath).size;
+        CGFloat instructionsPathScale = (self.instructionsHeight/instructionsPathSize.height);
+        [instructionsPath applyTransform:CGAffineTransformMakeScale(instructionsPathScale, instructionsPathScale)];
+        [instructionsPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-(instructionsPathSize.width*instructionsPathScale)/2, (boundsCenter.y-self.buttonRadius*3-self.buttonPadding)/2-(instructionsPathSize.height*instructionsPathScale)/2)];
+        [mask appendPath:instructionsPath];
+        
+        //draw dots and remove area behind it
+        CGRect dotsRect = [self drawDots];
+        if(dotsRect.size.width && dotsRect.size.width<self.bounds.size.width) {
+            [mask appendPath:[UIBezierPath bezierPathWithRect:CGRectMake(self.dotsDisplayLayer.frame.origin.x+dotsRect.origin.x+2, self.dotsDisplayLayer.frame.origin.y+2, dotsRect.size.width, self.dotsDisplayLayer.frame.size.height-4)]];
+        }
+        
+        //highlight the needed buttons
+        UIBezierPath *highlightedButtonsPath = [UIBezierPath bezierPath];
+        for(NSNumber *highlightedButtonNumber in self.highlightedButtonIndexes) {
+            int buttonIndex = [highlightedButtonNumber intValue];
+            CGFloat xOffset = (buttonIndex%3-1)*(self.buttonRadius*2+self.buttonPadding);
+            CGFloat yOffset = (buttonIndex/3-1)*(self.buttonRadius*2+self.buttonPadding);
+            [highlightedButtonsPath appendPath:[[self class] pathForCircleWithRadius:self.buttonRadius center:CGPointMake(boundsCenter.x+xOffset, boundsCenter.y+yOffset)]];
+        }
+        [self.highlightedButtonLayer setPath:highlightedButtonsPath.CGPath];
+    }
+    else if(self.securityType == ALSLockScreenSecurityTypeNone) {
+        //add clock to internal path
+        CGFloat clockScale = largeCircleIncrement/self.largeCircleMinRadius+1;
+        CGFloat clockRadiusScaled = self.clock.radius*clockScale;
+        UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute];
+        [clockPath applyTransform:CGAffineTransformMakeScale(clockScale, clockScale)];
+        [clockPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-clockRadiusScaled, boundsCenter.y-clockRadiusScaled)];
+        [mask appendPath:clockPath];
+        
+        [self.internalLayerOverlay setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
+        [CATransaction begin];
+        [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+        [self.internalLayerOverlay setOpacity:percentage];
+        [CATransaction commit];
     }
     
     [self.internalLayer setPath:mask.CGPath];
-    
-    //highlight the needed buttons
-    UIBezierPath *highlightedButtonsPath = [UIBezierPath bezierPath];
-    for(NSNumber *highlightedButtonNumber in self.highlightedButtonIndexes) {
-        int buttonIndex = [highlightedButtonNumber intValue];
-        CGFloat xOffset = (buttonIndex%3-1)*(self.buttonRadius*2+self.buttonPadding);
-        CGFloat yOffset = (buttonIndex/3-1)*(self.buttonRadius*2+self.buttonPadding);
-        [highlightedButtonsPath appendPath:[[self class] pathForCircleWithRadius:self.buttonRadius center:CGPointMake(boundsCenter.x+xOffset, boundsCenter.y+yOffset)]];
-    }
-    [self.highlightedButtonLayer setPath:highlightedButtonsPath.CGPath];
 }
 
 - (void)updateTimeOnMinute {
