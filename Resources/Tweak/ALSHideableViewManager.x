@@ -14,8 +14,14 @@ static BOOL _shouldHide;
 }
 
 + (void)addView:(UIView *)view {
-    ALSProxyObject *proxyObject = [ALSProxyObject proxyOfType:ALSProxyObjectWeakReference forObject:view];
-    [[self hideableObjects] setObject:@(view.hidden) forKey:proxyObject];
+    NSArray *keys = [[self hideableObjects] allKeys];
+    NSUInteger index = [keys indexOfObjectPassingTest:^(id obj, NSUInteger i, BOOL *stop) {
+        return (BOOL)([obj respondsToSelector:@selector(object)] && ([obj object]==view));
+    }];
+    if(index == NSNotFound) {
+        ALSProxyObject *proxyObject = [ALSProxyObject proxyOfType:ALSProxyObjectWeakReference forObject:view];
+        [[self hideableObjects] setObject:@(view.hidden) forKey:proxyObject];
+    }
 }
 
 + (NSMutableDictionary *)hideableObjects {

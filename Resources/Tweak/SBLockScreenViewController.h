@@ -11,12 +11,11 @@
 
 @end
 
-@interface SBLockScreenViewController : NSObject
+@interface SBLockScreenViewController : UIViewController
 
 - (id)lockScreenScrollView;
 - (id)lockScreenView;
 - (long long)statusBarStyle;
-- (void)viewWillAppear:(BOOL)view;
 
 - (id)customLockScreenContainer;
 - (void)failedBio;

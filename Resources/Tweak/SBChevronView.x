@@ -8,13 +8,10 @@
 
 %hook SBChevronView
 
-- (id)initWithFrame:(CGRect)frame {
-    id selfID = %orig;
-    if(selfID) {
-        [ALSHideableViewManager addView:selfID];
-        [selfID setHidden:[selfID isHidden]];
-    }
-    return selfID;
+- (void)layoutSubviews {
+    %orig;
+    [ALSHideableViewManager addView:self];
+    [self setHidden:[self isHidden]];
 }
 
 - (void)setHidden:(BOOL)hidden {
