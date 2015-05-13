@@ -40,7 +40,7 @@ static CGFloat _wallpaperViewHeight;
         CGFloat preferredHeight = [self preferredHeightForWidth:0];
         
         //create a container to hold (and clip) our header's subviews
-        UIView *headerContainer = [[UIView alloc] initWithFrame:CGRectMake(0, -44, self.bounds.size.width, _wallpaperViewHeight)];
+        UIView *headerContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, _wallpaperViewHeight)];
         [headerContainer setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
         [headerContainer setClipsToBounds:YES];
         
@@ -105,7 +105,7 @@ static CGFloat _wallpaperViewHeight;
 }
 
 - (void)dealloc {
-    [self.parentTableView removeObserver:self forKeyPath:@"contentOffset"];
+    //[self.parentTableView removeObserver:self forKeyPath:@"contentOffset"];
 }
 
 - (void)descriptionLabelTapped:(UITapGestureRecognizer *)tapRecognizer {
@@ -139,7 +139,7 @@ static CGFloat _wallpaperViewHeight;
             UILabel *label = [self.descriptionLabels objectAtIndex:i];
             [label setAttributedText:attributedString];
             [label setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin];
-            [label setBackgroundColor:[UIColor whiteColor]];
+            [label setBackgroundColor:[UIColor clearColor]];
             [label setFont:[UIFont systemFontOfSize:13]];
             [label setTextColor:[UIColor lightGrayColor]];
             [label setTag:i];
@@ -183,13 +183,7 @@ static CGFloat _wallpaperViewHeight;
         }
         if(currentView) {
             self.parentTableView = (UITableView *)currentView;
-            [self.parentTableView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
-            
-            CGRect screenBounds = [[UIScreen mainScreen] bounds];
-            CGFloat statusBarBackgroundWidth = MAX(screenBounds.size.width, screenBounds.size.height)*2;
-            UIView *statusBarBackground = [[UIView alloc] initWithFrame:CGRectMake(0, 0, statusBarBackgroundWidth, 20)];
-            [statusBarBackground setBackgroundColor:[currentView backgroundColor]];
-            [currentView.superview addSubview:statusBarBackground];
+            //[self.parentTableView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
         }
         
         self.tableViewSearched = YES;
@@ -301,7 +295,7 @@ static CGFloat _wallpaperViewHeight;
         CGRect screenBounds = [[UIScreen mainScreen] bounds];
         _wallpaperViewHeight = ceilf(sqrtf(MIN(screenBounds.size.width, screenBounds.size.height)*30));
         
-        preferredHeight = _wallpaperViewHeight+[[self descriptionView] bounds].size.height-44;
+        preferredHeight = _wallpaperViewHeight+[[self descriptionView] bounds].size.height;
     });
     return preferredHeight;
 }
