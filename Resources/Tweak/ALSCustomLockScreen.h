@@ -11,6 +11,7 @@
 - (void)failedEntry;
 - (void)resetView;
 - (void)setDisplayLinkPaused:(BOOL)paused;
+- (void)setKeyboardHeight:(CGFloat)keyboardHeight;
 - (void)setPasscodeEntered:(void (^)(NSString *passcode))passcodeEntered;
 - (void)setSecurityType:(NSInteger)securityType;
 - (BOOL)shouldShowWithNotifications;

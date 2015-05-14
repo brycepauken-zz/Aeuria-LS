@@ -178,6 +178,10 @@
     [self.displayLink setPaused:paused];
 }
 
+- (void)setKeyboardHeight:(CGFloat)keyboardHeight {
+    [self.filledOverlayMask setKeyboardHeight:keyboardHeight];
+}
+
 - (void)setPercentage:(CGFloat)percentage {
     _percentage = MAX(0, percentage);
 }

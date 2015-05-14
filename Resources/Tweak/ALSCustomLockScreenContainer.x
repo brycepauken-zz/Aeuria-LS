@@ -6,6 +6,9 @@
 @interface ALSCustomLockScreenContainer()
 
 @property (nonatomic, strong) ALSCustomLockScreen *customLockScreen;
+@property (nonatomic, strong) UIView *keyboardView;
+@property (nonatomic, strong) UIView *keyboardViewBackground;
+@property (nonatomic, strong) UIView *keyboardViewOriginalSuperview;
 @property (nonatomic, strong) UIView *mediaControlsView;
 @property (nonatomic, strong) UIView *mediaControlsViewBackground;
 @property (nonatomic, strong) UIView *mediaControlsViewOriginalSuperview;
@@ -41,6 +44,29 @@
         [self addSubview:overlayView];
     }
     return self;
+}
+
+- (void)addKeyboardView:(UIView *)keyboardView fromSuperView:(UIView *)superView {
+    [self setKeyboardView:keyboardView];
+    [keyboardView removeFromSuperview];
+    [self.scrollView addSubview:keyboardView];
+    
+    if([UIPrintInteractionController class]) {
+        UIVisualEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+        UIVisualEffectView *visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+        [visualEffectView setFrame:keyboardView.frame];
+        [self setKeyboardViewBackground:visualEffectView];
+    }
+    else {
+        [self setKeyboardViewBackground:[[UIView alloc] initWithFrame:keyboardView.frame]];
+        [self.keyboardViewBackground setBackgroundColor:[UIColor colorWithWhite:0.5 alpha:0.75]];
+    }
+    [self.keyboardViewBackground setAlpha:0];
+    [self insertSubview:self.keyboardViewBackground belowSubview:self.scrollView];
+    
+    [self setKeyboardViewOriginalSuperview:superView];
+    
+    [self.customLockScreen setKeyboardHeight:keyboardView.frame.size.height];
 }
 
 - (void)addMediaControlsView:(UIView *)mediaControlsView fromSuperView:(UIView *)superView {
@@ -98,6 +124,10 @@
     [self.notificationView removeFromSuperview];
     [self.notificationViewOriginalSuperview addSubview:self.notificationView];
     self.notificationViewOriginalSuperview = nil;
+    
+    [self.keyboardView removeFromSuperview];
+    [self.keyboardViewOriginalSuperview addSubview:self.keyboardView];
+    self.keyboardViewOriginalSuperview = nil;
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
@@ -107,7 +137,8 @@
     }
     
     if((!self.notificationViewBackground.hidden && CGRectContainsPoint(self.notificationView.frame, [self.scrollView convertPoint:point fromView:self])) ||
-       (!self.mediaControlsViewBackground.hidden && CGRectContainsPoint(self.mediaControlsView.frame, [self.scrollView convertPoint:point fromView:self]))) {
+       (!self.mediaControlsViewBackground.hidden && CGRectContainsPoint(self.mediaControlsView.frame, [self.scrollView convertPoint:point fromView:self])) ||
+       (!self.keyboardViewBackground.hidden && CGRectContainsPoint(self.keyboardView.frame, [self.scrollView convertPoint:point fromView:self]))) {
         [self.scrollView setScrollEnabled:NO];
     }
     else {
@@ -123,6 +154,8 @@
     [self.notificationViewBackground setFrame:CGRectMake(0, 0, self.scrollView.bounds.size.width, self.notificationView.frame.size.height)];
     [self.mediaControlsView setFrame:CGRectMake(self.scrollView.bounds.size.width, self.scrollView.bounds.size.height-self.mediaControlsView.frame.size.height-20, self.scrollView.bounds.size.width, self.mediaControlsView.frame.size.height)];
     [self.mediaControlsViewBackground setFrame:CGRectMake(0, self.scrollView.bounds.size.height-self.mediaControlsView.frame.size.height-20, self.scrollView.bounds.size.width, self.mediaControlsView.frame.size.height+20)];
+    [self.keyboardView setFrame:CGRectMake(self.scrollView.bounds.size.width, self.bounds.size.height-self.keyboardView.frame.size.height, self.bounds.size.width, self.keyboardView.frame.size.height)];
+    [self.keyboardViewBackground setFrame:CGRectMake(0, self.bounds.size.height-self.keyboardView.frame.size.height, self.bounds.size.width, self.keyboardView.frame.size.height)];
 }
 
 - (void)notificationViewChanged {
@@ -153,6 +186,7 @@
     [self.notificationViewBackground setAlpha:1-percentage];
     [self.mediaControlsView setAlpha:1-percentage];
     [self.mediaControlsViewBackground setAlpha:1-percentage];
+    [self.keyboardViewBackground setAlpha:percentage*0.75];
 }
 
 - (void)setFrame:(CGRect)frame {

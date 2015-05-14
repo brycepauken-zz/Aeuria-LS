@@ -22,6 +22,7 @@
 @property (nonatomic, strong) UIBezierPath *instructionsPath;
 @property (nonatomic, strong) CAShapeLayer *internalLayer;
 @property (nonatomic, strong) CAShapeLayer *internalLayerOverlay;
+@property (nonatomic) CGFloat keyboardHeight;
 @property (nonatomic) CGFloat largeCircleMaxInternalPaddingIncrement;
 @property (nonatomic) CGFloat largeCircleMaxRadiusIncrement;
 @property (nonatomic, strong) CAShapeLayer *maskLayer;
@@ -41,6 +42,9 @@
 @property (nonatomic) int largeCircleInnerPadding;
 @property (nonatomic) int largeCircleMinRadius;
 @property (nonatomic) float pressedButtonAlpha;
+@property (nonatomic) int textFieldCornerRadius;
+@property (nonatomic) int textFieldHeight;
+@property (nonatomic) int textFieldHorizontalPadding;
 
 @end
 
@@ -56,16 +60,19 @@
         _dotPadding = 16;
         _dotRadius = 8;
         _dotVerticalOffset = 18;
-        _instructionsHeight = 30;
+        _instructionsHeight = 28;
         _largeCircleInnerPadding = [[preferencesManager preferenceForKey:@"clockInnerPadding"] intValue];
         _largeCircleMinRadius = [[preferencesManager preferenceForKey:@"clockRadius"] intValue];
         _pressedButtonAlpha = 0.25;
-        _updateUntilTime = -1;
+        _textFieldCornerRadius = 10;
+        _textFieldHeight = 50;
+        _textFieldHorizontalPadding = 20;
         
         _currentHour = 0;
         _currentMinute = 0;
         _currentPercentage = 0;
         _highlightedButtonIndexes = [[NSMutableArray alloc] init];
+        _updateUntilTime = -1;
         
         _internalLayer = [[CAShapeLayer alloc] init];
         
@@ -301,10 +308,37 @@
 - (void)setInstructions:(NSString *)instructions {
     if(![instructions isEqualToString:_instructions]) {
         _instructions = instructions;
-        //freed near-immediately
-        CGPathRef instructionsPathRef = [ALSCustomLockScreenElement createPathForText:instructions fontName:@"AvenirNext-Medium"];
+        /*CGPathRef instructionsPathRef = [ALSCustomLockScreenElement createPathForText:instructions fontName:@"AvenirNext-Medium"];
         self.instructionsPath = [UIBezierPath bezierPathWithCGPath:instructionsPathRef];
-        CGPathRelease(instructionsPathRef);
+        CGPathRelease(instructionsPathRef);*/
+        
+        if(![instructions isEqualToString:@"Enter Passcode"]) {
+            //freed near-immediately
+            CGPathRef instructionsPathRef = [ALSCustomLockScreenElement createPathForText:instructions fontName:@"AvenirNext-Medium"];
+            self.instructionsPath = [UIBezierPath bezierPathWithCGPath:instructionsPathRef];
+            CGPathRelease(instructionsPathRef);
+        }
+        else {
+            //all freed near-immediately
+            CGPathRef instructionsEnterPathRef = [ALSCustomLockScreenElement createPathForText:@"Enter" fontName:@"AvenirNext-Medium"];
+            CGPathRef instructionsDashPathRef = [ALSCustomLockScreenElement createPathForText:@"--" fontName:@"AvenirNext-Medium"];
+            CGPathRef instructionsPasscodePathRef = [ALSCustomLockScreenElement createPathForText:@"Passcode" fontName:@"AvenirNext-Regular"];
+            
+            CGSize instructionsEnterPathSize = CGPathGetPathBoundingBox(instructionsEnterPathRef).size;
+            CGSize instructionsDashPathSize = CGPathGetPathBoundingBox(instructionsDashPathRef).size;
+            CGSize instructionsPasscodePathSize = CGPathGetPathBoundingBox(instructionsPasscodePathRef).size;
+            
+            UIBezierPath *enterPath = [UIBezierPath bezierPathWithCGPath:instructionsEnterPathRef];
+            UIBezierPath *passcodePath = [UIBezierPath bezierPathWithCGPath:instructionsPasscodePathRef];
+            [passcodePath applyTransform:CGAffineTransformMakeTranslation(instructionsEnterPathSize.width+instructionsDashPathSize.width, (instructionsEnterPathSize.height-instructionsPasscodePathSize.height)/2)];
+            [enterPath appendPath:passcodePath];
+            [enterPath applyTransform:CGAffineTransformMakeTranslation(instructionsDashPathSize.height, 0)];
+            self.instructionsPath = enterPath;
+            
+            CGPathRelease(instructionsEnterPathRef);
+            CGPathRelease(instructionsDashPathRef);
+            CGPathRelease(instructionsPasscodePathRef);
+        }
     }
 }
 
@@ -339,15 +373,21 @@
 - (void)updateMaskWithPercentage:(CGFloat)percentage {
     self.currentPercentage = percentage;
     
-    CGPoint boundsCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
+    CGPoint boundsCenter;
+    if(self.securityType != ALSLockScreenSecurityTypePhrase || !self.keyboardHeight) {
+        boundsCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
+    }
+    else {
+        boundsCenter = CGPointMake(self.bounds.size.width/2, (self.bounds.size.height-self.keyboardHeight*percentage)/2);
+    }
     
     UIBezierPath *mask = [UIBezierPath bezierPathWithRect:self.bounds];
     
-    //find how much to add to the minimum circle size
-    CGFloat largeCircleIncrement = self.largeCircleMaxRadiusIncrement*percentage;
-    CGFloat largeRadius = self.largeCircleMinRadius+largeCircleIncrement;
-    
     if(self.securityType == ALSLockScreenSecurityTypeCode) {
+        //find how much to add to the minimum circle size
+        CGFloat largeCircleIncrement = self.largeCircleMaxRadiusIncrement*percentage;
+        CGFloat largeRadius = self.largeCircleMinRadius+largeCircleIncrement;
+        
         //mask the whole thing to the large outer circle
         [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
     
@@ -389,9 +429,31 @@
         [self.highlightedButtonLayer setPath:highlightedButtonsPath.CGPath];
     }
     else if(self.securityType == ALSLockScreenSecurityTypePhrase) {
-        [self.circleMaskLayer setPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(boundsCenter.x-largeRadius, boundsCenter.y-self.largeCircleMinRadius, largeRadius*2, self.largeCircleMinRadius*2) byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(self.largeCircleMinRadius, self.largeCircleMinRadius)].CGPath];
+        CGFloat largeCircleIncrement = (self.largeCircleMaxRadiusIncrement+self.largeCircleMinRadius)*percentage;
+        CGFloat largeRadius = self.largeCircleMinRadius+largeCircleIncrement;
+        
+        [self.circleMaskLayer setPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(boundsCenter.x-largeRadius, boundsCenter.y-self.largeCircleMinRadius, largeRadius*2, self.largeCircleMinRadius*2) cornerRadius:self.largeCircleMinRadius].CGPath];
+    
+        UIBezierPath *clockPath = [[self.clock clockPathForHour:self.currentHour minute:self.currentMinute] bezierPathByReversingPath];
+        [clockPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-self.clock.radius+largeCircleIncrement, boundsCenter.y-self.clock.radius)];
+        [mask appendPath:clockPath];
+        
+        CGFloat leftEdgeOffset = MAX(self.textFieldHorizontalPadding, boundsCenter.x-self.clock.radius-MAX(self.textFieldHorizontalPadding,largeCircleIncrement)+self.textFieldHorizontalPadding);
+        CGFloat rightEdgeOffset = MIN(self.bounds.size.width-self.textFieldHorizontalPadding, boundsCenter.x-self.clock.radius+MAX(self.textFieldHorizontalPadding,largeCircleIncrement)-self.textFieldHorizontalPadding);
+        [mask appendPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(leftEdgeOffset, boundsCenter.y-self.textFieldHeight/2, rightEdgeOffset-leftEdgeOffset, self.textFieldHeight) byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(self.textFieldCornerRadius, self.textFieldCornerRadius)]];
+    
+        UIBezierPath *instructionsPath = [self.instructionsPath copy];
+        CGSize instructionsPathSize = CGPathGetPathBoundingBox(instructionsPath.CGPath).size;
+        CGFloat instructionsPathScale = (self.instructionsHeight/instructionsPathSize.height);
+        [instructionsPath applyTransform:CGAffineTransformMakeScale(instructionsPathScale, instructionsPathScale)];
+        [instructionsPath applyTransform:CGAffineTransformMakeTranslation(leftEdgeOffset+(rightEdgeOffset-leftEdgeOffset)/2-(instructionsPathSize.width*instructionsPathScale)/2, (self.bounds.size.height-self.keyboardHeight-self.clock.radius-self.textFieldHeight-instructionsPathSize.height*instructionsPathScale)/2+10)];
+        [mask appendPath:instructionsPath];
     }
     else if(self.securityType == ALSLockScreenSecurityTypeNone) {
+        //find how much to add to the minimum circle size
+        CGFloat largeCircleIncrement = self.largeCircleMaxRadiusIncrement*percentage;
+        CGFloat largeRadius = self.largeCircleMinRadius+largeCircleIncrement;
+        
         //mask the whole thing to the large outer circle
         [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
     

@@ -169,6 +169,12 @@
             break;
         }
         else if([view isKindOfClass:[%c(SBUIPasscodeLockViewWithKeyboard) class]]) {
+            for(UIView *keyboard in view.subviews) {
+                if([keyboard isKindOfClass:[%c(SBPasscodeKeyboard) class]]) {
+                    [self.customLockScreenContainer addKeyboardView:keyboard fromSuperView:keyboard.superview];
+                    break;
+                }
+            }
             securityType = ALSLockScreenSecurityTypePhrase;
             break;
         }
