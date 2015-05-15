@@ -9,8 +9,10 @@
 - (void)addNotificationView:(UIView *)notificationView fromSuperView:(UIView *)superView;
 - (ALSCustomLockScreen *)customLockScreen;
 - (void)notificationViewChanged;
+- (void)removeAddedViews;
 - (void)resetView;
 - (UIScrollView *)scrollView;
 - (void)setPasscodeEntered:(void (^)(NSString *passcode))passcodeEntered;
+- (void)setPasscodeTextField:(UITextField *)passcodeTextField;
 
 @end

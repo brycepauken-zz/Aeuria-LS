@@ -25,6 +25,7 @@
 
 - (void)addCustomLockScreen;
 - (BOOL)customLockScreenHidden;
+- (id)findViewOfClass:(Class)class inView:(UIView *)view maxDepth:(int)depth;
 - (void)setHintGestureRecognizersEnabled:(BOOL)enabled;
 - (void)updateSecurityType;
 
@@ -40,8 +41,11 @@
     
     [self setHintGestureRecognizersEnabled:NO];
     [ALSHideableViewManager setShouldHide:YES];
-    if(self.customLockScreenContainer && self.customLockScreenContainer.superview) {
-        [self.customLockScreenContainer removeFromSuperview];
+    if(self.customLockScreenContainer) {
+        [self.customLockScreenContainer removeAddedViews];
+        if(self.customLockScreenContainer.superview) {
+            [self.customLockScreenContainer removeFromSuperview];
+        }
     }
     
     __weak SBLockScreenViewController *weakSelf = self;
@@ -89,6 +93,37 @@
 %new
 - (void)failedPasscode {
     [self.customLockScreenContainer.customLockScreen failedEntry];
+}
+
+%new
+- (id)findViewOfClass:(Class)class inView:(UIView *)view maxDepth:(int)depth {
+    if (depth == 0 || [view isKindOfClass:[ALSCustomLockScreenContainer class]]) {
+        return nil;
+    }
+    
+    NSInteger count = depth;
+    while(count > 0) {
+        for(UIView *subview in view.subviews) {
+            if ([subview isKindOfClass:class]) {
+                return subview;
+            }
+        }
+        
+        count--;
+        for(UIView *subview in view.subviews) {
+            UIView *notificationView = [self findViewOfClass:class inView:subview maxDepth:count];
+            if(notificationView) {
+                return notificationView;
+            }
+        }
+    }
+    
+    return nil;
+}
+
+%new
+- (void)resetForScreenOff {
+    [self.customLockScreenContainer removeAddedViews];
 }
 
 /*
@@ -149,8 +184,7 @@
     %orig;
     
     [self setHintGestureRecognizersEnabled:![[self lockScreenScrollView] isHidden]];
-    [self updateSecurityType];
-    [self.customLockScreenContainer resetView];
+    [self addCustomLockScreen];
 }
 
 /*
@@ -175,6 +209,11 @@
                     break;
                 }
             }
+            id passcodeTextField = [self findViewOfClass:[%c(SBUIPasscodeTextField) class] inView:view maxDepth:5];
+            if(passcodeTextField) {
+                [self.customLockScreenContainer setPasscodeTextField:passcodeTextField];
+                [passcodeTextField setText:@""];
+            }
             securityType = ALSLockScreenSecurityTypePhrase;
             break;
         }
@@ -191,6 +230,12 @@
     
     [self addCustomLockScreen];
 }
+
+- (void)viewDidDisappear:(BOOL)view {
+    [self.customLockScreenContainer removeAddedViews];
+    %orig;
+}
+
 /*
  
 Example Alert

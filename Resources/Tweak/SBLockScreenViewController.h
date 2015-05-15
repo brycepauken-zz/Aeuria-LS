@@ -20,6 +20,7 @@
 - (id)customLockScreenContainer;
 - (void)failedBio;
 - (void)failedPasscode;
+- (void)resetForScreenOff;
 - (void)setCustomLockScreenHidden:(BOOL)hidden;
 
 @end

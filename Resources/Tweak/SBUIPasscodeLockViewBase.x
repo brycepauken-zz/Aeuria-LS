@@ -30,12 +30,19 @@
     
     [[self lockScreenViewController] failedPasscode];
 }
+
 - (void)updateStatusTextForBioEvent:(unsigned long long)arg1 animated:(bool)arg2 {
     %orig;
     
     if(arg1 > 0) {
         [[self lockScreenViewController] failedBio];
     }
+}
+
+- (void)resetForScreenOff {
+    %orig;
+    
+     [[self lockScreenViewController] resetForScreenOff];
 }
 
 %end

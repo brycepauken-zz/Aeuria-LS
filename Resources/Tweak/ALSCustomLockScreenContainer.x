@@ -15,6 +15,7 @@
 @property (nonatomic, strong) UIView *notificationView;
 @property (nonatomic, strong) UIView *notificationViewBackground;
 @property (nonatomic, strong) UIView *notificationViewOriginalSuperview;
+@property (nonatomic, strong) UITextField *passcodeTextField;
 @property (nonatomic, strong) ALSCustomLockScreenOverlay *scrollView;
 
 @end
@@ -117,17 +118,7 @@
 }
 
 - (void)dealloc {
-    [self.mediaControlsView removeFromSuperview];
-    [self.mediaControlsViewOriginalSuperview addSubview:self.mediaControlsView];
-    self.mediaControlsViewOriginalSuperview = nil;
-    
-    [self.notificationView removeFromSuperview];
-    [self.notificationViewOriginalSuperview addSubview:self.notificationView];
-    self.notificationViewOriginalSuperview = nil;
-    
-    [self.keyboardView removeFromSuperview];
-    [self.keyboardViewOriginalSuperview addSubview:self.keyboardView];
-    self.keyboardViewOriginalSuperview = nil;
+    [self removeAddedViews];
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
@@ -172,6 +163,23 @@
     [self.notificationViewBackground setHidden:shouldHideNotificationView];
 }
 
+- (void)removeAddedViews {
+    [self.mediaControlsView removeFromSuperview];
+    [self.mediaControlsViewOriginalSuperview addSubview:self.mediaControlsView];
+    self.mediaControlsView = nil;
+    self.mediaControlsViewOriginalSuperview = nil;
+    
+    [self.notificationView removeFromSuperview];
+    [self.notificationViewOriginalSuperview addSubview:self.notificationView];
+    self.notificationView = nil;
+    self.notificationViewOriginalSuperview = nil;
+    
+    [self.keyboardView removeFromSuperview];
+    [self.keyboardViewOriginalSuperview addSubview:self.keyboardView];
+    self.keyboardView = nil;
+    self.keyboardViewOriginalSuperview = nil;
+}
+
 - (void)resetView {
     [self setUserInteractionEnabled:YES];
     [self.scrollView setContentOffset:CGPointMake(self.bounds.size.width, 0)];
@@ -187,6 +195,15 @@
     [self.mediaControlsView setAlpha:1-percentage];
     [self.mediaControlsViewBackground setAlpha:1-percentage];
     [self.keyboardViewBackground setAlpha:percentage*0.75];
+    
+    if(self.passcodeTextField) {
+        if(percentage==1 && ![self.passcodeTextField isEditing]) {
+            [self.passcodeTextField becomeFirstResponder];
+        }
+        else if([self.passcodeTextField isEditing]) {
+            [self.passcodeTextField resignFirstResponder];
+        }
+    }
 }
 
 - (void)setFrame:(CGRect)frame {
