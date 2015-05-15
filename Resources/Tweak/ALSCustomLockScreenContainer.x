@@ -196,13 +196,8 @@
     [self.mediaControlsViewBackground setAlpha:1-percentage];
     [self.keyboardViewBackground setAlpha:percentage*0.75];
     
-    if(self.passcodeTextField) {
-        if(percentage==1 && ![self.passcodeTextField isEditing]) {
-            [self.passcodeTextField becomeFirstResponder];
-        }
-        else if([self.passcodeTextField isEditing]) {
-            [self.passcodeTextField resignFirstResponder];
-        }
+    if(self.passcodeTextField && percentage==1 && ![self.passcodeTextField isFirstResponder]) {
+        [self.passcodeTextField becomeFirstResponder];
     }
 }
 
