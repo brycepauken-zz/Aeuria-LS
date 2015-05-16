@@ -118,6 +118,8 @@
 }
 
 - (void)addDotAndAnimate:(BOOL)animate {
+    [CATransaction begin];
+    [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
     //create new dot
     int existingDotCount = (int)self.dotsLayer.sublayers.count;
     
@@ -152,6 +154,7 @@
         [subdot addAnimation:positionAnimation forKey:@"position"];
         [subdot setPosition:CGPointMake(newPositionX, self.dotRadius+4)];
     }
+    [CATransaction commit];
 }
 
 - (void)buttonAtIndex:(int)index setHighlighted:(BOOL)highlighted {
@@ -256,7 +259,12 @@
     CGFloat maxScreenDimension = MAX(screenSize.width, screenSize.height);
     CGRect dotsLayerFrame = CGRectMake((self.bounds.size.width-maxScreenDimension)/2, self.bounds.size.height/2-self.buttonRadius*3-self.buttonPadding-self.dotVerticalOffset-self.dotRadius*2-4, maxScreenDimension, self.dotRadius*2+8);
     [self.dotsDisplayLayer setFrame:dotsLayerFrame];
-    dotsLayerFrame.origin.y = -dotsLayerFrame.size.height*2;
+    if(self.securityType == ALSLockScreenSecurityTypePhrase) {
+        dotsLayerFrame.origin.y = (self.bounds.size.height-self.keyboardHeight)/2-dotsLayerFrame.size.height/2;
+    }
+    else {
+        dotsLayerFrame.origin.y = -dotsLayerFrame.size.height*2;
+    }
     [self.dotsLayer setFrame:dotsLayerFrame];
     
     self.largeCircleMaxRadiusIncrement = ceilf(sqrt(self.bounds.size.width*self.bounds.size.width+self.bounds.size.height*self.bounds.size.height)/2)-self.largeCircleMinRadius;
