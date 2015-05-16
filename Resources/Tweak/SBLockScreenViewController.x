@@ -194,6 +194,14 @@
     return 3;
 }
 
+- (BOOL)suppressesControlCenter {
+    return [[[self customLockScreenContainer] scrollView] contentOffset].x==0;
+}
+
+- (BOOL)suppressesNotificationCenter {
+    return [[[self customLockScreenContainer] scrollView] contentOffset].x==0;
+}
+
 %new
 - (void)updateSecurityType {
     ALSLockScreenSecurityType securityType = ALSLockScreenSecurityTypeNone;
