@@ -6,9 +6,12 @@
  with for such purposes as forwarding passcodes so we don't have to handle them.
  */
 
+@class ALSCustomLockScreenMask;
+
 @interface ALSCustomLockScreen : UIView <UIScrollViewDelegate>
 
 - (void)failedEntry;
+- (ALSCustomLockScreenMask *)filledOverlayMask;
 - (void)resetView;
 - (void)setDisplayLinkPaused:(BOOL)paused;
 - (void)setKeyboardHeight:(CGFloat)keyboardHeight;

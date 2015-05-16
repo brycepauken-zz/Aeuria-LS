@@ -21,6 +21,7 @@ typedef NS_ENUM(NSInteger, ALSLockScreenSecurityType) {
 - (BOOL)isAnimating;
 - (BOOL)needsUpdate;
 - (void)removeAllDotsWithCompletion:(void (^)())completion;
+- (void)removeDotAndAnimate:(BOOL)animate;
 - (void)resetMask;
 - (ALSLockScreenSecurityType)securityType;
 - (void)setKeyboardHeight:(CGFloat)keyboardHeight;

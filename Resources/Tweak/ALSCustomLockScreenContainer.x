@@ -1,6 +1,7 @@
 #import "ALSCustomLockScreenContainer.h"
 
 #import "ALSCustomLockScreen.h"
+#import "ALSCustomLockScreenMask.h"
 #import "ALSCustomLockScreenOverlay.h"
 
 @interface ALSCustomLockScreenContainer()
@@ -16,6 +17,7 @@
 @property (nonatomic, strong) UIView *notificationViewBackground;
 @property (nonatomic, strong) UIView *notificationViewOriginalSuperview;
 @property (nonatomic, strong) UITextField *passcodeTextField;
+@property (nonatomic) NSInteger passcodeTextFieldCharacterCount;
 @property (nonatomic, strong) ALSCustomLockScreenOverlay *scrollView;
 
 @end
@@ -163,6 +165,28 @@
     [self.notificationViewBackground setHidden:shouldHideNotificationView];
 }
 
+- (void)passcodeTextFieldDidChange:(UITextField *)textField {
+    if(textField == self.passcodeTextField) {
+        NSInteger newCharacterCount = textField.text.length;
+        NSInteger characterCountDiff = newCharacterCount-self.passcodeTextFieldCharacterCount;
+        if(characterCountDiff > 0) {
+            for(int i=0;i<characterCountDiff;i++) {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(i*0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [[self.customLockScreen filledOverlayMask] addDotAndAnimate:YES];
+                });
+            }
+        }
+        else {
+            for(int i=0;i<-characterCountDiff;i++) {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(i*0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [[self.customLockScreen filledOverlayMask] removeDotAndAnimate:YES];
+                });
+            }
+        }
+        self.passcodeTextFieldCharacterCount = newCharacterCount;
+    }
+}
+
 - (void)removeAddedViews {
     [self.mediaControlsView removeFromSuperview];
     [self.mediaControlsViewOriginalSuperview addSubview:self.mediaControlsView];
@@ -178,6 +202,9 @@
     [self.keyboardViewOriginalSuperview addSubview:self.keyboardView];
     self.keyboardView = nil;
     self.keyboardViewOriginalSuperview = nil;
+    
+    [self.passcodeTextField removeTarget:self action:@selector(passcodeTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    self.passcodeTextField = nil;
 }
 
 - (void)resetView {
@@ -211,6 +238,12 @@
 
 - (void)setPasscodeEntered:(void (^)(NSString *passcode))passcodeEntered {
     [self.customLockScreen setPasscodeEntered:passcodeEntered];
+}
+
+- (void)setPasscodeTextField:(UITextField *)passcodeTextField {
+    _passcodeTextField = passcodeTextField;
+    [_passcodeTextField addTarget:self action:@selector(passcodeTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    self.passcodeTextFieldCharacterCount = passcodeTextField.text.length;
 }
 
 @end

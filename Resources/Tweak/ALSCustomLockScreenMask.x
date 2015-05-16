@@ -120,9 +120,9 @@
 - (void)addDotAndAnimate:(BOOL)animate {
     [CATransaction begin];
     [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+    
     //create new dot
     int existingDotCount = (int)self.dotsLayer.sublayers.count;
-    
     CGFloat newDotOffset = (self.dotsLayer.bounds.size.width+(self.dotRadius*2*existingDotCount)+(self.dotPadding*(MAX(1,existingDotCount)-1)))/2+self.dotPadding+self.dotRadius*3/2+1;
     CAShapeLayer *dot = [[CAShapeLayer alloc] init];
     [dot setBounds:CGRectMake(0, 0, self.dotRadius*2, self.dotRadius*2)];
@@ -301,6 +301,49 @@
         [scaleAnimation setToValue:[NSValue valueWithCATransform3D:CATransform3DMakeScale(0, 0, 1)]];
         [subdot addAnimation:scaleAnimation forKey:@"transform"];
         [subdot setTransform:CATransform3DMakeScale(0, 0, 1)];
+    }
+    [CATransaction commit];
+}
+
+- (void)removeDotAndAnimate:(BOOL)animate {
+    [CATransaction begin];
+    [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+    
+    //animate position of all dots
+    int existingDotCount = (int)self.dotsLayer.sublayers.count-1;
+    CGFloat firstDotOffset = (self.dotsLayer.bounds.size.width-(self.dotRadius*2*existingDotCount)-(self.dotPadding*(existingDotCount-1)))/2+self.dotRadius+1;
+    CALayer *lastDot;
+    for(CALayer *subdot in [self.dotsLayer.sublayers copy]) {
+        int dotIndex = [[subdot valueForKey:@"indexNum"] intValue];
+        
+        CGFloat newPositionX = firstDotOffset+(self.dotRadius*2+self.dotPadding)*dotIndex;
+        CABasicAnimation *positionAnimation = [CABasicAnimation animationWithKeyPath:@"position.x"];
+        [positionAnimation setDuration:animate?0.1:0];
+        [positionAnimation setFromValue:@([subdot.presentationLayer position].x)];
+        [positionAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut]];
+        [positionAnimation setToValue:@(newPositionX)];
+        [subdot addAnimation:positionAnimation forKey:@"position"];
+        [subdot setPosition:CGPointMake(newPositionX, self.dotRadius+4)];
+        
+        if(dotIndex == existingDotCount) {
+            lastDot = subdot;
+        }
+    }
+    [CATransaction commit];
+    
+    [CATransaction begin];
+    [CATransaction setCompletionBlock:^{
+        [lastDot removeFromSuperlayer];
+    }];
+    [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+    if(lastDot) {
+        //animate alpha
+        CABasicAnimation *opacityAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
+        [opacityAnimation setDuration:animate?0.1:0];
+        [opacityAnimation setFromValue:@(1)];
+        [opacityAnimation setToValue:@(0)];
+        [lastDot addAnimation:opacityAnimation forKey:@"opacity"];
+        [lastDot setOpacity:0];
     }
     [CATransaction commit];
 }
