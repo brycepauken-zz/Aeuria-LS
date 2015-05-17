@@ -138,11 +138,11 @@
     if([self lockScreenViewController]) {
         UIView *mediaControlsView = [[self.customProperties objectForKey:@"mediaControlsView"] object];
         if(mediaControlsView) {
-            [[[self lockScreenViewController] customLockScreenContainer] addMediaControlsView:mediaControlsView fromSuperView:mediaControlsView.superview];
+            [[[self lockScreenViewController] customLockScreenContainer] setMediaControlsView:mediaControlsView];
         }
         UIView *notificationView = [[self.customProperties objectForKey:@"notificationView"] object];
         if(notificationView) {
-            [[[self lockScreenViewController] customLockScreenContainer] addNotificationView:notificationView fromSuperView:notificationView.superview];
+            [[[self lockScreenViewController] customLockScreenContainer] setNotificationView:notificationView];
         }
     }
     

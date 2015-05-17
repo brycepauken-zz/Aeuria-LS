@@ -42,10 +42,10 @@
     [self setHintGestureRecognizersEnabled:NO];
     [ALSHideableViewManager setShouldHide:YES];
     if(self.customLockScreenContainer) {
-        [self.customLockScreenContainer removeAddedViews];
         if(self.customLockScreenContainer.superview) {
             [self.customLockScreenContainer removeFromSuperview];
         }
+        self.customLockScreenContainer = nil;
     }
     
     __weak SBLockScreenViewController *weakSelf = self;
@@ -122,7 +122,7 @@
 
 %new
 - (void)resetForScreenOff {
-    [self.customLockScreenContainer removeAddedViews];
+    self.customLockScreenContainer = nil;
 }
 
 /*
@@ -205,7 +205,7 @@
         else if([view isKindOfClass:[%c(SBUIPasscodeLockViewWithKeyboard) class]]) {
             for(UIView *keyboard in view.subviews) {
                 if([keyboard isKindOfClass:[%c(SBPasscodeKeyboard) class]]) {
-                    [self.customLockScreenContainer addKeyboardView:keyboard fromSuperView:keyboard.superview];
+                    [self.customLockScreenContainer setKeyboardView:keyboard];
                     break;
                 }
             }
@@ -232,7 +232,7 @@
 }
 
 - (void)viewDidDisappear:(BOOL)view {
-    [self.customLockScreenContainer removeAddedViews];
+    self.customLockScreenContainer = nil;
     %orig;
 }
 

@@ -9,14 +9,11 @@
 @property (nonatomic, strong) ALSCustomLockScreen *customLockScreen;
 @property (nonatomic, weak) UIView *keyboardView;
 @property (nonatomic, strong) UIView *keyboardViewBackground;
-@property (nonatomic, strong) UIView *keyboardViewOriginalSuperview;
-@property (nonatomic, strong) UIView *mediaControlsView;
+@property (nonatomic, weak) UIView *mediaControlsView;
 @property (nonatomic, strong) UIView *mediaControlsViewBackground;
-@property (nonatomic, strong) UIView *mediaControlsViewOriginalSuperview;
-@property (nonatomic, strong) UIView *notificationView;
+@property (nonatomic, weak) UIView *notificationView;
 @property (nonatomic, strong) UIView *notificationViewBackground;
-@property (nonatomic, strong) UIView *notificationViewOriginalSuperview;
-@property (nonatomic, strong) UITextField *passcodeTextField;
+@property (nonatomic, weak) UITextField *passcodeTextField;
 @property (nonatomic) NSInteger passcodeTextFieldCharacterCount;
 @property (nonatomic, strong) ALSCustomLockScreenOverlay *scrollView;
 
@@ -46,92 +43,20 @@
     return self;
 }
 
-- (void)addKeyboardView:(UIView *)keyboardView fromSuperView:(UIView *)superView {
-    [self setKeyboardView:keyboardView];
-    //[keyboardView removeFromSuperview];
-    //[self.scrollView addSubview:keyboardView];
-    
-    if([UIPrintInteractionController class]) {
-        UIVisualEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-        UIVisualEffectView *visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-        [visualEffectView setFrame:keyboardView.frame];
-        [self setKeyboardViewBackground:visualEffectView];
-    }
-    else {
-        [self setKeyboardViewBackground:[[UIView alloc] initWithFrame:keyboardView.frame]];
-        [self.keyboardViewBackground setBackgroundColor:[UIColor colorWithWhite:0.5 alpha:0.75]];
-    }
-    [self.keyboardViewBackground setAlpha:0];
-    [self insertSubview:self.keyboardViewBackground belowSubview:self.scrollView];
-    
-    //[self setKeyboardViewOriginalSuperview:superView];
-    
-    [self.customLockScreen setKeyboardHeight:keyboardView.frame.size.height];
-}
-
-- (void)addMediaControlsView:(UIView *)mediaControlsView fromSuperView:(UIView *)superView {
-    if(![self.customLockScreen shouldShowWithNotifications] || mediaControlsView==self.mediaControlsView) {
-        return;
-    }
-    
-    [self setMediaControlsView:mediaControlsView];
-    [mediaControlsView removeFromSuperview];
-    [self.scrollView addSubview:mediaControlsView];
-    
-    [self setMediaControlsViewBackground:[[UIView alloc] initWithFrame:mediaControlsView.frame]];
-    [self.mediaControlsViewBackground setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
-    [self insertSubview:self.mediaControlsViewBackground belowSubview:self.scrollView];
-    
-    [self setMediaControlsViewOriginalSuperview:superView];
-}
-
-- (void)addNotificationView:(UIView *)notificationView fromSuperView:(UIView *)superView {
-    if(![self.customLockScreen shouldShowWithNotifications] || notificationView==self.notificationView) {
-        return;
-    }
-    
-    //cut notificiation view height in half
-    CGRect notificationViewFrame = notificationView.frame;
-    notificationViewFrame.size.height /= 2;
-    [notificationView setFrame:notificationViewFrame];
-    [(UITableView *)notificationView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-    
-    //remove all non-tableview subviews
-    for(UIView *subview in [notificationView.subviews copy]) {
-        if(!([subview isKindOfClass:[%c(UITableViewWrapperView) class]] || [subview isKindOfClass:[UITableView class]])) {
-            [subview removeFromSuperview];
-        }
-    }
-    
-    [self setNotificationView:notificationView];
-    [notificationView removeFromSuperview];
-    [self.scrollView addSubview:notificationView];
-    
-    [self setNotificationViewBackground:[[UIView alloc] initWithFrame:notificationView.frame]];
-    [self.notificationViewBackground setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
-    [self insertSubview:self.notificationViewBackground belowSubview:self.scrollView];
-    
-    [self setNotificationViewOriginalSuperview:superView];
-    
-    [self notificationViewChanged];
-}
-
 - (void)dealloc {
-    [self removeAddedViews];
+    [self.passcodeTextField removeTarget:self action:@selector(passcodeTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    [self.notificationView setFrame:CGRectMake(self.scrollView.bounds.size.width, 0, self.scrollView.bounds.size.width, self.notificationView.frame.size.height)];
     [self.notificationViewBackground setFrame:CGRectMake(0, 0, self.scrollView.bounds.size.width, self.notificationView.frame.size.height)];
-    [self.mediaControlsView setFrame:CGRectMake(self.scrollView.bounds.size.width, self.scrollView.bounds.size.height-self.mediaControlsView.frame.size.height-20, self.scrollView.bounds.size.width, self.mediaControlsView.frame.size.height)];
     [self.mediaControlsViewBackground setFrame:CGRectMake(0, self.scrollView.bounds.size.height-self.mediaControlsView.frame.size.height-20, self.scrollView.bounds.size.width, self.mediaControlsView.frame.size.height+20)];
-    //[self.keyboardView setFrame:CGRectMake(self.scrollView.bounds.size.width, self.bounds.size.height-self.keyboardView.frame.size.height, self.bounds.size.width, self.keyboardView.frame.size.height)];
     [self.keyboardViewBackground setFrame:CGRectMake(0, self.bounds.size.height-self.keyboardView.frame.size.height, self.bounds.size.width, self.keyboardView.frame.size.height)];
 }
 
 - (void)notificationViewChanged {
+    return;
     NSInteger numberOfRows = [((UITableView *)self.notificationView).dataSource tableView:(UITableView *)self.notificationView numberOfRowsInSection:0];
     if(numberOfRows==1) {
         CGFloat itemHeight = [((UITableView *)self.notificationView).delegate tableView:(UITableView *)self.notificationView heightForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
@@ -167,24 +92,6 @@
     }
 }
 
-- (void)removeAddedViews {
-    [self.mediaControlsView removeFromSuperview];
-    [self.mediaControlsViewOriginalSuperview addSubview:self.mediaControlsView];
-    self.mediaControlsView = nil;
-    self.mediaControlsViewOriginalSuperview = nil;
-    
-    [self.notificationView removeFromSuperview];
-    [self.notificationViewOriginalSuperview addSubview:self.notificationView];
-    self.notificationView = nil;
-    self.notificationViewOriginalSuperview = nil;
-    
-    self.keyboardView = nil;
-    self.keyboardViewOriginalSuperview = nil;
-    
-    [self.passcodeTextField removeTarget:self action:@selector(passcodeTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-    self.passcodeTextField = nil;
-}
-
 - (void)resetView {
     [self setUserInteractionEnabled:YES];
     [self.scrollView setContentOffset:CGPointMake(self.bounds.size.width, 0)];
@@ -212,6 +119,54 @@
     if(!CGRectEqualToRect(self.frame, prevFrame)) {
         [self.scrollView setContentSize:CGSizeMake(self.bounds.size.width*2, self.bounds.size.height)];
     }
+}
+
+/*
+ Stores a reference to the passcode keyboard view,
+ and adds a background behind it.
+ */
+- (void)setKeyboardView:(UIView *)keyboardView {
+    _keyboardView = keyboardView;
+    
+    if([UIPrintInteractionController class]) {
+        UIVisualEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+        UIVisualEffectView *visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+        [visualEffectView setFrame:keyboardView.frame];
+        [self setKeyboardViewBackground:visualEffectView];
+    }
+    else {
+        [self setKeyboardViewBackground:[[UIView alloc] initWithFrame:keyboardView.frame]];
+        [self.keyboardViewBackground setBackgroundColor:[UIColor colorWithWhite:0.5 alpha:0.75]];
+    }
+    [self.keyboardViewBackground setAlpha:0];
+    [self insertSubview:self.keyboardViewBackground belowSubview:self.scrollView];
+    [self.customLockScreen setKeyboardHeight:keyboardView.frame.size.height];
+}
+
+/*
+ Stores a reference to the media controls view,
+ and adds a background behind it.
+ */
+- (void)setMediaControlsView:(UIView *)mediaControlsView {
+    _mediaControlsView = mediaControlsView;
+    
+    [self setMediaControlsViewBackground:[[UIView alloc] initWithFrame:mediaControlsView.frame]];
+    [self.mediaControlsViewBackground setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
+    [self insertSubview:self.mediaControlsViewBackground belowSubview:self.scrollView];
+}
+
+/*
+ Stores a reference to the notification view,
+ and adds a background behind it.
+ */
+- (void)setNotificationView:(UIView *)notificationView {
+    _notificationView = notificationView;
+    
+    [self setNotificationViewBackground:[[UIView alloc] initWithFrame:notificationView.frame]];
+    [self.notificationViewBackground setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
+    [self insertSubview:self.notificationViewBackground belowSubview:self.scrollView];
+    
+    [self notificationViewChanged];
 }
 
 - (void)setPasscodeEntered:(void (^)(NSString *passcode))passcodeEntered {

@@ -4,14 +4,13 @@
 
 @interface ALSCustomLockScreenContainer : UIView <UIScrollViewDelegate>
 
-- (void)addKeyboardView:(UIView *)keyboardView fromSuperView:(UIView *)superView;
-- (void)addMediaControlsView:(UIView *)mediaControlsView fromSuperView:(UIView *)superView;
-- (void)addNotificationView:(UIView *)notificationView fromSuperView:(UIView *)superView;
 - (ALSCustomLockScreen *)customLockScreen;
 - (void)notificationViewChanged;
-- (void)removeAddedViews;
 - (void)resetView;
 - (UIScrollView *)scrollView;
+- (void)setKeyboardView:(UIView *)keyboardView;
+- (void)setMediaControlsView:(UIView *)mediaControlsView;
+- (void)setNotificationView:(UIView *)notificationView;
 - (void)setPasscodeEntered:(void (^)(NSString *passcode))passcodeEntered;
 - (void)setPasscodeTextField:(UITextField *)passcodeTextField;
 
