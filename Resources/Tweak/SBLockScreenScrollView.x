@@ -20,6 +20,7 @@
 - (void)hideSubviewsIfNeeded;
 - (id)lockScreenViewController;
 - (void)searchSubviews;
++ (void)setNonAncestorsHidden:(BOOL)hidden fromView:(UIView *)view withAncestorsList:(NSArray *)ancestorsList currentDepth:(NSInteger)currentDepth;
 - (void)setProperty:(id)property forKey:(id<NSCopying>)key;
 
 @end
@@ -109,6 +110,9 @@
 %new
 - (void)hideSubviewsIfNeeded {
     BOOL shouldHideSubviews = [self shouldHideSubviews];
+    NSArray *mediaControlsViewAncestors = [self.customProperties objectForKey:@"mediaControlsViewAncestors"];
+    NSArray *notificationViewAncestors = [self.customProperties objectForKey:@"notificationViewAncestors"];
+    
     for(UIView *subview in self.subviews) {
         if([subview isKindOfClass:[%c(SBUIPasscodeLockViewWithKeyboard) class]]) {
             for(UIView *passcodeViewSubview in subview.subviews) {
@@ -118,6 +122,12 @@
                 }
                 [passcodeViewSubview setHidden:(shouldHideSubviews && ![passcodeViewSubview isKindOfClass:[%c(SBPasscodeKeyboard) class]])];
             }
+        }
+        else if(subview == [mediaControlsViewAncestors firstObject]) {
+            [[self class] setNonAncestorsHidden:shouldHideSubviews fromView:subview withAncestorsList:mediaControlsViewAncestors currentDepth:1];
+        }
+        else if(subview == [notificationViewAncestors firstObject]) {
+            [[self class] setNonAncestorsHidden:shouldHideSubviews fromView:subview withAncestorsList:notificationViewAncestors currentDepth:1];
         }
         else {
             [subview setHidden:shouldHideSubviews];
@@ -219,10 +229,27 @@
     [[[[self lockScreenViewController] customLockScreenContainer] scrollView] setContentOffset:offset];
 };
 
+/*
+ Recurses through the view hierarchy and updates the hidden
+ property on views that aren't part of the given ancestor
+ list (i.e., hides everything not needed to show the
+ notification or media controls views)
+ */
 %new
-- (void)setShouldHideSubviews:(BOOL)shouldHide {
-    [self setProperty:@(shouldHide) forKey:@"shouldHideSubviews"];
-    [self hideSubviewsIfNeeded];
++ (void)setNonAncestorsHidden:(BOOL)hidden fromView:(UIView *)view withAncestorsList:(NSArray *)ancestorsList currentDepth:(NSInteger)currentDepth {
+    [view setHidden:NO];
+    if(currentDepth >= ancestorsList.count) {
+        return;
+    }
+    UIView *ancestor = [ancestorsList objectAtIndex:currentDepth];
+    for(UIView *subview in view.subviews) {
+        if(subview == ancestor) {
+            [self setNonAncestorsHidden:hidden fromView:subview withAncestorsList:ancestorsList currentDepth:currentDepth+1];
+        }
+        else {
+            [subview setHidden:hidden];
+        }
+    }
 }
 
 %new
@@ -233,6 +260,12 @@
     else {
         [self.customProperties removeObjectForKey:key];
     }
+}
+
+%new
+- (void)setShouldHideSubviews:(BOOL)shouldHide {
+    [self setProperty:@(shouldHide) forKey:@"shouldHideSubviews"];
+    [self hideSubviewsIfNeeded];
 }
 
 %new

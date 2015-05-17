@@ -45,7 +45,6 @@
         if(self.customLockScreenContainer.superview) {
             [self.customLockScreenContainer removeFromSuperview];
         }
-        self.customLockScreenContainer = nil;
     }
     
     __weak SBLockScreenViewController *weakSelf = self;
@@ -125,7 +124,6 @@
     if(self.customLockScreenContainer && self.customLockScreenContainer.superview) {
         [self.customLockScreenContainer removeFromSuperview];
     }
-    self.customLockScreenContainer = nil;
 }
 
 /*
@@ -232,11 +230,6 @@
     %orig;
     
     [self addCustomLockScreen];
-}
-
-- (void)viewDidDisappear:(BOOL)view {
-    self.customLockScreenContainer = nil;
-    %orig;
 }
 
 /*
