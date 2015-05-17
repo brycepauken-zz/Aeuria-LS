@@ -59,11 +59,10 @@
         [proxyPasscodeHandler setPasscodeView:passcodeView];
         [weakSelf passcodeLockViewPasscodeEntered:proxyPasscodeHandler];
     }];
-    [self.customLockScreenContainer.layer setZPosition:MAXFLOAT];
     
     [self updateSecurityType];
     
-    [[[self lockScreenScrollView] superview] addSubview:self.customLockScreenContainer];
+    [[[self lockScreenScrollView] superview] insertSubview:self.customLockScreenContainer belowSubview:[self lockScreenScrollView]];
 }
 
 /*
@@ -139,7 +138,7 @@
 - (void)setCustomLockScreenHidden:(BOOL)hidden {
     if([[self.customLockScreenContainer customLockScreen] shouldShowWithNotifications]) {
         [ALSHideableViewManager setShouldHide:YES];
-        [[self lockScreenScrollView] setHidden:YES];
+        [[self lockScreenScrollView] setShouldHideSubviews:YES];
         [self setHintGestureRecognizersEnabled:NO];
         return;
     }
@@ -149,7 +148,7 @@
     if(hidden) {
         [self.customLockScreenContainer removeFromSuperview];
         [ALSHideableViewManager setShouldHide:NO];
-        [[self lockScreenScrollView] setHidden:NO];
+        [[self lockScreenScrollView] setShouldHideSubviews:NO];
         [self setHintGestureRecognizersEnabled:YES];
         if(self.customLockScreenContainer && self.customLockScreenContainer.superview) {
             [self.customLockScreenContainer removeFromSuperview];
@@ -157,7 +156,7 @@
     }
     else {
         [ALSHideableViewManager setShouldHide:YES];
-        [[self lockScreenScrollView] setHidden:YES];
+        [[self lockScreenScrollView] setShouldHideSubviews:YES];
         [self setHintGestureRecognizersEnabled:NO];
         [self addCustomLockScreen];
     }
@@ -165,6 +164,7 @@
 
 %new
 - (void)setHintGestureRecognizersEnabled:(BOOL)enabled {
+    return;
     UIView *currentView = self.view;
     while(currentView) {
         for(UIGestureRecognizer *gestureRecognizer in currentView.gestureRecognizers) {
@@ -192,14 +192,6 @@
  */
 - (long long)statusBarStyle {
     return 3;
-}
-
-- (BOOL)suppressesControlCenter {
-    return [[[self customLockScreenContainer] scrollView] contentOffset].x==0;
-}
-
-- (BOOL)suppressesNotificationCenter {
-    return [[[self customLockScreenContainer] scrollView] contentOffset].x==0;
 }
 
 %new

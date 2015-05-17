@@ -17,6 +17,7 @@
 
 - (void)checkShouldShowCustomLockScreen;
 - (id)findViewOfClass:(Class)class inView:(UIView *)view maxDepth:(int)depth;
+- (void)hideSubviewsIfNeeded;
 - (id)lockScreenViewController;
 - (void)searchSubviews;
 
@@ -82,8 +83,53 @@
     return nil;
 }
 
+/*
+ Updates all subviews other than SBPasscodeKeyboard (a subview of
+ SBUIPasscodeLockViewWithKeyboard) to be hidden or shown as needed
+ */
+%new
+- (void)hideSubviewsIfNeeded {
+    BOOL shouldHideSubviews = [self shouldHideSubviews];
+    for(UIView *subview in self.subviews) {
+        if([subview isKindOfClass:[%c(SBUIPasscodeLockViewWithKeyboard) class]]) {
+            for(UIView *passcodeViewSubview in subview.subviews) {
+                if([passcodeViewSubview isKindOfClass:[UILabel class]]) {
+                    //we also remove the 'enter passcode' label, since it's tricky to keep hidden
+                    [passcodeViewSubview removeFromSuperview];
+                }
+                [passcodeViewSubview setHidden:(shouldHideSubviews && ![passcodeViewSubview isKindOfClass:[%c(SBPasscodeKeyboard) class]])];
+            }
+        }
+        else {
+            [subview setHidden:shouldHideSubviews];
+        }
+    }
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    UIView *customLockScreen = [[[self lockScreenViewController] customLockScreenContainer] customLockScreen];
+    UIView *tappedButton = [customLockScreen hitTest:point withEvent:event];
+    if(tappedButton) {
+        return customLockScreen;
+    }
+    return %orig;
+}
+
 - (void)layoutSubviews {
     %orig;
+    
+    //layoutSubviews is called on scrolling; ignore the other checks if this is the case here
+    NSValue *lastKnownOffsetVal = [self.customProperties objectForKey:@"lastKnownOffset"];
+    if(lastKnownOffsetVal) {
+        CGPoint lastKnownOffset = [lastKnownOffsetVal CGPointValue];
+        if(!CGPointEqualToPoint(lastKnownOffset, self.contentOffset)) {
+            [self.customProperties setObject:[NSValue valueWithCGPoint:self.contentOffset] forKey:@"lastKnownOffset"];
+            return;
+        }
+    }
+    else {
+        [self.customProperties setObject:[NSValue valueWithCGPoint:self.contentOffset] forKey:@"lastKnownOffset"];
+    }
     
     BOOL notificationViewNotFound = ![[self.customProperties objectForKey:@"notificationView"] object];
     [self searchSubviews];
@@ -99,6 +145,8 @@
             [[[self lockScreenViewController] customLockScreenContainer] addNotificationView:notificationView fromSuperView:notificationView.superview];
         }
     }
+    
+    [self hideSubviewsIfNeeded];
     
     if(notificationViewNotFound && [[self.customProperties objectForKey:@"notificationView"] object]) {
         [self notificationViewChanged];
@@ -143,17 +191,25 @@
 }
 
 - (void)setContentOffset:(CGPoint)offset {
-    if(self.hidden) {
-        %orig(CGPointMake(self.bounds.size.width, 0));
-        UIScrollView *customScrollView = [[[self lockScreenViewController] customLockScreenContainer] scrollView];
-        if(customScrollView.contentOffset.x > offset.x) {
-            [[[[[self lockScreenViewController] customLockScreenContainer] customLockScreen] layer] removeAnimationForKey:@"position"];
-            [customScrollView setContentOffset:offset];
-        }
-    }
-    else {
-        %orig;
-    }
+    %orig;
+    [[[[[self lockScreenViewController] customLockScreenContainer] customLockScreen] layer] removeAnimationForKey:@"position"];
+    [[[[self lockScreenViewController] customLockScreenContainer] scrollView] setContentOffset:offset];
 };
+
+%new
+- (void)setShouldHideSubviews:(BOOL)shouldHide {
+    [self.customProperties setObject:@(shouldHide) forKey:@"shouldHideSubviews"];
+    [self hideSubviewsIfNeeded];
+}
+
+%new
+- (BOOL)shouldHideSubviews {
+    NSNumber *shouldHideSubviewsNum = [self.customProperties objectForKey:@"shouldHideSubviews"];
+    if(!shouldHideSubviewsNum) {
+        [self setShouldHideSubviews:YES];
+        return YES;
+    }
+    return [shouldHideSubviewsNum boolValue];
+}
 
 %end

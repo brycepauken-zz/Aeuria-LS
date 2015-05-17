@@ -7,7 +7,7 @@
 @interface ALSCustomLockScreenContainer()
 
 @property (nonatomic, strong) ALSCustomLockScreen *customLockScreen;
-@property (nonatomic, strong) UIView *keyboardView;
+@property (nonatomic, weak) UIView *keyboardView;
 @property (nonatomic, strong) UIView *keyboardViewBackground;
 @property (nonatomic, strong) UIView *keyboardViewOriginalSuperview;
 @property (nonatomic, strong) UIView *mediaControlsView;
@@ -38,21 +38,18 @@
         [_scrollView setContentOffset:CGPointMake(self.bounds.size.width, 0)];
         [_scrollView setDelegate:self];
         [_scrollView setPagingEnabled:YES];
+        [_scrollView setScrollEnabled:NO];
         [_scrollView setShowsHorizontalScrollIndicator:NO];
         [_scrollView setShowsVerticalScrollIndicator:NO];
         [self addSubview:_scrollView];
-        
-        UIView *overlayView = [[UIView alloc] initWithFrame:self.bounds];
-        [overlayView setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
-        [self addSubview:overlayView];
     }
     return self;
 }
 
 - (void)addKeyboardView:(UIView *)keyboardView fromSuperView:(UIView *)superView {
     [self setKeyboardView:keyboardView];
-    [keyboardView removeFromSuperview];
-    [self.scrollView addSubview:keyboardView];
+    //[keyboardView removeFromSuperview];
+    //[self.scrollView addSubview:keyboardView];
     
     if([UIPrintInteractionController class]) {
         UIVisualEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
@@ -67,7 +64,7 @@
     [self.keyboardViewBackground setAlpha:0];
     [self insertSubview:self.keyboardViewBackground belowSubview:self.scrollView];
     
-    [self setKeyboardViewOriginalSuperview:superView];
+    //[self setKeyboardViewOriginalSuperview:superView];
     
     [self.customLockScreen setKeyboardHeight:keyboardView.frame.size.height];
 }
@@ -123,23 +120,6 @@
     [self removeAddedViews];
 }
 
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-    UIView *tappedButton = [self.customLockScreen hitTest:point withEvent:event];
-    if(tappedButton) {
-        return self.customLockScreen;
-    }
-    
-    if((!self.notificationViewBackground.hidden && CGRectContainsPoint(self.notificationView.frame, [self.scrollView convertPoint:point fromView:self])) ||
-       (!self.mediaControlsViewBackground.hidden && CGRectContainsPoint(self.mediaControlsView.frame, [self.scrollView convertPoint:point fromView:self])) ||
-       (!self.keyboardViewBackground.hidden && CGRectContainsPoint(self.keyboardView.frame, [self.scrollView convertPoint:point fromView:self]))) {
-        [self.scrollView setScrollEnabled:NO];
-    }
-    else {
-        [self.scrollView setScrollEnabled:YES];
-    }
-    return [self.scrollView hitTest:[self.scrollView convertPoint:point fromView:self] withEvent:event];
-}
-
 - (void)layoutSubviews {
     [super layoutSubviews];
     
@@ -147,7 +127,7 @@
     [self.notificationViewBackground setFrame:CGRectMake(0, 0, self.scrollView.bounds.size.width, self.notificationView.frame.size.height)];
     [self.mediaControlsView setFrame:CGRectMake(self.scrollView.bounds.size.width, self.scrollView.bounds.size.height-self.mediaControlsView.frame.size.height-20, self.scrollView.bounds.size.width, self.mediaControlsView.frame.size.height)];
     [self.mediaControlsViewBackground setFrame:CGRectMake(0, self.scrollView.bounds.size.height-self.mediaControlsView.frame.size.height-20, self.scrollView.bounds.size.width, self.mediaControlsView.frame.size.height+20)];
-    [self.keyboardView setFrame:CGRectMake(self.scrollView.bounds.size.width, self.bounds.size.height-self.keyboardView.frame.size.height, self.bounds.size.width, self.keyboardView.frame.size.height)];
+    //[self.keyboardView setFrame:CGRectMake(self.scrollView.bounds.size.width, self.bounds.size.height-self.keyboardView.frame.size.height, self.bounds.size.width, self.keyboardView.frame.size.height)];
     [self.keyboardViewBackground setFrame:CGRectMake(0, self.bounds.size.height-self.keyboardView.frame.size.height, self.bounds.size.width, self.keyboardView.frame.size.height)];
 }
 
@@ -198,8 +178,6 @@
     self.notificationView = nil;
     self.notificationViewOriginalSuperview = nil;
     
-    [self.keyboardView removeFromSuperview];
-    [self.keyboardViewOriginalSuperview addSubview:self.keyboardView];
     self.keyboardView = nil;
     self.keyboardViewOriginalSuperview = nil;
     
@@ -224,7 +202,7 @@
     [self.keyboardViewBackground setAlpha:percentage*0.75];
     
     if(self.passcodeTextField && percentage==1 && ![self.passcodeTextField isFirstResponder]) {
-        [self.passcodeTextField becomeFirstResponder];
+        //[self.passcodeTextField becomeFirstResponder];
     }
 }
 

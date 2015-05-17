@@ -10,6 +10,14 @@
 
 %hook SBUIPasscodeLockViewBase
 
+- (void)layoutSubviews {
+    for(UIView *subview in self.subviews) {
+        if([subview isKindOfClass:[UILabel class]]) {
+            [subview setHidden:YES];
+        }
+    }
+}
+
 %new
 - (id)lockScreenViewController {
     __weak static SBLockScreenViewController *lockScreenViewController;
