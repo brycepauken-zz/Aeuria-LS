@@ -122,6 +122,9 @@
 
 %new
 - (void)resetForScreenOff {
+    if(self.customLockScreenContainer && self.customLockScreenContainer.superview) {
+        [self.customLockScreenContainer removeFromSuperview];
+    }
     self.customLockScreenContainer = nil;
 }
 
