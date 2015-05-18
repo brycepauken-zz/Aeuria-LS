@@ -202,6 +202,8 @@
 - (void)notificationViewChanged {
     [self searchSubviews];
     
+    [[[self lockScreenViewController] customLockScreenContainer] notificationViewChanged];
+    
     UIView *notificationView = [self.customProperties objectForKey:@"notificationView"];
     if(notificationView) {
         [self setProperty:@([((UITableView *)notificationView).dataSource tableView:(UITableView *)notificationView numberOfRowsInSection:0]>0) forKey:@"notificationViewFilled"];

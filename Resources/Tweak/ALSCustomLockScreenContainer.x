@@ -56,7 +56,6 @@
 }
 
 - (void)notificationViewChanged {
-    return;
     NSInteger numberOfRows = [((UITableView *)self.notificationView).dataSource tableView:(UITableView *)self.notificationView numberOfRowsInSection:0];
     if(numberOfRows==1) {
         CGFloat itemHeight = [((UITableView *)self.notificationView).delegate tableView:(UITableView *)self.notificationView heightForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
@@ -66,7 +65,6 @@
         [((UITableView *)self.notificationView) setTableHeaderView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.notificationView.bounds.size.width, 0)]];
     }
     BOOL shouldHideNotificationView = numberOfRows==0;
-    [self.notificationView setHidden:shouldHideNotificationView];
     [self.notificationViewBackground setHidden:shouldHideNotificationView];
 }
 
