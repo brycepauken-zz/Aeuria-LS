@@ -39,6 +39,11 @@
         return;
     }
     
+    UIView *keyboardView = [self.customLockScreenContainer keyboardView];
+    UIView *mediaControlsView = [self.customLockScreenContainer mediaControlsView];
+    UIView *notificationView = [self.customLockScreenContainer notificationView];
+    UITextField *passcodeTextField = [self.customLockScreenContainer passcodeTextField];
+    
     [self setHintGestureRecognizersEnabled:NO];
     [ALSHideableViewManager setShouldHide:YES];
     if(self.customLockScreenContainer) {
@@ -50,6 +55,10 @@
     __weak SBLockScreenViewController *weakSelf = self;
     self.customLockScreenContainer = [[ALSCustomLockScreenContainer alloc] initWithFrame:[[self lockScreenView] bounds]];
     [self.customLockScreenContainer setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
+    [self.customLockScreenContainer setKeyboardView:keyboardView];
+    [self.customLockScreenContainer setMediaControlsView:mediaControlsView];
+    [self.customLockScreenContainer setNotificationView:notificationView];
+    [self.customLockScreenContainer setPasscodeTextField:passcodeTextField];
     [self.customLockScreenContainer setPasscodeEntered:^(NSString *passcode) {
         //create a proxy passcode handler (returns the entered passcode, forwards all other requests)
         id passcodeView = [[weakSelf lockScreenView] passcodeView];
@@ -234,14 +243,14 @@
 
 /*
  
-Example Alert
+ Example Alert
  
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Title" message:@"Message" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:NO];
+ UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Title" message:@"Message" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+ [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:NO];
  
-Example Logging
+ Example Logging
  
-    [[self performSelector:@selector(recursiveDescription)] writeToFile:@"/var/mobile/Documents/out1.txt" atomically:NO encoding:NSStringEncodingConversionAllowLossy error:nil];
+ [[self performSelector:@selector(recursiveDescription)] writeToFile:@"/var/mobile/Documents/out1.txt" atomically:NO encoding:NSStringEncodingConversionAllowLossy error:nil];
  
  */
 

@@ -7,13 +7,9 @@
 @interface ALSCustomLockScreenContainer()
 
 @property (nonatomic, strong) ALSCustomLockScreen *customLockScreen;
-@property (nonatomic, weak) UIView *keyboardView;
 @property (nonatomic, strong) UIView *keyboardViewBackground;
-@property (nonatomic, weak) UIView *mediaControlsView;
 @property (nonatomic, strong) UIView *mediaControlsViewBackground;
-@property (nonatomic, weak) UIView *notificationView;
 @property (nonatomic, strong) UIView *notificationViewBackground;
-@property (nonatomic, weak) UITextField *passcodeTextField;
 @property (nonatomic) NSInteger passcodeTextFieldCharacterCount;
 @property (nonatomic, strong) ALSCustomLockScreenOverlay *scrollView;
 
