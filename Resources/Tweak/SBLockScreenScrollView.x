@@ -35,7 +35,7 @@
 - (NSArray *)ancestorsOfView:(UIView *)view {
     NSMutableArray *ancestors = [[NSMutableArray alloc] init];
     UIView *currentView = view.superview;
-    while(currentView!=self && currentView.superview) {
+    while(currentView!=self && currentView) {
         [ancestors insertObject:currentView atIndex:0];
         currentView = currentView.superview;
     }
