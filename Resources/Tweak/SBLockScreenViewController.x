@@ -181,9 +181,6 @@
         [ALSHideableViewManager setShouldHide:NO];
         [[self lockScreenScrollView] setShouldHideSubviews:NO];
         [self setHintGestureRecognizersEnabled:YES];
-        if(self.customLockScreenContainer && self.customLockScreenContainer.superview) {
-            [self.customLockScreenContainer removeFromSuperview];
-        }
     }
     else {
         [ALSHideableViewManager setShouldHide:YES];

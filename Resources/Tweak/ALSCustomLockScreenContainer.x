@@ -62,7 +62,7 @@
         [((UITableView *)self.notificationView) setTableHeaderView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.notificationView.bounds.size.width, MAX(0,(self.notificationView.bounds.size.height-itemHeight)/2))]];
     }
     else {
-        [((UITableView *)self.notificationView) setTableHeaderView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.notificationView.bounds.size.width, 0)]];
+        [((UITableView *)self.notificationView) setTableHeaderView:nil];
     }
     BOOL shouldHideNotificationView = numberOfRows==0;
     [self.notificationViewBackground setHidden:shouldHideNotificationView];
@@ -88,6 +88,11 @@
         }
         self.passcodeTextFieldCharacterCount = newCharacterCount;
     }
+}
+
+- (void)removeFromSuperview {
+    [((UITableView *)self.notificationView) setTableHeaderView:nil];
+    [super removeFromSuperview];
 }
 
 - (void)resetView {
