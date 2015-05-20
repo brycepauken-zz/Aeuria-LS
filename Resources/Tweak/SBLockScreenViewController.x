@@ -24,7 +24,6 @@
 - (void)passcodeLockViewPasscodeDidChange:(id)arg1;
 
 - (void)addCustomLockScreen;
-- (BOOL)customLockScreenHidden;
 - (id)customProperties;
 - (id)findViewOfClass:(Class)class inView:(UIView *)view maxDepth:(int)depth;
 - (void)setHintGestureRecognizersEnabled:(BOOL)enabled;
@@ -188,6 +187,7 @@
         [self setHintGestureRecognizersEnabled:NO];
         [self addCustomLockScreen];
     }
+    [[self lockScreenScrollView] layoutSubviews];
 }
 
 %new

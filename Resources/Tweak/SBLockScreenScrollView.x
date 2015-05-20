@@ -177,8 +177,12 @@
     
     [self hideSubviewsIfNeeded];
     
-    if(notificationViewNotFound && [self.customProperties objectForKey:@"notificationView"]) {
+    UIView *notificationView = [self.customProperties objectForKey:@"notificationView"];
+    if(notificationViewNotFound && notificationView) {
         [self notificationViewChanged];
+    }
+    if(notificationView.superview.superview) {
+        [notificationView.superview.superview layoutSubviews];
     }
     [self checkShouldShowCustomLockScreen];
 }

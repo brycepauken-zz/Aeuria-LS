@@ -1,5 +1,7 @@
 #import "SBLockScreenNotificationListView.h"
 
+#import "SBLockScreenViewController.h"
+
 @interface SBLockScreenNotificationListView()
 
 - (id)customProperties;
@@ -48,14 +50,22 @@
         [[self customProperties] setObject:@(firstSubviewFrame.size.height) forKey:@"originalHeight"];
     }
     
-    CGFloat halfHeight = [[[self customProperties] objectForKey:@"originalHeight"] doubleValue]/2;
-    firstSubviewFrame.origin.y = 0;
-    firstSubviewFrame.size.height = halfHeight;
+    CGFloat height;
+    if([[self lockScreenViewController] customLockScreenHidden]) {
+        height = [[[self customProperties] objectForKey:@"originalHeight"] doubleValue];
+        firstSubviewFrame.origin.y = [[[self customProperties] objectForKey:@"originalYOffset"] doubleValue];
+    }
+    else {
+        height = [[[self customProperties] objectForKey:@"originalHeight"] doubleValue]/2;
+        firstSubviewFrame.origin.y = 0;
+    }
+    firstSubviewFrame.size.height = height;
     [firstSubview setFrame:firstSubviewFrame];
     for(UIView *secondSubview in firstSubview.subviews) {
         if([secondSubview isKindOfClass:[UITableView class]]) {
             CGRect secondSubviewFrame = firstSubview.frame;
-            secondSubviewFrame.size.height = halfHeight;
+            secondSubviewFrame.origin.y = 0;
+            secondSubviewFrame.size.height = height;
             [secondSubview setFrame:secondSubviewFrame];
             break;
         }

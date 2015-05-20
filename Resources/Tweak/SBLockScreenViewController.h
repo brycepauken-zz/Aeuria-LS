@@ -18,6 +18,7 @@
 - (long long)statusBarStyle;
 
 - (id)customLockScreenContainer;
+- (BOOL)customLockScreenHidden;
 - (void)failedBio;
 - (void)failedPasscode;
 - (void)resetForScreenOff;

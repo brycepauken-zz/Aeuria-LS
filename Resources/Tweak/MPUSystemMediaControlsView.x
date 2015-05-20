@@ -1,5 +1,7 @@
 #import "MPUSystemMediaControlsView.h"
 
+#import "SBLockScreenViewController.h"
+
 @interface MPUSystemMediaControlsView()
 
 - (id)customProperties;
@@ -39,7 +41,12 @@
         if(![[self customProperties] objectForKey:@"originalYOffset"]) {
             [[self customProperties] setObject:@(offsetedViewFrame.origin.y) forKey:@"originalYOffset"];
         }
-        offsetedViewFrame.origin.y = offsetedView.superview.frame.size.height - offsetedViewFrame.size.height - 20;
+        if([[self lockScreenViewController] customLockScreenHidden]) {
+            offsetedViewFrame.origin.y = [[[self customProperties] objectForKey:@"originalYOffset"] doubleValue];
+        }
+        else {
+            offsetedViewFrame.origin.y = offsetedView.superview.frame.size.height - offsetedViewFrame.size.height - 20;
+        }
         [offsetedView setFrame:offsetedViewFrame];
     }
 }
