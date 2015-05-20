@@ -51,6 +51,10 @@
     [self.keyboardViewBackground setFrame:CGRectMake(0, self.bounds.size.height-self.keyboardView.frame.size.height, self.bounds.size.width, self.keyboardView.frame.size.height)];
 }
 
+- (void)mediaControlsBecameHidden:(BOOL)hidden {
+    [self.mediaControlsViewBackground setHidden:hidden];
+}
+
 - (void)notificationViewChanged {
     NSInteger numberOfRows = [((UITableView *)self.notificationView).dataSource tableView:(UITableView *)self.notificationView numberOfRowsInSection:0];
     if(numberOfRows==1) {
@@ -147,6 +151,8 @@
     [self setMediaControlsViewBackground:[[UIView alloc] initWithFrame:mediaControlsView.frame]];
     [self.mediaControlsViewBackground setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
     [self insertSubview:self.mediaControlsViewBackground belowSubview:self.scrollView];
+    
+    [self mediaControlsBecameHidden:YES];
 }
 
 /*

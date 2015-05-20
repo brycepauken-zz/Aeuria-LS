@@ -25,6 +25,7 @@
 
 - (void)addCustomLockScreen;
 - (BOOL)customLockScreenHidden;
+- (id)customProperties;
 - (id)findViewOfClass:(Class)class inView:(UIView *)view maxDepth:(int)depth;
 - (void)setHintGestureRecognizersEnabled:(BOOL)enabled;
 - (void)updateSecurityType;
@@ -43,6 +44,12 @@
     UIView *mediaControlsView = [self.customLockScreenContainer mediaControlsView];
     UIView *notificationView = [self.customLockScreenContainer notificationView];
     UITextField *passcodeTextField = [self.customLockScreenContainer passcodeTextField];
+    
+    BOOL shouldHideMediaControls = NO;
+    NSNumber *shouldHideMediaControlsNum = [[self customProperties] objectForKey:@"MediaControlsShouldHide"];
+    if(shouldHideMediaControlsNum) {
+        shouldHideMediaControls = [shouldHideMediaControlsNum boolValue];
+    }
     
     [self setHintGestureRecognizersEnabled:NO];
     [ALSHideableViewManager setShouldHide:YES];
@@ -67,6 +74,7 @@
         [proxyPasscodeHandler setPasscodeView:passcodeView];
         [weakSelf passcodeLockViewPasscodeEntered:proxyPasscodeHandler];
     }];
+    [self.customLockScreenContainer mediaControlsBecameHidden:shouldHideMediaControls];
     
     [self updateSecurityType];
     
@@ -90,6 +98,19 @@
         return NO;
     }
     return [customLockScreenHiddenNum boolValue];
+}
+
+%new
+- (id)customProperties {
+    id customProperties;
+    @synchronized(self) {
+        customProperties = objc_getAssociatedObject(self, @selector(customProperties));
+        if(!customProperties) {
+            customProperties = [[NSMutableDictionary alloc] init];
+            objc_setAssociatedObject(self, @selector(customProperties), customProperties, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        }
+    }
+    return customProperties;
 }
 
 %new
@@ -184,6 +205,14 @@
         }
         currentView = currentView.superview;
     }
+}
+
+- (void)_mediaControlsDidHideOrShow:(id)arg1 {
+    %orig;
+    
+    BOOL shouldHide = [[arg1 name] hasSuffix:@"Hide"];
+    [[self customProperties] setObject:@(shouldHide) forKey:@"MediaControlsShouldHide"];
+    [self.customLockScreenContainer mediaControlsBecameHidden:shouldHide];
 }
 
 /*

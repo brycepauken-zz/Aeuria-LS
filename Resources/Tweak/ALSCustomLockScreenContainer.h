@@ -10,6 +10,7 @@
 @property (nonatomic, weak) UITextField *passcodeTextField;
 
 - (ALSCustomLockScreen *)customLockScreen;
+- (void)mediaControlsBecameHidden:(BOOL)hidden;
 - (void)notificationViewChanged;
 - (void)resetView;
 - (UIScrollView *)scrollView;
