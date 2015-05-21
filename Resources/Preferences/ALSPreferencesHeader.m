@@ -8,7 +8,9 @@
 @property (nonatomic, strong) NSArray *descriptionLabels;
 @property (nonatomic, strong) UIView *filledOverlay;
 @property (nonatomic, strong) CAShapeLayer *filledOverlayMask;
+@property (nonatomic, strong) UIView *headerContainer;
 @property (nonatomic, strong) UIImage *lockscreenWallpaper;
+@property (nonatomic, weak) UINavigationBar *navigationBar;
 @property (nonatomic, weak) UITableView *parentTableView;
 @property (nonatomic) BOOL tableViewSearched;
 @property (nonatomic, strong) UIImageView *wallpaperView;
@@ -40,15 +42,16 @@ static CGFloat _wallpaperViewHeight;
         CGFloat preferredHeight = [self preferredHeightForWidth:0];
         
         //create a container to hold (and clip) our header's subviews
-        UIView *headerContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, _wallpaperViewHeight)];
-        [headerContainer setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-        [headerContainer setClipsToBounds:YES];
+        self.headerContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, _wallpaperViewHeight)];
+        [self.headerContainer setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
+        [self.headerContainer setBackgroundColor:[UIColor clearColor]];
+        [self.headerContainer setClipsToBounds:YES];
         
         //create the wallpaper view
-        _wallpaperView = [[UIImageView alloc] initWithFrame:CGRectInset(headerContainer.bounds, 0, -50)];
+        _wallpaperView = [[UIImageView alloc] initWithFrame:CGRectInset(self.headerContainer.bounds, 0, -50)];
         [_wallpaperView setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
         [_wallpaperView setContentMode:UIViewContentModeScaleAspectFill];
-        [headerContainer addSubview:_wallpaperView];
+        [self.headerContainer addSubview:_wallpaperView];
         
         //get the user's current lock screen wallpaper
         NSData *lockscreenWallpaperData = [NSData dataWithContentsOfFile:@"/var/mobile/Library/SpringBoard/LockBackground.cpbitmap"];
@@ -69,35 +72,37 @@ static CGFloat _wallpaperViewHeight;
         }
         
         //create the filled overlay that shows the title and circle
-        _filledOverlay = [[UIView alloc] initWithFrame:headerContainer.bounds];
+        _filledOverlay = [[UIView alloc] initWithFrame:self.headerContainer.bounds];
         [_filledOverlay setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
         [_filledOverlay setBackgroundColor:[UIColor whiteColor]];
         _filledOverlayMask = [[CAShapeLayer alloc] init];
         [_filledOverlayMask setFillColor:[[UIColor blackColor] CGColor]];
         [_filledOverlayMask setFillRule:kCAFillRuleEvenOdd];
         [_filledOverlay.layer setMask:_filledOverlayMask];
-        [headerContainer addSubview:_filledOverlay];
+        [self.headerContainer addSubview:_filledOverlay];
         
-        //create views outside of the headerContainer to cast a shadow inside
+        //create views outside of the self.headerContainer to cast a shadow inside
         CGRect screenBounds = [[UIScreen mainScreen] bounds];
         CGFloat shadowCastingViewWidth = MAX(screenBounds.size.width, screenBounds.size.height)*2;
         for(int i=0;i<2;i++) {
-            UIView *shadowCastingView = [[UIView alloc] initWithFrame:CGRectMake(-20, (i==0?-20:headerContainer.bounds.size.height), shadowCastingViewWidth+40, 20)];
+            UIView *shadowCastingView = [[UIView alloc] initWithFrame:CGRectMake(-20, (i==0?-20:self.headerContainer.bounds.size.height), shadowCastingViewWidth+40, 20)];
             [shadowCastingView setBackgroundColor:[UIColor blackColor]];
             [shadowCastingView.layer setMasksToBounds:NO];
             [shadowCastingView.layer setShadowOffset:CGSizeMake(0, 0)];
             [shadowCastingView.layer setShadowOpacity:0.4];
             [shadowCastingView.layer setShadowRadius:2];
-            [headerContainer addSubview:shadowCastingView];
+            [self.headerContainer addSubview:shadowCastingView];
         }
         
         //add the description view containing credits
         UIView *descriptionView = [self descriptionView];
         [descriptionView setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleWidth];
+        [descriptionView setBackgroundColor:[UIColor clearColor]];
         [descriptionView setFrame:CGRectMake(0, preferredHeight-descriptionView.frame.size.height+10, self.bounds.size.width, descriptionView.frame.size.height)];
         
+        [self setBackgroundColor:[UIColor clearColor]];
         [self updateFilledOverlay];
-        [self addSubview:headerContainer];
+        [self addSubview:self.headerContainer];
         [self addSubview:descriptionView];
     }
     
@@ -173,7 +178,26 @@ static CGFloat _wallpaperViewHeight;
 }
 
 - (void)layoutSubviews {
+    CGSize filledOverlaySize = self.filledOverlay.bounds.size;
     [super layoutSubviews];
+    
+    UIView *currentView = self.superview;
+    while(!self.navigationBar && currentView) {
+        for(UIView *subview in currentView.subviews) {
+            if([subview isKindOfClass:[UINavigationBar class]] && !subview.hidden) {
+                self.navigationBar = (UINavigationBar *)subview;
+                break;
+            }
+        }
+        currentView = currentView.superview;
+    }
+    if(self.navigationBar) {
+        CGFloat xOffset = [self.navigationBar convertPoint:CGPointZero fromView:self].x;
+        [self.headerContainer setFrame:CGRectMake(-xOffset, self.headerContainer.frame.origin.y, self.navigationBar.frame.size.width, self.headerContainer.frame.size.height)];
+        for(UILabel *label in self.descriptionLabels) {
+            [label setCenter:CGPointMake(-xOffset+self.navigationBar.frame.size.width/2, label.center.y)];
+        }
+    }
     
     if(!self.tableViewSearched && self.superview) {
         //find nearest parent tableview
@@ -190,9 +214,8 @@ static CGFloat _wallpaperViewHeight;
     }
     
     //check if wallpaperView size changed
-    CGSize filledOverlaySize = self.filledOverlay.bounds.size;
-    [super layoutSubviews];
     if(!CGSizeEqualToSize(filledOverlaySize, self.filledOverlay.bounds.size)) {
+        [self.filledOverlayMask setFrame:CGRectMake(0, 0, self.self.filledOverlay.bounds.size.width, self.filledOverlay.bounds.size.height)];
         [self updateFilledOverlay];
     }
 }
