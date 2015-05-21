@@ -110,7 +110,7 @@ static CGFloat _wallpaperViewHeight;
 }
 
 - (void)dealloc {
-    //[self.parentTableView removeObserver:self forKeyPath:@"contentOffset"];
+    [self.parentTableView removeObserver:self forKeyPath:@"contentOffset"];
 }
 
 - (void)descriptionLabelTapped:(UITapGestureRecognizer *)tapRecognizer {
@@ -191,13 +191,6 @@ static CGFloat _wallpaperViewHeight;
         }
         currentView = currentView.superview;
     }
-    if(self.navigationBar) {
-        CGFloat xOffset = [self.navigationBar convertPoint:CGPointZero fromView:self].x;
-        [self.headerContainer setFrame:CGRectMake(-xOffset, self.headerContainer.frame.origin.y, self.navigationBar.frame.size.width, self.headerContainer.frame.size.height)];
-        for(UILabel *label in self.descriptionLabels) {
-            [label setCenter:CGPointMake(-xOffset+self.navigationBar.frame.size.width/2, label.center.y)];
-        }
-    }
     
     if(!self.tableViewSearched && self.superview) {
         //find nearest parent tableview
@@ -207,10 +200,23 @@ static CGFloat _wallpaperViewHeight;
         }
         if(currentView) {
             self.parentTableView = (UITableView *)currentView;
-            //[self.parentTableView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
+            [self.parentTableView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
         }
         
         self.tableViewSearched = YES;
+    }
+    
+    if(self.navigationBar) {
+        CGFloat xOffset = [self.navigationBar convertPoint:CGPointZero fromView:self].x;
+        [self.headerContainer setFrame:CGRectMake(-xOffset, self.headerContainer.frame.origin.y, self.navigationBar.frame.size.width, self.headerContainer.frame.size.height)];
+        CGFloat wallpaperOffset = 0;
+        if(self.parentTableView) {
+            wallpaperOffset = self.parentTableView.contentOffset.y/2;
+        }
+        [self.wallpaperView setCenter:CGPointMake(self.headerContainer.bounds.size.width/2, self.headerContainer.bounds.size.height/2+wallpaperOffset)];
+        for(UILabel *label in self.descriptionLabels) {
+            [label setCenter:CGPointMake(-xOffset+self.navigationBar.frame.size.width/2, label.center.y)];
+        }
     }
     
     //check if wallpaperView size changed
@@ -223,9 +229,8 @@ static CGFloat _wallpaperViewHeight;
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if([object isKindOfClass:[UITableView class]]) {
         CGPoint contentOffset = [object contentOffset];
-        contentOffset.y += 64;
         contentOffset.y /= 2;
-        [self.wallpaperView setCenter:CGPointMake(self.wallpaperView.superview.bounds.size.width/2, self.wallpaperView.superview.bounds.size.height/2+contentOffset.y)];
+        [self.wallpaperView setCenter:CGPointMake(self.headerContainer.bounds.size.width/2, self.headerContainer.bounds.size.height/2+contentOffset.y)];
     }
 }
 
