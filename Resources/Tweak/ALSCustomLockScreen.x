@@ -228,16 +228,6 @@
 
 - (void)updateScrollPercentage:(CGFloat)percentage {
     self.percentage = percentage;
-    if(self.superview && self.superview.superview && !self.superview.hidden && self.filledOverlayMask.securityType==ALSLockScreenSecurityTypeNone && percentage > 0.9) {
-        if(self.passcodeEntered) {
-            [self.superview setUserInteractionEnabled:NO];
-            UIScrollView *scrollView = ((ALSCustomLockScreenContainer *)self.superview).scrollView;
-            [scrollView setScrollEnabled:NO];
-            [scrollView setScrollEnabled:YES];
-            [scrollView setContentOffset:CGPointZero];
-            self.passcodeEntered(@"");
-        }
-    }
 }
 
 - (void)updateViews {

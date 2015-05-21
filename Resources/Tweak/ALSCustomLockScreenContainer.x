@@ -41,6 +41,7 @@
 
 - (void)dealloc {
     [self.passcodeTextField removeTarget:self action:@selector(passcodeTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    [self.scrollView setDelegate:nil];
 }
 
 - (void)layoutSubviews {
