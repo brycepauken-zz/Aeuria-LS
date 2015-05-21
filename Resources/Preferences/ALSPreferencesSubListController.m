@@ -2,6 +2,8 @@
 
 #import "PSSpecifier.h"
 
+NSString *kALSPreferencesSubListStateChanged = @"ALSPreferencesSubListStateChanged";
+
 @implementation ALSPreferencesSubListController
 
 static NSString *kALSPreferencesDefaultsPath = @"/Library/PreferenceBundles/AeuriaLSPreferences.bundle/Defaults.plist";
@@ -26,6 +28,18 @@ static NSString *kALSPreferencesDefaultsPath = @"/Library/PreferenceBundles/Aeur
         [specifier setProperty:[defaults objectForKey:[specifier propertyForKey:@"key"]] forKey:@"default"];
     }
     return specifiers;
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:kALSPreferencesSubListStateChanged object:self userInfo:@{@"appearing":@(YES)}];
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:kALSPreferencesSubListStateChanged object:self userInfo:@{@"appearing":@(NO)}];
 }
 
 @end

@@ -36,4 +36,18 @@
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.brycepauken.aeurials/PreferencesChanged"), NULL, NULL, YES);
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    //watch for sublist changes
+    [[NSNotificationCenter defaultCenter] addObserverForName:kALSPreferencesSubListStateChanged object:nil queue:nil usingBlock:^(NSNotification *notification) {
+        if([[notification.userInfo objectForKey:@"appearing"] boolValue]) {
+            self.sublistController = notification.object;
+        }
+        else {
+            self.sublistController = nil;
+        }
+    }];
+}
+
 @end
