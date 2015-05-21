@@ -231,7 +231,7 @@
 
 - (void)setContentOffset:(CGPoint)offset {
     %orig;
-    [[[[[self lockScreenViewController] customLockScreenContainer] customLockScreen] layer] removeAnimationForKey:@"position"];
+    [[[[[self lockScreenViewController] customLockScreenContainer] customLockScreen] layer] removeAnimationForKey:@"ShakeAnimation"];
     [[[[self lockScreenViewController] customLockScreenContainer] scrollView] setContentOffset:offset];
 };
 

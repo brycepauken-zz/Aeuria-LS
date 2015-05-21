@@ -151,7 +151,7 @@
         [positionAnimation setFromValue:@(subdot==dot?dot.position.x:[subdot.presentationLayer position].x)];
         [positionAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut]];
         [positionAnimation setToValue:@(newPositionX)];
-        [subdot addAnimation:positionAnimation forKey:@"position"];
+        [subdot addAnimation:positionAnimation forKey:@"ShakeAnimation"];
         [subdot setPosition:CGPointMake(newPositionX, self.dotRadius+4)];
     }
     [CATransaction commit];
@@ -322,7 +322,7 @@
         [positionAnimation setFromValue:@([subdot.presentationLayer position].x)];
         [positionAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut]];
         [positionAnimation setToValue:@(newPositionX)];
-        [subdot addAnimation:positionAnimation forKey:@"position"];
+        [subdot addAnimation:positionAnimation forKey:@"ShakeAnimation"];
         [subdot setPosition:CGPointMake(newPositionX, self.dotRadius+4)];
         
         if(dotIndex == existingDotCount) {
@@ -418,7 +418,7 @@
     [shakeAnimation setFromValue:[NSValue valueWithCGPoint:CGPointMake(self.dotsDisplayLayer.position.x-10, self.dotsDisplayLayer.position.y)]];
     [shakeAnimation setRepeatCount:4];
     [shakeAnimation setToValue:[NSValue valueWithCGPoint:CGPointMake(self.dotsDisplayLayer.position.x+10, self.dotsDisplayLayer.position.y)]];
-    [self.dotsDisplayLayer addAnimation:shakeAnimation forKey:@"position"];
+    [self.dotsDisplayLayer addAnimation:shakeAnimation forKey:@"ShakeAnimation"];
 }
 
 - (void)updateMaskWithPercentage:(CGFloat)percentage {

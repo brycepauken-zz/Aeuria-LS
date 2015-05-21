@@ -114,12 +114,12 @@
 
 %new
 - (void)failedBio {
-    [self.customLockScreenContainer.customLockScreen failedEntry];
+    [[self.customLockScreenContainer customLockScreen] failedEntry];
 }
 
 %new
 - (void)failedPasscode {
-    [self.customLockScreenContainer.customLockScreen failedEntry];
+    [[self.customLockScreenContainer customLockScreen] failedEntry];
 }
 
 %new
@@ -254,7 +254,7 @@
             break;
         }
     }
-    [self.customLockScreenContainer.customLockScreen setSecurityType:securityType];
+    [[self.customLockScreenContainer customLockScreen] setSecurityType:securityType];
 }
 
 /*

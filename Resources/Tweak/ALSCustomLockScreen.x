@@ -13,6 +13,7 @@
 @property (nonatomic, strong) UIView *filledOverlay;
 @property (nonatomic, strong) ALSCustomLockScreenMask *filledOverlayMask;
 @property (nonatomic) int highlightedButtonIndex;
+@property (nonatomic) CGRect lastKnownBounds;
 @property (nonatomic) BOOL needsUpdate;
 @property (nonatomic) NSMutableString *passcode;
 @property (nonatomic, copy) void (^passcodeEntered)(NSString *passcode);
@@ -38,11 +39,13 @@
         _buttonRadius = 44;
         _shouldShowWithNotifications = YES;
         
+        _lastKnownBounds = self.bounds;
         _passcode = [[NSMutableString alloc] init];
         _percentage = 0;
         _previousPercentage = 0;
         
-        _filledOverlayMask = [[ALSCustomLockScreenMask alloc] initWithFrame:self.bounds preferencesManager:_preferencesManager];
+        CGFloat maxDimension = MAX(self.bounds.size.width, self.bounds.size.height);
+        _filledOverlayMask = [[ALSCustomLockScreenMask alloc] initWithFrame:CGRectMake((self.bounds.size.width-maxDimension)/2, (self.bounds.size.height-maxDimension)/2, maxDimension, maxDimension) preferencesManager:_preferencesManager];
         _filledOverlay = [[UIView alloc] initWithFrame:self.bounds];
         [_filledOverlay setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
         [_filledOverlay setBackgroundColor:[_preferencesManager preferenceForKey:@"faceColor"]];
@@ -76,7 +79,7 @@
         [shakeAnimation setFromValue:[NSValue valueWithCGPoint:CGPointMake(self.center.x-10, self.center.y)]];
         [shakeAnimation setRepeatCount:4];
         [shakeAnimation setToValue:[NSValue valueWithCGPoint:CGPointMake(self.center.x+10, self.center.y)]];
-        [self.layer addAnimation:shakeAnimation forKey:@"position"];
+        [self.layer addAnimation:shakeAnimation forKey:@"ShakeAnimation"];
     }
     else {
         [self.filledOverlayMask shakeDots];
@@ -110,6 +113,29 @@
     }
     
     return nil;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    if(!CGRectEqualToRect(self.bounds, self.lastKnownBounds)) {
+        CAAnimation *existingAnimation = [self.layer animationForKey:[self.layer.animationKeys firstObject]];
+        
+        self.lastKnownBounds = self.bounds;
+        
+        CGPoint centerPoint = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
+        CABasicAnimation *centerAnimation = [CABasicAnimation animationWithKeyPath:@"position"];
+        [centerAnimation setDuration:[[existingAnimation valueForKey:@"duration"] doubleValue]];
+        [centerAnimation setFromValue:[self.filledOverlayMask valueForKey:@"position"]];
+        [centerAnimation setTimingFunction:[existingAnimation timingFunction]];
+        [centerAnimation setToValue:[NSValue valueWithCGPoint:centerPoint]];
+        [self.filledOverlayMask addAnimation:centerAnimation forKey:@"CenterAnimation"];
+        
+        [CATransaction begin];
+        [CATransaction setValue: (id) kCFBooleanTrue forKey: kCATransactionDisableActions];
+        [self.filledOverlayMask setPosition:centerPoint];
+        [CATransaction commit];
+    }
 }
 
 - (void)panGestureRecognizerCalled:(UIPanGestureRecognizer *)gestureRecognizer {
@@ -218,7 +244,7 @@
     if(self.hidden || !self.superview || self.superview.hidden) {
         return;
     }
-    if(self.percentage != self.previousPercentage || self.filledOverlayMask.isAnimating || self.needsUpdate || self.filledOverlayMask.needsUpdate) {
+    if(true || self.percentage != self.previousPercentage || self.filledOverlayMask.isAnimating || self.needsUpdate || self.filledOverlayMask.needsUpdate) {
         self.needsUpdate = NO;
         self.previousPercentage = self.percentage;
         [self.filledOverlayMask updateMaskWithPercentage:self.percentage];
