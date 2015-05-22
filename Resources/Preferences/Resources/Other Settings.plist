@@ -16,6 +16,42 @@
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
+			<string>Analog Clock Middle Dot Radius:</string>
+			<key>key</key>
+			<string>clockDotRadius</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Analog Hand Inner Width:</string>
+			<key>key</key>
+			<string>handInnerWidth</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Analog Hand Outer Width:</string>
+			<key>key</key>
+			<string>handOuterWidth</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
 			<string>Clock Inner Padding:</string>
 			<key>key</key>
 			<string>clockInnerPadding</string>
@@ -110,6 +146,78 @@
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
+			<string>Hour Hand Extension Length:</string>
+			<key>key</key>
+			<string>hourHandExtensionLength</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Hour Hand Length:</string>
+			<key>key</key>
+			<string>hourHandLength</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Hour Tick Mark Height:</string>
+			<key>key</key>
+			<string>hourTickMarkHeight</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Hour Tick Mark Inner Width:</string>
+			<key>key</key>
+			<string>hourTickMarkInnerWidth</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Hour Tick Mark Outer Width:</string>
+			<key>key</key>
+			<string>hourTickMarkOuterWidth</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Hour Tick Mark Padding:</string>
+			<key>key</key>
+			<string>hourTickMarkPadding</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
 			<string>Max Digital Time Height:</string>
 			<key>key</key>
 			<string>maxDigitalTimeHeight</string>
@@ -137,6 +245,30 @@
 			<string>Max Title Height:</string>
 			<key>key</key>
 			<string>maxTitleHeight</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Minute Hand Extension Length:</string>
+			<key>key</key>
+			<string>minuteHandExtensionLength</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Minute Hand Length:</string>
+			<key>key</key>
+			<string>minuteHandLength</string>
 			<key>isNumeric</key>
 			<true/>
 		</dict>

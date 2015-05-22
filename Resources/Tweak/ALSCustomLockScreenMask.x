@@ -63,7 +63,7 @@
         _buttonDistanceFromEdge = [[preferencesManager preferenceForKey:@"passcodeButtonDistanceFromEdge"] intValue];
         _buttonPadding = [[preferencesManager preferenceForKey:@"passcodeButtonPadding"] intValue];
         _buttonRadius = [[preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
-        _clockDotRadius = 0;
+        _clockDotRadius = [[preferencesManager preferenceForKey:@"clockDotRadius"] intValue];
         _clockType = [[preferencesManager preferenceForKey:@"clockType"] intValue];
         _dotPadding = [[preferencesManager preferenceForKey:@"characterDotSidePadding"] intValue];
         _dotRadius = [[preferencesManager preferenceForKey:@"characterDotRadius"] intValue];

@@ -38,6 +38,12 @@
 	<false/>
 	<key>shouldHideBottomButtons</key>
 	<false/>
+	<key>clockDotRadius</key>
+	<integer>2</integer>
+	<key>handInnerWidth</key>
+	<integer>8</integer>
+	<key>handOuterWidth</key>
+	<integer>2</integer>
 	<key>clockInnerPadding</key>
 	<integer>10</integer>
 	<key>clockRadius</key>
@@ -54,12 +60,28 @@
 	<integer>28</integer>
 	<key>shouldHideForNotificationsOrMedia</key>
 	<false/>
+	<key>hourHandExtensionLength</key>
+	<integer>10</integer>
+	<key>hourHandLength</key>
+	<integer>40</integer>
+	<key>hourTickMarkHeight</key>
+	<integer>10</integer>
+	<key>hourTickMarkInnerWidth</key>
+	<integer>2</integer>
+	<key>hourTickMarkOuterWidth</key>
+	<integer>3</integer>
+	<key>hourTickMarkPadding</key>
+	<integer>0</integer>
 	<key>maxDigitalTimeHeight</key>
 	<integer>48</integer>
 	<key>maxSubtitleHeight</key>
 	<integer>30</integer>
 	<key>maxTitleHeight</key>
 	<integer>38</integer>
+	<key>minuteHandExtensionLength</key>
+	<integer>10</integer>
+	<key>minuteHandLength</key>
+	<integer>70</integer>
 	<key>passcodeButtonDistanceFromEdge</key>
 	<integer>20</integer>
 	<key>passcodeButtonPadding</key>
