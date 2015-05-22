@@ -12,6 +12,7 @@
 @property (nonatomic, strong) CAShapeLayer *circleMaskLayer;
 @property (nonatomic, strong) ALSCustomLockScreenClock *clock;
 @property (nonatomic, strong) CAShapeLayer *clockLayer;
+@property (nonatomic, strong) CAShapeLayer *clockLayerMask;
 @property (nonatomic, strong) CAShapeLayer *clockRenderingLayer;
 @property (nonatomic) NSInteger currentHour;
 @property (nonatomic) NSInteger currentMinute;
@@ -38,6 +39,7 @@
 @property (nonatomic) int buttonPadding;
 @property (nonatomic) int buttonRadius;
 @property (nonatomic) float clockInvisibleAt;
+@property (nonatomic) int clockDotRadius;
 @property (nonatomic) int clockType;
 @property (nonatomic) int dotPadding;
 @property (nonatomic) int dotRadius;
@@ -61,6 +63,7 @@
         _buttonDistanceFromEdge = [[preferencesManager preferenceForKey:@"passcodeButtonDistanceFromEdge"] intValue];
         _buttonPadding = [[preferencesManager preferenceForKey:@"passcodeButtonPadding"] intValue];
         _buttonRadius = [[preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
+        _clockDotRadius = 0;
         _clockType = [[preferencesManager preferenceForKey:@"clockType"] intValue];
         _dotPadding = [[preferencesManager preferenceForKey:@"characterDotSidePadding"] intValue];
         _dotRadius = [[preferencesManager preferenceForKey:@"characterDotRadius"] intValue];
@@ -99,6 +102,11 @@
         _clockRenderingLayer = [[CAShapeLayer alloc] init];
         [_clockRenderingLayer setFillColor:[[UIColor blackColor] CGColor]];
         [_internalLayer addSublayer:_clockRenderingLayer];
+        
+        _clockLayerMask = [[CAShapeLayer alloc] init];
+        [_clockLayerMask setFillColor:[[UIColor blackColor] CGColor]];
+        [_clockLayerMask setFillRule:kCAFillRuleEvenOdd];
+        [_clockRenderingLayer setMask:_clockLayerMask];
         
         _internalLayerOverlay = [[CAShapeLayer alloc] init];
         [_internalLayerOverlay setFillColor:[[UIColor blackColor] CGColor]];
@@ -269,6 +277,7 @@
     
     CGRect clockLayerFrame = CGRectMake(self.bounds.size.width/2-self.largeCircleMinRadius, self.bounds.size.height/2-self.largeCircleMinRadius, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2);
     [self.clockLayer setFrame:clockLayerFrame];
+    [self.clockLayerMask setFrame:CGRectMake(0, 0, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2)];
     clockLayerFrame.origin.y = -clockLayerFrame.size.height*2;
     [self.clockRenderingLayer setFrame:clockLayerFrame];
     
@@ -445,6 +454,9 @@
 - (void)updateMaskWithPercentage:(CGFloat)percentage {
     self.currentPercentage = percentage;
     
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    
     CGPoint boundsCenter;
     if(self.securityType != ALSLockScreenSecurityTypePhrase || !self.keyboardHeight) {
         boundsCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
@@ -464,6 +476,10 @@
         UIBezierPath *newClockPath = [clockPath copy];
         [newClockPath applyTransform:CGAffineTransformMakeTranslation(self.clockLayer.bounds.size.width/2-self.clock.radius, self.clockLayer.bounds.size.height/2-self.clock.radius)];
         [self.clockRenderingLayer setPath:newClockPath.CGPath];
+        
+        UIBezierPath *clockLayerMaskPath = [UIBezierPath bezierPathWithRect:self.clockLayerMask.bounds];
+        [clockLayerMaskPath appendPath:[[self class] pathForCircleWithRadius:self.clockDotRadius center:CGPointMake(self.clockLayerMask.bounds.size.width/2, self.clockLayerMask.bounds.size.height/2)]];
+        [self.clockLayerMask setPath:clockLayerMaskPath.CGPath];
         
         static const int bytesPerPixel = 4;
         static const int bitsPerComponent = 8;
@@ -503,10 +519,8 @@
         
         self.clockLayer.contents = (id)image.CGImage;
     }
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
+    
     [self.clockLayer setTransform:CATransform3DMakeScale(clockScale, clockScale, 1)];
-    [CATransaction commit];
     [mask appendPath:[[self class] pathForCircleWithRadius:clockRadiusScaled center:boundsCenter]];
     
     if(self.securityType == ALSLockScreenSecurityTypeCode) {
@@ -599,6 +613,8 @@
     }
     
     [self.maskLayer setPath:mask.CGPath];
+    
+    [CATransaction commit];
 }
 
 - (void)updateTimeOnMinute {

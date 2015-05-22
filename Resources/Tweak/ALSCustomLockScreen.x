@@ -37,7 +37,7 @@
         
         _buttonPadding = [[_preferencesManager preferenceForKey:@"passcodeButtonPadding"] intValue];
         _buttonRadius = [[_preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
-        _shouldShowWithNotifications = [[_preferencesManager preferenceForKey:@"shouldHideForNotificationsOrMedia"] boolValue];
+        _shouldShowWithNotifications = ![[_preferencesManager preferenceForKey:@"shouldHideForNotificationsOrMedia"] boolValue];
         
         _lastKnownBounds = self.bounds;
         _passcode = [[NSMutableString alloc] init];
