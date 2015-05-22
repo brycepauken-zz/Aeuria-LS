@@ -55,7 +55,7 @@
         _hourTickHeight = 20;
         _hourTickInnerWidth = 2;
         _hourTickOuterWidth = 4;
-        _hourTickPadding = 1;
+        _hourTickPadding = 8;
         _maxDigitalTimeHeight = [[preferencesManager preferenceForKey:@"maxDigitalTimeHeight"] intValue];
         _maxSubtitleHeight = [[preferencesManager preferenceForKey:@"maxSubtitleHeight"] intValue];
         _maxTitleHeight = [[preferencesManager preferenceForKey:@"maxTitleHeight"] intValue];
@@ -155,7 +155,7 @@
         
         //create outer 12 hour ticks
         UIBezierPath *defaultHourTickMark = [[self class] pathForTickOfHeight:self.hourTickHeight innerWidth:self.hourTickInnerWidth outerWidth:self.hourTickOuterWidth];
-        CGFloat hourTickRadius = self.radius-self.hourTickPadding-self.hourTickHeight;
+        CGFloat hourTickRadius = self.radius-self.hourTickPadding-self.hourTickHeight/2;
         for(int i=0;i<12;i++) {
             CGFloat angle = (-M_PI/6)*i;
             UIBezierPath *hourTickMark = [defaultHourTickMark copy];
@@ -166,13 +166,13 @@
         
         UIBezierPath *hourHand = [[self class] pathForTickOfHeight:self.hourHandLength+self.hourHandExtensionLength innerWidth:self.handInnerWidth outerWidth:self.handOuterWidth];
         [hourHand applyTransform:CGAffineTransformMakeTranslation(0, self.hourHandExtensionLength)];
-        [hourHand applyTransform:CGAffineTransformMakeRotation((-M_PI/6))];
+        [hourHand applyTransform:CGAffineTransformMakeRotation(M_PI*((hour+(minute/60.0))/6.0))];
         [hourHand applyTransform:CGAffineTransformMakeTranslation(self.radius, self.radius)];
         [returnPath appendPath:hourHand];
         
         UIBezierPath *minuteHand = [[self class] pathForTickOfHeight:self.minuteHandLength+self.minuteHandExtensionLength innerWidth:self.handInnerWidth outerWidth:self.handOuterWidth];
         [minuteHand applyTransform:CGAffineTransformMakeTranslation(0, self.minuteHandExtensionLength)];
-        [minuteHand applyTransform:CGAffineTransformMakeRotation(0)];
+        [minuteHand applyTransform:CGAffineTransformMakeRotation(M_PI*(minute/30.0))];
         [minuteHand applyTransform:CGAffineTransformMakeTranslation(self.radius, self.radius)];
         [returnPath appendPath:minuteHand];
     }
