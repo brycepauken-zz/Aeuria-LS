@@ -25,7 +25,6 @@
         _buttonPadding = [[preferencesManager preferenceForKey:@"passcodeButtonPadding"] intValue];
         _buttonRadius = [[preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
         _buttonTextHeight = [[preferencesManager preferenceForKey:@"passcodeButtonTextHeight"] intValue];
-        _clockInvisibleAt = 0.5;
     }
     return self;
 }

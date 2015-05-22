@@ -23,7 +23,6 @@
 @property (nonatomic, strong) CAShapeLayer *internalLayer;
 @property (nonatomic, strong) CAShapeLayer *internalLayerOverlay;
 @property (nonatomic) CGFloat keyboardHeight;
-@property (nonatomic) CGFloat largeCircleMaxInternalPaddingIncrement;
 @property (nonatomic) CGFloat largeCircleMaxRadiusIncrement;
 @property (nonatomic, strong) CAShapeLayer *maskLayer;
 @property (nonatomic, strong) NSTimer *minuteTimer;
@@ -32,6 +31,7 @@
 @property (nonatomic) NSTimeInterval updateUntilTime;
 
 //preference properties
+@property (nonatomic) int buttonDistanceFromEdge;
 @property (nonatomic) int buttonPadding;
 @property (nonatomic) int buttonRadius;
 @property (nonatomic) float clockInvisibleAt;
@@ -54,9 +54,9 @@
     self = [super init];
     if(self) {
         _preferencesManager = preferencesManager;
+        _buttonDistanceFromEdge = [[preferencesManager preferenceForKey:@"passcodeButtonDistanceFromEdge"] intValue];
         _buttonPadding = [[preferencesManager preferenceForKey:@"passcodeButtonPadding"] intValue];
         _buttonRadius = [[preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
-        _clockInvisibleAt = 0.5;
         _dotPadding = [[preferencesManager preferenceForKey:@"characterDotSidePadding"] intValue];
         _dotRadius = [[preferencesManager preferenceForKey:@"characterDotRadius"] intValue];
         _dotVerticalOffset = [[preferencesManager preferenceForKey:@"characterDotBottomPadding"] intValue];
@@ -268,7 +268,10 @@
     [self.dotsLayer setFrame:dotsLayerFrame];
     
     self.largeCircleMaxRadiusIncrement = ceilf(sqrt(self.bounds.size.width*self.bounds.size.width+self.bounds.size.height*self.bounds.size.height)/2)-self.largeCircleMinRadius;
-    self.largeCircleMaxInternalPaddingIncrement = ((self.largeCircleMaxRadiusIncrement+self.largeCircleMinRadius)/(CGFloat)self.largeCircleMinRadius)*self.largeCircleInnerPadding-self.largeCircleInnerPadding;
+    
+    CGFloat clockInvisibleNeededRadiusIncrement = (self.buttonDistanceFromEdge+(self.buttonRadius*2+self.buttonPadding)*M_SQRT2+self.buttonRadius)-self.largeCircleMinRadius;
+    self.clockInvisibleAt = clockInvisibleNeededRadiusIncrement/self.largeCircleMaxRadiusIncrement;
+    self.buttons.clockInvisibleAt = self.clockInvisibleAt;
 }
 
 - (BOOL)needsUpdate {
