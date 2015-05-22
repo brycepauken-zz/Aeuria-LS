@@ -17,8 +17,14 @@
 @property (nonatomic, strong) UIBezierPath *preloadedPath;
 
 //preference properties
+@property (nonatomic, strong) NSString *digitalTimeFont;
+@property (nonatomic) int maxDigitalTimeHeight;
 @property (nonatomic) int maxSubtitleHeight;
 @property (nonatomic) int maxTitleHeight;
+@property (nonatomic, strong) NSString *mainFont;
+@property (nonatomic, strong) NSString *secondaryFont;
+@property (nonatomic) BOOL shouldShowAmPm;
+@property (nonatomic) BOOL shouldShowLeadingZero;
 @property (nonatomic) int subtitleOffset;
 
 @end
@@ -31,8 +37,14 @@
 - (instancetype)initWithRadius:(CGFloat)radius type:(ALSClockType)type preferencesManager:(ALSPreferencesManager *)preferencesManager {
     self = [super initWithPreferencesManager:preferencesManager];
     if(self) {
+        _digitalTimeFont = [preferencesManager preferenceForKey:@"digitalTimeFont"];
+        _maxDigitalTimeHeight = [[preferencesManager preferenceForKey:@"maxDigitalTimeHeight"] intValue];
         _maxSubtitleHeight = [[preferencesManager preferenceForKey:@"maxSubtitleHeight"] intValue];
         _maxTitleHeight = [[preferencesManager preferenceForKey:@"maxTitleHeight"] intValue];
+        _mainFont = [preferencesManager preferenceForKey:@"mainFont"];
+        _secondaryFont = [preferencesManager preferenceForKey:@"secondaryFont"];
+        _shouldShowAmPm = [[preferencesManager preferenceForKey:@"shouldShowAmPm"] boolValue];
+        _shouldShowLeadingZero = [[preferencesManager preferenceForKey:@"shouldShowLeadingZero"] boolValue];
         _subtitleOffset = [[preferencesManager preferenceForKey:@"clockSubtitleTopPadding"] intValue];
         
         _radius = radius;
@@ -58,7 +70,7 @@
             self.currentPath = self.preloadedPath;
         }
         else {
-            self.currentPath = [[self class] generatePathWithType:self.type radius:self.radius forHour:hour minute:minute maxTitleHeight:self.maxTitleHeight maxSubtitleHeight:self.maxSubtitleHeight subtitleOffset:self.subtitleOffset];
+            self.currentPath = [self generatePathForHour:hour minute:minute];
         }
     }
     //return a copy of the (possibly new) current path, so transformations don't affect our cache
@@ -69,40 +81,56 @@
  The generatePathForHour:forMinute: method creates the UIBezierPath representing
  the clock cutout for the given hour and minute.
  */
-+ (UIBezierPath *)generatePathWithType:(ALSClockType)type radius:(CGFloat)radius forHour:(NSInteger)hour minute:(NSInteger)minute maxTitleHeight:(int)maxTitleHeight maxSubtitleHeight:(int)maxSubtitleHeight subtitleOffset:(int)subtitleOffset {
-    if(type == ALSClockTypeText) {
+- (UIBezierPath *)generatePathForHour:(NSInteger)hour minute:(NSInteger)minute {
+    UIBezierPath *returnPath;
+    if(self.type == ALSClockTypeText) {
         //get the hour and minute as strings
-        NSString *hourString = [[self numberToText:hour isMinute:NO] uppercaseString];
-        NSString *minuteString = [self numberToText:minute isMinute:YES];
+        NSString *hourString = [[[self class] numberToText:hour isMinute:NO] uppercaseString];
+        NSString *minuteString = [[self class] numberToText:minute isMinute:YES];
         
         //get paths representing the hour and minute strings (rendered in a large font)
         //freed before return
-        CGPathRef largeHourPath = [self createPathForText:hourString fontName:@"AvenirNext-DemiBold"];
+        CGPathRef largeHourPath = [[self class] createPathForText:hourString fontName:self.mainFont];
         //freed before return
-        CGPathRef largeMinutePath = [self createPathForText:minuteString fontName:@"Georgia-Italic"];
+        CGPathRef largeMinutePath = [[self class] createPathForText:minuteString fontName:self.secondaryFont];
         
         CGSize largeHourPathSize = CGPathGetPathBoundingBox(largeHourPath).size;
-        CGFloat hourScale = [self scaleForPathOfSize:largeHourPathSize withinRadius:radius isHalfCircle:YES withOffsetFromCenter:0 maxHeight:maxTitleHeight];
+        CGFloat hourScale = [[self class] scaleForPathOfSize:largeHourPathSize withinRadius:self.radius isHalfCircle:YES withOffsetFromCenter:0 maxHeight:self.maxTitleHeight];
         UIBezierPath *hourPath = [UIBezierPath bezierPathWithCGPath:largeHourPath];
         [hourPath applyTransform:CGAffineTransformMakeScale(hourScale, hourScale)];
-        [hourPath applyTransform:CGAffineTransformMakeTranslation(radius-(largeHourPathSize.width*hourScale)/2, radius-(largeHourPathSize.height*hourScale))];
+        [hourPath applyTransform:CGAffineTransformMakeTranslation(self.radius-(largeHourPathSize.width*hourScale)/2, self.radius-(largeHourPathSize.height*hourScale))];
         
         CGSize largeMinutePathSize = CGPathGetPathBoundingBox(largeMinutePath).size;
-        CGFloat minuteScale = [self scaleForPathOfSize:largeMinutePathSize withinRadius:radius isHalfCircle:YES withOffsetFromCenter:subtitleOffset maxHeight:maxSubtitleHeight];
+        CGFloat minuteScale = [[self class] scaleForPathOfSize:largeMinutePathSize withinRadius:self.radius isHalfCircle:YES withOffsetFromCenter:self.subtitleOffset maxHeight:self.maxSubtitleHeight];
         UIBezierPath *minutePath = [UIBezierPath bezierPathWithCGPath:largeMinutePath];
         [minutePath applyTransform:CGAffineTransformMakeScale(minuteScale, minuteScale)];
-        [minutePath applyTransform:CGAffineTransformMakeTranslation(radius-(largeMinutePathSize.width*minuteScale)/2, radius+subtitleOffset)];
+        [minutePath applyTransform:CGAffineTransformMakeTranslation(self.radius-(largeMinutePathSize.width*minuteScale)/2, self.radius+self.subtitleOffset)];
         
-        UIBezierPath *returnPath = [UIBezierPath bezierPath];
+        returnPath = [UIBezierPath bezierPath];
         [returnPath appendPath:hourPath];
         [returnPath appendPath:minutePath];
         
         CGPathRelease(largeHourPath);
         CGPathRelease(largeMinutePath);
-        
-        return returnPath;
     }
-    return nil;
+    else if(self.type == ALSClockTypeDigital) {
+        NSString *timeString = [NSString stringWithFormat:[NSString stringWithFormat:@"%%%@i:%%02i%%@",(self.shouldShowLeadingZero?@"02":@"")],(int)hour,(int)minute,(self.shouldShowAmPm?@" AM":@"")];
+        
+        //freed before return
+        CGPathRef largeTimePath = [[self class] createPathForText:timeString fontName:self.digitalTimeFont];
+        
+        CGSize largeTimePathSize = CGPathGetPathBoundingBox(largeTimePath).size;
+        CGFloat timeScale = [[self class] scaleForPathOfSize:largeTimePathSize withinRadius:self.radius isHalfCircle:NO withOffsetFromCenter:0 maxHeight:self.maxDigitalTimeHeight];
+        UIBezierPath *timePath = [UIBezierPath bezierPathWithCGPath:largeTimePath];
+        [timePath applyTransform:CGAffineTransformMakeScale(timeScale, timeScale)];
+        [timePath applyTransform:CGAffineTransformMakeTranslation(self.radius-(largeTimePathSize.width*timeScale)/2, self.radius-(largeTimePathSize.height*timeScale)/2)];
+        
+        returnPath = [UIBezierPath bezierPath];
+        [returnPath appendPath:timePath];
+        
+        CGPathRelease(largeTimePath);
+    }
+    return returnPath;
 }
 
 /*
@@ -158,7 +186,7 @@
 - (void)preloadPathForHour:(NSInteger)hour minute:(NSInteger)minute {
     //check if we need to update preloaded path
     if(!self.preloadedPath || hour!=self.preloadedHour || minute!=self.preloadedMinute) {
-        self.preloadedPath = [[self class] generatePathWithType:self.type radius:self.radius forHour:hour minute:minute maxTitleHeight:self.maxTitleHeight maxSubtitleHeight:self.maxSubtitleHeight subtitleOffset:self.subtitleOffset];
+        self.preloadedPath = [self generatePathForHour:hour minute:minute];
         
         self.preloadedHour = hour;
         self.preloadedMinute = minute;

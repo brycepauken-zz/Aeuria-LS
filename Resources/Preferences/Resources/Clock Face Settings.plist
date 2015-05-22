@@ -52,6 +52,16 @@
 		</dict>
 		<dict>
 			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Show AM/PM on Digital</string>
+			<key>key</key>
+			<string>shouldShowAmPm</string>
+		</dict>
+		<dict>
+			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>Clock Face Fonts</string>
@@ -79,6 +89,18 @@
 			<string>ALSPreferencesFontCell</string>
 			<key>key</key>
 			<string>secondaryFont</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSDefaultCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Digital Time Font</string>
+			<key>cellClass</key>
+			<string>ALSPreferencesFontCell</string>
+			<key>key</key>
+			<string>digitalTimeFont</string>
 		</dict>
 		<dict>
 			<key>cell</key>

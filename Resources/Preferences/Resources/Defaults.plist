@@ -6,10 +6,14 @@
 	<integer>0</integer>
 	<key>shouldUseTwentyFourHourTime</key>
 	<false/>
+	<key>shouldShowAmPm</key>
+	<false/>
 	<key>mainFont</key>
 	<string>AvenirNext-DemiBold</string>
 	<key>secondaryFont</key>
 	<string>Georgia-Italic</string>
+	<key>digitalTimeFont</key>
+	<string>AppleSDGothicNeo-Bold</string>
 	<key>lockScreenColor</key>
 	<string>#FFFFFF</string>
 	<key>lockScreenColorAlpha</key>
@@ -50,6 +54,8 @@
 	<integer>28</integer>
 	<key>shouldHideForNotificationsOrMedia</key>
 	<false/>
+	<key>maxDigitalTimeHeight</key>
+	<integer>48</integer>
 	<key>maxSubtitleHeight</key>
 	<integer>30</integer>
 	<key>maxTitleHeight</key>
@@ -70,5 +76,7 @@
 	<integer>50</integer>
 	<key>passcodeTextFieldSidePadding</key>
 	<integer>20</integer>
+	<key>shouldShowLeadingZero</key>
+	<false/>
 </dict>
 </plist>

@@ -35,6 +35,7 @@
 @property (nonatomic) int buttonPadding;
 @property (nonatomic) int buttonRadius;
 @property (nonatomic) float clockInvisibleAt;
+@property (nonatomic) int clockType;
 @property (nonatomic) int dotPadding;
 @property (nonatomic) int dotRadius;
 @property (nonatomic) int dotVerticalOffset;
@@ -57,6 +58,7 @@
         _buttonDistanceFromEdge = [[preferencesManager preferenceForKey:@"passcodeButtonDistanceFromEdge"] intValue];
         _buttonPadding = [[preferencesManager preferenceForKey:@"passcodeButtonPadding"] intValue];
         _buttonRadius = [[preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
+        _clockType = [[preferencesManager preferenceForKey:@"clockType"] intValue];
         _dotPadding = [[preferencesManager preferenceForKey:@"characterDotSidePadding"] intValue];
         _dotRadius = [[preferencesManager preferenceForKey:@"characterDotRadius"] intValue];
         _dotVerticalOffset = [[preferencesManager preferenceForKey:@"characterDotBottomPadding"] intValue];
@@ -103,7 +105,7 @@
         [_highlightedButtonLayer setFillColor:[[UIColor colorWithWhite:0 alpha:_pressedButtonAlpha] CGColor]];
         [_internalLayer addSublayer:_highlightedButtonLayer];
         
-        _clock = [[ALSCustomLockScreenClock alloc] initWithRadius:_largeCircleMinRadius-_largeCircleInnerPadding type:ALSClockTypeText preferencesManager:_preferencesManager];
+        _clock = [[ALSCustomLockScreenClock alloc] initWithRadius:_largeCircleMinRadius-_largeCircleInnerPadding type:_clockType preferencesManager:_preferencesManager];
         _buttons = [[ALSCustomLockScreenButtons alloc] initWithPreferencesManager:_preferencesManager];
         
         [self setFrame:frame];

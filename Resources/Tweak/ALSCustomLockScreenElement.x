@@ -120,7 +120,15 @@ static const CGFloat kScaleSearchAcceptableScaleDifference = 0.001;
         }
         return returnVal;
     }
-    return 1;
+    else {
+        CGFloat diagonal = radius*2;
+        CGFloat height = (diagonal*pathSize.height)/sqrt(pathSize.width*pathSize.width + pathSize.height*pathSize.height);
+        CGFloat returnVal = height/pathSize.height;
+        if(returnVal*pathSize.height > maxHeight) {
+            return maxHeight/pathSize.height;
+        }
+        return returnVal;
+    }
 }
 
 @end

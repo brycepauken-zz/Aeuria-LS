@@ -110,6 +110,18 @@
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
+			<string>Max Digital Time Height:</string>
+			<key>key</key>
+			<string>maxDigitalTimeHeight</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
 			<string>Max Subtitle Height:</string>
 			<key>key</key>
 			<string>maxSubtitleHeight</string>
@@ -223,6 +235,16 @@
 			<string>passcodeTextFieldSidePadding</string>
 			<key>isNumeric</key>
 			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Show Leading Hour Zero:</string>
+			<key>key</key>
+			<string>shouldShowLeadingZero</string>
 		</dict>
 		<dict>
 			<key>cell</key>
