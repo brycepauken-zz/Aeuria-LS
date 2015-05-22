@@ -52,10 +52,10 @@
         _handOuterWidth = 2;
         _hourHandExtensionLength = 10;
         _hourHandLength = 40;
-        _hourTickHeight = 20;
+        _hourTickHeight = 16;
         _hourTickInnerWidth = 2;
         _hourTickOuterWidth = 4;
-        _hourTickPadding = 8;
+        _hourTickPadding = 0;
         _maxDigitalTimeHeight = [[preferencesManager preferenceForKey:@"maxDigitalTimeHeight"] intValue];
         _maxSubtitleHeight = [[preferencesManager preferenceForKey:@"maxSubtitleHeight"] intValue];
         _maxTitleHeight = [[preferencesManager preferenceForKey:@"maxTitleHeight"] intValue];
@@ -93,8 +93,7 @@
             self.currentPath = [self generatePathForHour:hour minute:minute];
         }
     }
-    //return a copy of the (possibly new) current path, so transformations don't affect our cache
-    return [UIBezierPath bezierPathWithCGPath:self.currentPath.CGPath];
+    return self.currentPath;
 }
 
 /*
@@ -155,7 +154,7 @@
         
         //create outer 12 hour ticks
         UIBezierPath *defaultHourTickMark = [[self class] pathForTickOfHeight:self.hourTickHeight innerWidth:self.hourTickInnerWidth outerWidth:self.hourTickOuterWidth];
-        CGFloat hourTickRadius = self.radius-self.hourTickPadding-self.hourTickHeight/2;
+        CGFloat hourTickRadius = self.radius-self.hourTickPadding-self.hourTickHeight;
         for(int i=0;i<12;i++) {
             CGFloat angle = (-M_PI/6)*i;
             UIBezierPath *hourTickMark = [defaultHourTickMark copy];

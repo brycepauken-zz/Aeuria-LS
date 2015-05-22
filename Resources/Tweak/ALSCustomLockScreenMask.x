@@ -11,6 +11,8 @@
 @property (nonatomic, strong) ALSCustomLockScreenButtons *buttons;
 @property (nonatomic, strong) CAShapeLayer *circleMaskLayer;
 @property (nonatomic, strong) ALSCustomLockScreenClock *clock;
+@property (nonatomic, strong) CAShapeLayer *clockLayer;
+@property (nonatomic, strong) CAShapeLayer *clockRenderingLayer;
 @property (nonatomic) NSInteger currentHour;
 @property (nonatomic) NSInteger currentMinute;
 @property (nonatomic) CGFloat currentPercentage;
@@ -24,6 +26,7 @@
 @property (nonatomic, strong) CAShapeLayer *internalLayerOverlay;
 @property (nonatomic) CGFloat keyboardHeight;
 @property (nonatomic) CGFloat largeCircleMaxRadiusIncrement;
+@property (nonatomic, strong) UIBezierPath *lastKnownClockPath;
 @property (nonatomic, strong) CAShapeLayer *maskLayer;
 @property (nonatomic, strong) NSTimer *minuteTimer;
 @property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
@@ -88,6 +91,14 @@
         [_maskLayer setFillColor:[[UIColor blackColor] CGColor]];
         [_maskLayer setFillRule:kCAFillRuleEvenOdd];
         [_internalLayer addSublayer:_maskLayer];
+        
+        _clockLayer = [[CAShapeLayer alloc] init];
+        [_clockLayer setFillColor:[[UIColor blackColor] CGColor]];
+        [_internalLayer addSublayer:_clockLayer];
+        
+        _clockRenderingLayer = [[CAShapeLayer alloc] init];
+        [_clockRenderingLayer setFillColor:[[UIColor blackColor] CGColor]];
+        [_internalLayer addSublayer:_clockRenderingLayer];
         
         _internalLayerOverlay = [[CAShapeLayer alloc] init];
         [_internalLayerOverlay setFillColor:[[UIColor blackColor] CGColor]];
@@ -255,6 +266,11 @@
     [self.internalLayer setFrame:self.bounds];
     [self.internalLayerOverlay setFrame:self.bounds];
     [self.maskLayer setFrame:self.bounds];
+    
+    CGRect clockLayerFrame = CGRectMake(self.bounds.size.width/2-self.largeCircleMinRadius, self.bounds.size.height/2-self.largeCircleMinRadius, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2);
+    [self.clockLayer setFrame:clockLayerFrame];
+    clockLayerFrame.origin.y = -clockLayerFrame.size.height*2;
+    [self.clockRenderingLayer setFrame:clockLayerFrame];
     
     //dotsLayer's frame is a long horizontal bar placed dotVerticalOffset pixels above the highest button
     CGSize screenSize = [[UIScreen mainScreen] bounds].size;
@@ -439,6 +455,60 @@
     
     UIBezierPath *mask = [UIBezierPath bezierPathWithRect:self.bounds];
     
+    CGFloat clockScale = MAX(0,(1-percentage/self.clockInvisibleAt));
+    CGFloat clockRadiusScaled = self.clock.radius*clockScale;
+    UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute];
+    if(clockPath != self.lastKnownClockPath) {
+        self.lastKnownClockPath = clockPath;
+        
+        UIBezierPath *newClockPath = [clockPath copy];
+        [newClockPath applyTransform:CGAffineTransformMakeTranslation(self.clockLayer.bounds.size.width/2-self.clock.radius, self.clockLayer.bounds.size.height/2-self.clock.radius)];
+        [self.clockRenderingLayer setPath:newClockPath.CGPath];
+        
+        static const int bytesPerPixel = 4;
+        static const int bitsPerComponent = 8;
+        static CGColorSpaceRef colorSpace;
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            colorSpace = CGColorSpaceCreateDeviceRGB();
+        });
+        
+        //create a data-backed context, and draw the dots layer inside
+        CGFloat screenScale = [UIScreen mainScreen].scale;
+        int width = floor(self.clockLayer.bounds.size.width)*screenScale;
+        int height = floor(self.clockLayer.bounds.size.height)*screenScale;
+        int bytesPerRow = width * bytesPerPixel;
+        unsigned char *data = calloc(width * height * bytesPerPixel, 1);
+        CGContextRef ctx = CGBitmapContextCreate(data, width, height, bitsPerComponent, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast|kCGBitmapByteOrder32Big);
+        CGContextTranslateCTM(ctx, 0, height);
+        //CGContextScaleCTM(ctx, 1.0, -1.0);
+        CGContextScaleCTM(ctx, screenScale, -screenScale);
+        [self.clockRenderingLayer renderInContext:ctx];
+        
+        //reverse alpha value
+        for(int y=0;y<height;y++) {
+            int yOffset = y*width;
+            for(int x=0;x<width;x++) {
+                int offset = (yOffset+x)*bytesPerPixel;
+                data[offset+3] = 255-data[offset+3];
+            }
+        }
+        
+        //get image
+        CGImageRef imageRef = CGBitmapContextCreateImage(ctx);
+        UIImage *image = [UIImage imageWithCGImage:imageRef];
+        CGImageRelease(imageRef);
+        CGContextRelease(ctx);
+        free(data);
+        
+        self.clockLayer.contents = (id)image.CGImage;
+    }
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    [self.clockLayer setTransform:CATransform3DMakeScale(clockScale, clockScale, 1)];
+    [CATransaction commit];
+    [mask appendPath:[[self class] pathForCircleWithRadius:clockRadiusScaled center:boundsCenter]];
+    
     if(self.securityType == ALSLockScreenSecurityTypeCode) {
         //find how much to add to the minimum circle size
         CGFloat largeCircleIncrement = self.largeCircleMaxRadiusIncrement*percentage;
@@ -446,14 +516,14 @@
         
         //mask the whole thing to the large outer circle
         [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
-    
+        
         //add clock to internal path
-        CGFloat clockScale = MAX(0,(1-percentage/self.clockInvisibleAt));
+        /*CGFloat clockScale = MAX(0,(1-percentage/self.clockInvisibleAt));
         CGFloat clockRadiusScaled = self.clock.radius*clockScale;
         UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute];
         [clockPath applyTransform:CGAffineTransformMakeScale(clockScale, clockScale)];
         [clockPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-clockRadiusScaled, boundsCenter.y-clockRadiusScaled)];
-        [mask appendPath:clockPath];
+        [mask appendPath:clockPath];*/
         
         //add buttons to internal path
         UIBezierPath *buttonsPath = [self.buttons buttonsPathForRadius:largeRadius middleButtonStartingRadius:(self.largeCircleMinRadius+self.largeCircleMaxRadiusIncrement*self.clockInvisibleAt)];
@@ -490,9 +560,9 @@
         
         [self.circleMaskLayer setPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(boundsCenter.x-largeRadius, boundsCenter.y-self.largeCircleMinRadius, largeRadius*2, self.largeCircleMinRadius*2) cornerRadius:self.largeCircleMinRadius].CGPath];
     
-        UIBezierPath *clockPath = [[self.clock clockPathForHour:self.currentHour minute:self.currentMinute] bezierPathByReversingPath];
+        /*UIBezierPath *clockPath = [[self.clock clockPathForHour:self.currentHour minute:self.currentMinute] bezierPathByReversingPath];
         [clockPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-self.clock.radius+largeCircleIncrement, boundsCenter.y-self.clock.radius)];
-        [mask appendPath:clockPath];
+        [mask appendPath:clockPath];*/
         
         CGFloat leftEdgeOffset = MAX(self.textFieldHorizontalPadding, boundsCenter.x-self.clock.radius-MAX(self.textFieldHorizontalPadding,largeCircleIncrement)+self.textFieldHorizontalPadding);
         CGFloat rightEdgeOffset = MIN(self.bounds.size.width-self.textFieldHorizontalPadding, boundsCenter.x-self.clock.radius+MAX(self.textFieldHorizontalPadding,largeCircleIncrement)-self.textFieldHorizontalPadding);
@@ -514,12 +584,12 @@
         [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
     
         //add clock to internal path
-        CGFloat clockScale = largeCircleIncrement/self.largeCircleMinRadius+1;
+        /*CGFloat clockScale = largeCircleIncrement/self.largeCircleMinRadius+1;
         CGFloat clockRadiusScaled = self.clock.radius*clockScale;
         UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute];
         [clockPath applyTransform:CGAffineTransformMakeScale(clockScale, clockScale)];
         [clockPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-clockRadiusScaled, boundsCenter.y-clockRadiusScaled)];
-        [mask appendPath:clockPath];
+        [mask appendPath:clockPath];*/
         
         [self.internalLayerOverlay setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
         [CATransaction begin];
