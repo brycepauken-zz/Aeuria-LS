@@ -54,19 +54,19 @@
     self = [super init];
     if(self) {
         _preferencesManager = preferencesManager;
-        _buttonPadding = 10;
-        _buttonRadius = 44;
-        _clockInvisibleAt = [[preferencesManager preferenceForKey:@"clockInvisibleAt"] floatValue];
-        _dotPadding = 16;
-        _dotRadius = 8;
-        _dotVerticalOffset = 18;
-        _instructionsHeight = 28;
+        _buttonPadding = [[preferencesManager preferenceForKey:@"passcodeButtonPadding"] intValue];
+        _buttonRadius = [[preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
+        _clockInvisibleAt = 0.5;
+        _dotPadding = [[preferencesManager preferenceForKey:@"characterDotSidePadding"] intValue];
+        _dotRadius = [[preferencesManager preferenceForKey:@"characterDotRadius"] intValue];
+        _dotVerticalOffset = [[preferencesManager preferenceForKey:@"characterDotBottomPadding"] intValue];
+        _instructionsHeight = [[preferencesManager preferenceForKey:@"enterPasscodeTextHeight"] intValue];
         _largeCircleInnerPadding = [[preferencesManager preferenceForKey:@"clockInnerPadding"] intValue];
         _largeCircleMinRadius = [[preferencesManager preferenceForKey:@"clockRadius"] intValue];
-        _pressedButtonAlpha = 0.25;
-        _textFieldCornerRadius = 10;
-        _textFieldHeight = 50;
-        _textFieldHorizontalPadding = 20;
+        _pressedButtonAlpha = [[preferencesManager preferenceForKey:@"passcodeButtonPressedAlpha"] doubleValue];
+        _textFieldCornerRadius = [[preferencesManager preferenceForKey:@"passcodeTextFieldCornerRadius"] intValue];
+        _textFieldHeight = [[preferencesManager preferenceForKey:@"passcodeTextFieldHeight"] intValue];
+        _textFieldHorizontalPadding = [[preferencesManager preferenceForKey:@"passcodeTextFieldSidePadding"] intValue];
         
         _currentHour = 0;
         _currentMinute = 0;

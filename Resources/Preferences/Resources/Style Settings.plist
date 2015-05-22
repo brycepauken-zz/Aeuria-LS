@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Lock Screen Color</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSDefaultCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Main Color</string>
+			<key>cellClass</key>
+			<string>ALSPreferencesColorCell</string>
+			<key>key</key>
+			<string>lockScreenColor</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Lock Screen Color Alpha</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSliderCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>key</key>
+			<string>lockScreenColorAlpha</string>
+			<key>min</key>
+			<real>0</real>
+			<key>max</key>
+			<real>1</real>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Lock Screen Blur</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Add Blur to Lock Screen</string>
+			<key>key</key>
+			<string>shouldBlurLockScreen</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Disable Color When Blur Enabled</string>
+			<key>key</key>
+			<string>shouldDisableLockScreenColorOnBlur</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Lock Screen Blur Strength</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSliderCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>key</key>
+			<string>lockScreenBlurStrength</string>
+			<key>min</key>
+			<integer>0</integer>
+			<key>max</key>
+			<real>1</real>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Background Overlay Color</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Add Color over Background</string>
+			<key>key</key>
+			<string>shouldColorBackground</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSDefaultCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Background Overlay Color</string>
+			<key>cellClass</key>
+			<string>ALSPreferencesColorCell</string>
+			<key>key</key>
+			<string>backgroundColor</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Background Overlay Color Alpha</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSliderCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>key</key>
+			<string>backgroundColorAlpha</string>
+			<key>min</key>
+			<integer>0</integer>
+			<key>max</key>
+			<real>1</real>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Other Style Settings</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Disable Existing Blur Effects</string>
+			<key>key</key>
+			<string>shouldDisableExistingBlur</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Reset Settings</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Reset Above Settings</string>
+			<key>action</key>
+			<string>resetSettings</string>
+			<key>isDestructive</key>
+			<true/>
+			<key>confirmation</key>
+			<dict>
+				<key>prompt</key>
+				<string>Reset the above Settings?</string>
+				<key>title</key>
+				<string>Reset</string>
+				<key>cancelTitle</key>
+				<string>Cancel</string>
+			</dict>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>Background &amp; Status Bar</string>
+</dict>
+</plist>

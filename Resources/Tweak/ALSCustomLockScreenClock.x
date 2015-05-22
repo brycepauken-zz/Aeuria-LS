@@ -33,7 +33,7 @@
     if(self) {
         _maxSubtitleHeight = [[preferencesManager preferenceForKey:@"maxSubtitleHeight"] intValue];
         _maxTitleHeight = [[preferencesManager preferenceForKey:@"maxTitleHeight"] intValue];
-        _subtitleOffset = [[preferencesManager preferenceForKey:@"clockSubtitleOffset"] intValue];
+        _subtitleOffset = [[preferencesManager preferenceForKey:@"clockSubtitleTopPadding"] intValue];
         
         _radius = radius;
         _type = type;

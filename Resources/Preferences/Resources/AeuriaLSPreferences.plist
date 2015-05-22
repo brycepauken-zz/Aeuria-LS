@@ -14,7 +14,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Change the clock&apos;s format and style</string>
+			<string>Change the clock&apos;s format</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -28,7 +28,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Modify the clock&apos;s surroundings</string>
+			<string>Choose your style</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -36,13 +36,13 @@
 			<key>detail</key>
 			<string>ALSPreferencesSubListController</string>
 			<key>label</key>
-			<string>Background &amp; Status Bar Settings</string>
+			<string>Style Settings</string>
 		</dict>
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Change passcode page settings</string>
+			<string>Modify passcode settings</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -50,7 +50,7 @@
 			<key>detail</key>
 			<string>ALSPreferencesSubListController</string>
 			<key>label</key>
-			<string>Passcode &amp; Passphrase Settings</string>
+			<string>Passcode Page Settings</string>
 		</dict>
 		<dict>
 			<key>cell</key>

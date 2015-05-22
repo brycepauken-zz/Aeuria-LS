@@ -21,11 +21,11 @@
 - (instancetype)initWithPreferencesManager:(ALSPreferencesManager *)preferencesManager {
     self = [super initWithPreferencesManager:preferencesManager];
     if(self) {
-        _buttonDistanceFromEdge = 20;
-        _buttonPadding = 10;
-        _buttonRadius = 44;
-        _buttonTextHeight = 32;
-        _clockInvisibleAt = [[preferencesManager preferenceForKey:@"clockInvisibleAt"] floatValue];
+        _buttonDistanceFromEdge = [[preferencesManager preferenceForKey:@"passcodeButtonDistanceFromEdge"] intValue];
+        _buttonPadding = [[preferencesManager preferenceForKey:@"passcodeButtonPadding"] intValue];
+        _buttonRadius = [[preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
+        _buttonTextHeight = [[preferencesManager preferenceForKey:@"passcodeButtonTextHeight"] intValue];
+        _clockInvisibleAt = 0.5;
     }
     return self;
 }

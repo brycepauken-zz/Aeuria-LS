@@ -8,7 +8,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Change these at your own risk</string>
+			<string>Change these at your own discretion &amp; risk</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -19,18 +19,6 @@
 			<string>Clock Inner Padding:</string>
 			<key>key</key>
 			<string>clockInnerPadding</string>
-			<key>isNumeric</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSEditTextCell</string>
-			<key>defaults</key>
-			<string>com.brycepauken.aeurials</string>
-			<key>label</key>
-			<string>Clock Invisible At:</string>
-			<key>key</key>
-			<string>clockInvisibleAt</string>
 			<key>isNumeric</key>
 			<true/>
 		</dict>
@@ -52,11 +40,69 @@
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
-			<string>Clock Subtitle Offset:</string>
+			<string>Clock Subtitle Top Padding:</string>
 			<key>key</key>
-			<string>clockSubtitleOffset</string>
+			<string>clockSubtitleTopPadding</string>
 			<key>isNumeric</key>
 			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Character Dot Bottom Padding:</string>
+			<key>key</key>
+			<string>characterDotBottomPadding</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Character Dot Side Padding:</string>
+			<key>key</key>
+			<string>characterDotSidePadding</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Character Dot Radius:</string>
+			<key>key</key>
+			<string>characterDotRadius</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Enter Passcode Text Height:</string>
+			<key>key</key>
+			<string>enterPasscodeTextHeight</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Hide for Notifications/Media:</string>
+			<key>key</key>
+			<string>shouldHideForNotificationsOrMedia</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -79,6 +125,102 @@
 			<string>Max Title Height:</string>
 			<key>key</key>
 			<string>maxTitleHeight</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Pass Button Distance From Edge:</string>
+			<key>key</key>
+			<string>passcodeButtonDistanceFromEdge</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Pass Button Padding:</string>
+			<key>key</key>
+			<string>passcodeButtonPadding</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Pass Button Pressed Alpha:</string>
+			<key>key</key>
+			<string>passcodeButtonPressedAlpha</string>
+			<key>isDecimalPad</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Pass Button Radius:</string>
+			<key>key</key>
+			<string>passcodeButtonRadius</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Pass Button Text Height:</string>
+			<key>key</key>
+			<string>passcodeButtonTextHeight</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Pass Text Field Corner Radius:</string>
+			<key>key</key>
+			<string>passcodeTextFieldCornerRadius</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Pass Text Field Height:</string>
+			<key>key</key>
+			<string>passcodeTextFieldHeight</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Pass Text Field Side Padding:</string>
+			<key>key</key>
+			<string>passcodeTextFieldSidePadding</string>
 			<key>isNumeric</key>
 			<true/>
 		</dict>

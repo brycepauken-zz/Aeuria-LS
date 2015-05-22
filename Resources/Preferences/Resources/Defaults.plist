@@ -2,45 +2,73 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>backgroundBlurStrength</key>
-	<integer>0</integer>
-	<key>backgroundColor</key>
-	<string>#000000</string>
-	<key>backgroundColorVisiblity</key>
-	<real>0.5</real>
-	<key>clockInnerPadding</key>
-	<integer>10</integer>
-	<key>clockInvisibleAt</key>
-	<real>0.5</real>
-	<key>clockRadius</key>
-	<integer>100</integer>
-	<key>clockSubtitleOffset</key>
-	<integer>14</integer>
 	<key>clockType</key>
 	<integer>0</integer>
-	<key>colorVisiblity</key>
-	<integer>1</integer>
-	<key>faceColor</key>
-	<string>#FFFFFF</string>
+	<key>shouldUseTwentyFourHourTime</key>
+	<false/>
 	<key>mainFont</key>
 	<string>AvenirNext-DemiBold</string>
+	<key>secondaryFont</key>
+	<string>Georgia-Italic</string>
+	<key>lockScreenColor</key>
+	<string>#FFFFFF</string>
+	<key>lockScreenColorAlpha</key>
+	<integer>1</integer>
+	<key>shouldBlurLockScreen</key>
+	<false/>
+	<key>shouldDisableLockScreenColorOnBlur</key>
+	<true/>
+	<key>lockScreenBlurStrength</key>
+	<integer>4</integer>
+	<key>shouldColorBackground</key>
+	<true/>
+	<key>backgroundColor</key>
+	<string>#000000</string>
+	<key>backgroundColorAlpha</key>
+	<real>0.5</real>
+	<key>shouldDisableExistingBlur</key>
+	<true/>
+	<key>shouldHideEnterPasscodeText</key>
+	<false/>
+	<key>shouldHideZeroButton</key>
+	<false/>
+	<key>shouldHideBottomButtons</key>
+	<false/>
+	<key>clockInnerPadding</key>
+	<integer>10</integer>
+	<key>clockRadius</key>
+	<integer>100</integer>
+	<key>clockSubtitleTopPadding</key>
+	<integer>14</integer>
+	<key>characterDotBottomPadding</key>
+	<integer>18</integer>
+	<key>characterDotSidePadding</key>
+	<integer>16</integer>
+	<key>characterDotRadius</key>
+	<integer>8</integer>
+	<key>enterPasscodeTextHeight</key>
+	<integer>28</integer>
+	<key>shouldHideForNotificationsOrMedia</key>
+	<false/>
 	<key>maxSubtitleHeight</key>
 	<integer>30</integer>
 	<key>maxTitleHeight</key>
 	<integer>38</integer>
-	<key>secondaryFont</key>
-	<string>Georgia-Italic</string>
-	<key>shouldBlurBackground</key>
-	<false/>
-	<key>shouldColorBackground</key>
-	<true/>
-	<key>shouldHideSecurityText</key>
-	<false/>
-	<key>shouldHideZeroButton</key>
-	<false/>
-	<key>shouldUseNumericEntry</key>
-	<false/>
-	<key>twentyFourHour</key>
-	<false/>
+	<key>passcodeButtonDistanceFromEdge</key>
+	<integer>20</integer>
+	<key>passcodeButtonPadding</key>
+	<integer>10</integer>
+	<key>passcodeButtonPressedAlpha</key>
+	<real>0.25</real>
+	<key>passcodeButtonRadius</key>
+	<integer>44</integer>
+	<key>passcodeButtonTextHeight</key>
+	<integer>32</integer>
+	<key>passcodeTextFieldCornerRadius</key>
+	<integer>10</integer>
+	<key>passcodeTextFieldHeight</key>
+	<integer>50</integer>
+	<key>passcodeTextFieldSidePadding</key>
+	<integer>20</integer>
 </dict>
 </plist>
