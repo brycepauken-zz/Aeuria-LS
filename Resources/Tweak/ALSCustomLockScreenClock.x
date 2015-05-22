@@ -18,10 +18,20 @@
 
 //preference properties
 @property (nonatomic, strong) NSString *digitalTimeFont;
+@property (nonatomic) int handInnerWidth;
+@property (nonatomic) int handOuterWidth;
+@property (nonatomic) int hourHandExtensionLength;
+@property (nonatomic) int hourHandLength;
+@property (nonatomic) int hourTickHeight;
+@property (nonatomic) int hourTickInnerWidth;
+@property (nonatomic) int hourTickOuterWidth;
+@property (nonatomic) int hourTickPadding;
 @property (nonatomic) int maxDigitalTimeHeight;
 @property (nonatomic) int maxSubtitleHeight;
 @property (nonatomic) int maxTitleHeight;
 @property (nonatomic, strong) NSString *mainFont;
+@property (nonatomic) int minuteHandExtensionLength;
+@property (nonatomic) int minuteHandLength;
 @property (nonatomic, strong) NSString *secondaryFont;
 @property (nonatomic) BOOL shouldShowAmPm;
 @property (nonatomic) BOOL shouldShowLeadingZero;
@@ -38,10 +48,20 @@
     self = [super initWithPreferencesManager:preferencesManager];
     if(self) {
         _digitalTimeFont = [preferencesManager preferenceForKey:@"digitalTimeFont"];
+        _handInnerWidth = 8;
+        _handOuterWidth = 2;
+        _hourHandExtensionLength = 10;
+        _hourHandLength = 40;
+        _hourTickHeight = 20;
+        _hourTickInnerWidth = 2;
+        _hourTickOuterWidth = 4;
+        _hourTickPadding = 1;
         _maxDigitalTimeHeight = [[preferencesManager preferenceForKey:@"maxDigitalTimeHeight"] intValue];
         _maxSubtitleHeight = [[preferencesManager preferenceForKey:@"maxSubtitleHeight"] intValue];
         _maxTitleHeight = [[preferencesManager preferenceForKey:@"maxTitleHeight"] intValue];
         _mainFont = [preferencesManager preferenceForKey:@"mainFont"];
+        _minuteHandExtensionLength = 10;
+        _minuteHandLength = 60;
         _secondaryFont = [preferencesManager preferenceForKey:@"secondaryFont"];
         _shouldShowAmPm = [[preferencesManager preferenceForKey:@"shouldShowAmPm"] boolValue];
         _shouldShowLeadingZero = [[preferencesManager preferenceForKey:@"shouldShowLeadingZero"] boolValue];
@@ -130,6 +150,32 @@
         
         CGPathRelease(largeTimePath);
     }
+    else if(self.type == ALSClockTypeAnalog) {
+        returnPath = [UIBezierPath bezierPath];
+        
+        //create outer 12 hour ticks
+        UIBezierPath *defaultHourTickMark = [[self class] pathForTickOfHeight:self.hourTickHeight innerWidth:self.hourTickInnerWidth outerWidth:self.hourTickOuterWidth];
+        CGFloat hourTickRadius = self.radius-self.hourTickPadding-self.hourTickHeight;
+        for(int i=0;i<12;i++) {
+            CGFloat angle = (-M_PI/6)*i;
+            UIBezierPath *hourTickMark = [defaultHourTickMark copy];
+            [hourTickMark applyTransform:CGAffineTransformMakeRotation(angle)];
+            [hourTickMark applyTransform:CGAffineTransformMakeTranslation(self.radius+hourTickRadius*sin(angle), self.radius-hourTickRadius*cos(angle))];
+            [returnPath appendPath:hourTickMark];
+        }
+        
+        UIBezierPath *hourHand = [[self class] pathForTickOfHeight:self.hourHandLength+self.hourHandExtensionLength innerWidth:self.handInnerWidth outerWidth:self.handOuterWidth];
+        [hourHand applyTransform:CGAffineTransformMakeTranslation(0, self.hourHandExtensionLength)];
+        [hourHand applyTransform:CGAffineTransformMakeRotation((-M_PI/6))];
+        [hourHand applyTransform:CGAffineTransformMakeTranslation(self.radius, self.radius)];
+        [returnPath appendPath:hourHand];
+        
+        UIBezierPath *minuteHand = [[self class] pathForTickOfHeight:self.minuteHandLength+self.minuteHandExtensionLength innerWidth:self.handInnerWidth outerWidth:self.handOuterWidth];
+        [minuteHand applyTransform:CGAffineTransformMakeTranslation(0, self.minuteHandExtensionLength)];
+        [minuteHand applyTransform:CGAffineTransformMakeRotation(0)];
+        [minuteHand applyTransform:CGAffineTransformMakeTranslation(self.radius, self.radius)];
+        [returnPath appendPath:minuteHand];
+    }
     return returnPath;
 }
 
@@ -177,6 +223,16 @@
         }
     }
     return nil;
+}
+
++ (UIBezierPath *)pathForTickOfHeight:(CGFloat)height innerWidth:(CGFloat)innerWidth outerWidth:(CGFloat)outerWidth {
+    UIBezierPath *tickPath = [UIBezierPath bezierPath];
+    [tickPath moveToPoint:CGPointMake(-innerWidth/2, 0)];
+    [tickPath addLineToPoint:CGPointMake(-outerWidth/2, -height)];
+    [tickPath addLineToPoint:CGPointMake(outerWidth/2, -height)];
+    [tickPath addLineToPoint:CGPointMake(innerWidth/2, 0)];
+    [tickPath closePath];
+    return tickPath;
 }
 
 /*
