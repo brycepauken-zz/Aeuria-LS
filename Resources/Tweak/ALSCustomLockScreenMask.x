@@ -478,7 +478,9 @@
         [self.clockRenderingLayer setPath:newClockPath.CGPath];
         
         UIBezierPath *clockLayerMaskPath = [UIBezierPath bezierPathWithRect:self.clockLayerMask.bounds];
-        [clockLayerMaskPath appendPath:[[self class] pathForCircleWithRadius:self.clockDotRadius center:CGPointMake(self.clockLayerMask.bounds.size.width/2, self.clockLayerMask.bounds.size.height/2)]];
+        if(self.clockType == ALSClockTypeAnalog && self.clockDotRadius>0) {
+            [clockLayerMaskPath appendPath:[[self class] pathForCircleWithRadius:self.clockDotRadius center:CGPointMake(self.clockLayerMask.bounds.size.width/2, self.clockLayerMask.bounds.size.height/2)]];
+        }
         [self.clockLayerMask setPath:clockLayerMaskPath.CGPath];
         
         static const int bytesPerPixel = 4;
