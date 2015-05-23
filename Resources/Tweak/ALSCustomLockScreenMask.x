@@ -434,6 +434,11 @@
     }
 }
 
+- (void)setSecurityType:(ALSLockScreenSecurityType)securityType {
+    _securityType = securityType;
+    [self setNeedsLayout];
+}
+
 - (void)setupTimer {
     if(self.minuteTimer && [self.minuteTimer isValid]) {
         [self.minuteTimer invalidate];
