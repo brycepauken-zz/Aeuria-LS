@@ -24,6 +24,8 @@
 //preference properties
 @property (nonatomic) int buttonPadding;
 @property (nonatomic) int buttonRadius;
+@property (nonatomic, strong) UIColor *lockScreenColor;
+@property (nonatomic) float lockScreenColorAlpha;
 @property (nonatomic) BOOL shouldShowWithNotifications;
 
 @end
@@ -37,6 +39,8 @@
         
         _buttonPadding = [[_preferencesManager preferenceForKey:@"passcodeButtonPadding"] intValue];
         _buttonRadius = [[_preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
+        _lockScreenColor = [_preferencesManager preferenceForKey:@"lockScreenColor"];
+        _lockScreenColorAlpha = [[_preferencesManager preferenceForKey:@"lockScreenColorAlpha"] floatValue];
         _shouldShowWithNotifications = ![[_preferencesManager preferenceForKey:@"shouldHideForNotificationsOrMedia"] boolValue];
         
         _lastKnownBounds = self.bounds;
@@ -48,7 +52,7 @@
         _filledOverlayMask = [[ALSCustomLockScreenMask alloc] initWithFrame:CGRectMake((self.bounds.size.width-maxDimension)/2, (self.bounds.size.height-maxDimension)/2, maxDimension, maxDimension) preferencesManager:_preferencesManager];
         _filledOverlay = [[UIView alloc] initWithFrame:self.bounds];
         [_filledOverlay setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
-        [_filledOverlay setBackgroundColor:[_preferencesManager preferenceForKey:@"faceColor"]];
+        [_filledOverlay setBackgroundColor:[_lockScreenColor colorWithAlphaComponent:_lockScreenColorAlpha]];
         [_filledOverlay.layer setMask:_filledOverlayMask];
         
         ALSProxyTarget *proxyTarget = [ALSProxyTarget proxyForTarget:self selector:@selector(updateViews)];

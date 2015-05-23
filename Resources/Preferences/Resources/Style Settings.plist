@@ -36,7 +36,7 @@
 			<key>key</key>
 			<string>lockScreenColorAlpha</string>
 			<key>min</key>
-			<real>0</real>
+			<real>0.25</real>
 			<key>max</key>
 			<real>1</real>
 		</dict>
@@ -62,7 +62,7 @@
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
-			<string>Disable Color When Blur Enabled</string>
+			<string>Disable Color With Blur</string>
 			<key>key</key>
 			<string>shouldDisableLockScreenColorOnBlur</string>
 		</dict>
