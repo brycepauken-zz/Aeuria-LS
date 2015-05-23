@@ -17,6 +17,7 @@
 @property (nonatomic) NSInteger currentHour;
 @property (nonatomic) NSInteger currentMinute;
 @property (nonatomic) CGFloat currentPercentage;
+@property (nonatomic, weak) UIView *customLockScreen;
 @property (nonatomic, strong) CAShapeLayer *dotsDisplayLayer;
 @property (nonatomic, strong) CAShapeLayer *dotsLayer;
 @property (nonatomic, strong) NSMutableArray *highlightedButtonIndexes;
@@ -587,8 +588,9 @@
         [clockCutOut applyTransform:CGAffineTransformMakeTranslation(largeCircleIncrement, 0)];
         [mask appendPath:clockCutOut];
         
-        CGFloat leftEdgeOffset = MAX(self.textFieldHorizontalPadding, boundsCenter.x-self.clock.radius-MAX(self.textFieldHorizontalPadding,largeCircleIncrement)+self.textFieldHorizontalPadding);
-        CGFloat rightEdgeOffset = MIN(self.bounds.size.width-self.textFieldHorizontalPadding, boundsCenter.x-self.clock.radius+MAX(self.textFieldHorizontalPadding,largeCircleIncrement)-self.textFieldHorizontalPadding);
+        CGFloat screenOffset = (self.bounds.size.width-self.customLockScreen.bounds.size.width)/2;
+        CGFloat leftEdgeOffset = MAX(self.textFieldHorizontalPadding+screenOffset, boundsCenter.x-self.clock.radius-MAX(self.textFieldHorizontalPadding,largeCircleIncrement)+self.textFieldHorizontalPadding);
+        CGFloat rightEdgeOffset = MIN(self.bounds.size.width-self.textFieldHorizontalPadding-screenOffset, boundsCenter.x-self.clock.radius+MAX(self.textFieldHorizontalPadding,largeCircleIncrement)-self.textFieldHorizontalPadding);
         [mask appendPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(leftEdgeOffset, boundsCenter.y-self.textFieldHeight/2, rightEdgeOffset-leftEdgeOffset, self.textFieldHeight) byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(self.textFieldCornerRadius, self.textFieldCornerRadius)]];
     
         UIBezierPath *instructionsPath = [self.instructionsPath copy];

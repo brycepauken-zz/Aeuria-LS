@@ -25,6 +25,7 @@ typedef NS_ENUM(NSInteger, ALSLockScreenSecurityType) {
 - (void)removeDotAndAnimate:(BOOL)animate;
 - (void)resetMask;
 - (ALSLockScreenSecurityType)securityType;
+- (void)setCustomLockScreen:(UIView *)customLockScreen;
 - (void)setKeyboardHeight:(CGFloat)keyboardHeight;
 - (void)setSecurityType:(ALSLockScreenSecurityType)securityType;
 - (void)shakeDots;

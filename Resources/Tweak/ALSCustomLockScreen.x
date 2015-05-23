@@ -62,6 +62,7 @@
         
         CGFloat maxDimension = MAX(self.bounds.size.width, self.bounds.size.height);
         _filledOverlayMask = [[ALSCustomLockScreenMask alloc] initWithFrame:CGRectMake((self.bounds.size.width-maxDimension)/2, (self.bounds.size.height-maxDimension)/2, maxDimension, maxDimension) preferencesManager:_preferencesManager];
+        [_filledOverlayMask setCustomLockScreen:self];
         _filledOverlay = [[UIView alloc] initWithFrame:self.bounds];
         [_filledOverlay setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
         [_filledOverlay.layer setMask:_filledOverlayMask];
