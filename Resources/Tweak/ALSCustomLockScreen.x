@@ -107,7 +107,6 @@
 }
 
 - (void)failedEntry {
-    [self.superview setUserInteractionEnabled:YES];
     if(self.percentage < 0.5) {
         CABasicAnimation *shakeAnimation = [CABasicAnimation animationWithKeyPath:@"position"];
         [shakeAnimation setAutoreverses:YES];
@@ -120,17 +119,28 @@
     else {
         [self.filledOverlayMask shakeDots];
     }
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.filledOverlayMask removeAllDotsAndAnimate:YES withCompletion:^{
+            [self.superview setUserInteractionEnabled:YES];
+        }];
+    });
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    if(!self.superview.userInteractionEnabled) {
+        return nil;
+    }
+    
     if(self.filledOverlayMask.securityType!=ALSLockScreenSecurityTypeCode) {
         if(self.filledOverlayMask.securityType==ALSLockScreenSecurityTypePhrase && CGRectContainsPoint(CGRectMake(self.bounds.size.width/2-50, 20, 100, 80), point)) {
+            self.highlightedButtonIndex = -1;
             return self;
         }
         return nil;
     }
     
     if(CGRectContainsPoint(CGRectMake(0, self.bounds.size.height-50, 100, 50), point) || CGRectContainsPoint(CGRectMake(self.bounds.size.width-100, self.bounds.size.height-50, 100, 50), point)) {
+        self.highlightedButtonIndex = -1;
         return self;
     }
     
@@ -213,6 +223,10 @@
 }
 
 - (void)panGestureRecognizerCalled:(UIPanGestureRecognizer *)gestureRecognizer {
+    if(!self.superview.userInteractionEnabled) {
+        return;
+    }
+    
     CGPoint point = [gestureRecognizer locationInView:self];
     
     //check delete & emergency buttons
@@ -300,6 +314,9 @@
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    if(!self.superview.userInteractionEnabled) {
+        return;
+    }
     UIView *tappedButton = [self hitTest:[[touches anyObject] locationInView:self] withEvent:event];
     if(tappedButton) {
         _highlightedButtonIndex = (int)tappedButton.tag;

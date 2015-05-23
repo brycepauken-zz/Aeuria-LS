@@ -22,6 +22,7 @@
 		022130AB1AE1BDE800054A1A /* ALSPreferencesManager.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSPreferencesManager.x; sourceTree = "<group>"; };
 		022627B91AE9E605006658FF /* LSPath.dat */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = LSPath.dat; sourceTree = "<group>"; };
 		022C65B11B11133900132878 /* SBUIPasscodeLockViewWithKeypad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBUIPasscodeLockViewWithKeypad.h; sourceTree = "<group>"; };
+		022C65B21B1144E600132878 /* SBUIPasscodeLockViewWithKeypad.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBUIPasscodeLockViewWithKeypad.x; sourceTree = "<group>"; };
 		023724181AC25213007FAFC1 /* ALSCustomLockScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreen.h; sourceTree = "<group>"; };
 		023724191AC25213007FAFC1 /* ALSCustomLockScreen.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreen.x; sourceTree = "<group>"; };
 		0237241A1AC25213007FAFC1 /* ALSCustomLockScreenMask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenMask.h; sourceTree = "<group>"; };
@@ -169,6 +170,7 @@
 				027F9B531AF7041100180368 /* SBUIPasscodeLockViewBase.h */,
 				027FFDAB1AFA9E0400FA1486 /* SBUIPasscodeLockViewBase.x */,
 				022C65B11B11133900132878 /* SBUIPasscodeLockViewWithKeypad.h */,
+				022C65B21B1144E600132878 /* SBUIPasscodeLockViewWithKeypad.x */,
 				023724241AC25213007FAFC1 /* SBWallpaperEffectView.h */,
 				023724251AC25213007FAFC1 /* SBWallpaperEffectView.x */,
 			);

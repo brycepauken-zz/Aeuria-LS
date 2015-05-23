@@ -2,12 +2,6 @@
 
 #import "SBLockScreenViewController.h"
 
-@interface  SBUIPasscodeLockViewBase()
-
-- (SBLockScreenViewController *)lockScreenViewController;
-
-@end
-
 %hook SBUIPasscodeLockViewBase
 
 - (void)layoutSubviews {
