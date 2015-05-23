@@ -40,22 +40,6 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Hides the &apos;cancel&apos;, &apos;delete&apos;, and &apos;emergency&apos; buttons, but does not disable them (buttons are still tappable)</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>defaults</key>
-			<string>com.brycepauken.aeurials</string>
-			<key>label</key>
-			<string>Hide Bottom Buttons</string>
-			<key>key</key>
-			<string>shouldHideBottomButtons</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>label</key>
 			<string>Reset Settings</string>
 		</dict>
 		<dict>
