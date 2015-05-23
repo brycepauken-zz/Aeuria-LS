@@ -134,7 +134,7 @@ static CGFloat _wallpaperViewHeight;
         self.descriptionLabels = @[[UILabel new], [UILabel new]];
         descriptionView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 0)];
         NSArray *leadingStrings = @[@"Initial Concept by ", @"Tweak Programmed by "];
-        NSArray *names = @[@"Zach Williams", @"Bryce Pauken"];
+        NSArray *names = @[@"Zach Williams (Reddit)", @"Bryce Pauken (Twitter)"];
         CGFloat currentOffset = kLabelPadding;
         for(int i=0;i<self.descriptionLabels.count;i++) {
             NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];

@@ -4,12 +4,14 @@
 
 @interface ALSCustomLockScreenButtons()
 
+@property (nonatomic) float clockInvisibleAt;
+
 //preference properties
 @property (nonatomic) int buttonDistanceFromEdge;
 @property (nonatomic) int buttonPadding;
 @property (nonatomic) int buttonRadius;
 @property (nonatomic) int buttonTextHeight;
-@property (nonatomic) float clockInvisibleAt;
+@property (nonatomic) BOOL shouldHideZeroButton;
 
 @end
 
@@ -25,6 +27,7 @@
         _buttonPadding = [[preferencesManager preferenceForKey:@"passcodeButtonPadding"] intValue];
         _buttonRadius = [[preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
         _buttonTextHeight = [[preferencesManager preferenceForKey:@"passcodeButtonTextHeight"] intValue];
+        _shouldHideZeroButton = [[preferencesManager preferenceForKey:@"shouldHideZeroButton"] boolValue];
     }
     return self;
 }
@@ -41,8 +44,9 @@
     
     //buttons in order: 1-9, bottom-left, 0, bottom-right
     for(int i=0;i<12;i++) {
-        //bottom-left/right buttons functionality still coming
-        if(i==9 || i==11) {
+        //bottom-left/right buttons functionality still coming,
+        //so hide them (and the zero button if desired)
+        if(i==9 || i==11 || (i==10 && self.shouldHideZeroButton)) {
             continue;
         }
         

@@ -13,6 +13,7 @@
 @property (nonatomic, strong) ALSCustomLockScreenClock *clock;
 @property (nonatomic, strong) CAShapeLayer *clockLayer;
 @property (nonatomic, strong) CAShapeLayer *clockLayerMask;
+@property (nonatomic) float clockInvisibleAt;
 @property (nonatomic, strong) CAShapeLayer *clockRenderingLayer;
 @property (nonatomic) NSInteger currentHour;
 @property (nonatomic) NSInteger currentMinute;
@@ -40,7 +41,6 @@
 @property (nonatomic) int buttonDistanceFromEdge;
 @property (nonatomic) int buttonPadding;
 @property (nonatomic) int buttonRadius;
-@property (nonatomic) float clockInvisibleAt;
 @property (nonatomic) int clockDotRadius;
 @property (nonatomic) int clockType;
 @property (nonatomic) int dotPadding;
@@ -50,6 +50,7 @@
 @property (nonatomic) int largeCircleInnerPadding;
 @property (nonatomic) int largeCircleMinRadius;
 @property (nonatomic) float pressedButtonAlpha;
+@property (nonatomic) BOOL shouldHideEnterPasscodeText;
 @property (nonatomic) int textFieldCornerRadius;
 @property (nonatomic) int textFieldHeight;
 @property (nonatomic) int textFieldHorizontalPadding;
@@ -74,6 +75,7 @@
         _largeCircleInnerPadding = [[preferencesManager preferenceForKey:@"clockInnerPadding"] intValue];
         _largeCircleMinRadius = [[preferencesManager preferenceForKey:@"clockRadius"] intValue];
         _pressedButtonAlpha = [[preferencesManager preferenceForKey:@"passcodeButtonPressedAlpha"] floatValue];
+        _shouldHideEnterPasscodeText = [[preferencesManager preferenceForKey:@"shouldHideEnterPasscodeText"] boolValue];
         _textFieldCornerRadius = [[preferencesManager preferenceForKey:@"passcodeTextFieldCornerRadius"] intValue];
         _textFieldHeight = [[preferencesManager preferenceForKey:@"passcodeTextFieldHeight"] intValue];
         _textFieldHorizontalPadding = [[preferencesManager preferenceForKey:@"passcodeTextFieldSidePadding"] intValue];
@@ -389,9 +391,6 @@
 - (void)setInstructions:(NSString *)instructions {
     if(![instructions isEqualToString:_instructions]) {
         _instructions = instructions;
-        /*CGPathRef instructionsPathRef = [ALSCustomLockScreenElement createPathForText:instructions fontName:@"AvenirNext-Medium"];
-        self.instructionsPath = [UIBezierPath bezierPathWithCGPath:instructionsPathRef];
-        CGPathRelease(instructionsPathRef);*/
         
         if(![instructions isEqualToString:@"Enter Passcode"]) {
             //freed near-immediately
@@ -561,12 +560,14 @@
         [mask appendPath:buttonsPath];
         
         //add instructions to internal path
-        UIBezierPath *instructionsPath = [self.instructionsPath copy];
-        CGSize instructionsPathSize = CGPathGetPathBoundingBox(instructionsPath.CGPath).size;
-        CGFloat instructionsPathScale = (self.instructionsHeight/instructionsPathSize.height);
-        [instructionsPath applyTransform:CGAffineTransformMakeScale(instructionsPathScale, instructionsPathScale)];
-        [instructionsPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-(instructionsPathSize.width*instructionsPathScale)/2, (boundsCenter.y-self.buttonRadius*3-self.buttonPadding)/2-(instructionsPathSize.height*instructionsPathScale)/2)];
-        [mask appendPath:instructionsPath];
+        if(!self.shouldHideEnterPasscodeText) {
+            UIBezierPath *instructionsPath = [self.instructionsPath copy];
+            CGSize instructionsPathSize = CGPathGetPathBoundingBox(instructionsPath.CGPath).size;
+            CGFloat instructionsPathScale = (self.instructionsHeight/instructionsPathSize.height);
+            [instructionsPath applyTransform:CGAffineTransformMakeScale(instructionsPathScale, instructionsPathScale)];
+            [instructionsPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-(instructionsPathSize.width*instructionsPathScale)/2, (boundsCenter.y-self.buttonRadius*3-self.buttonPadding)/2-(instructionsPathSize.height*instructionsPathScale)/2)];
+            [mask appendPath:instructionsPath];
+        }
         
         //draw dots and remove area behind it
         CGRect dotsRect = [self drawDots];
@@ -602,12 +603,14 @@
         CGFloat rightEdgeOffset = MIN(self.bounds.size.width-self.textFieldHorizontalPadding-screenOffset, boundsCenter.x-self.clock.radius+MAX(self.textFieldHorizontalPadding,largeCircleIncrement)-self.textFieldHorizontalPadding);
         [mask appendPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(leftEdgeOffset, boundsCenter.y-self.textFieldHeight/2, rightEdgeOffset-leftEdgeOffset, self.textFieldHeight) byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(self.textFieldCornerRadius, self.textFieldCornerRadius)]];
     
-        UIBezierPath *instructionsPath = [self.instructionsPath copy];
-        CGSize instructionsPathSize = CGPathGetPathBoundingBox(instructionsPath.CGPath).size;
-        CGFloat instructionsPathScale = (self.instructionsHeight/instructionsPathSize.height);
-        [instructionsPath applyTransform:CGAffineTransformMakeScale(instructionsPathScale, instructionsPathScale)];
-        [instructionsPath applyTransform:CGAffineTransformMakeTranslation(leftEdgeOffset+(rightEdgeOffset-leftEdgeOffset)/2-(instructionsPathSize.width*instructionsPathScale)/2, (self.bounds.size.height-self.keyboardHeight-self.clock.radius-self.textFieldHeight-instructionsPathSize.height*instructionsPathScale)/2+10)];
-        [mask appendPath:instructionsPath];
+        if(!self.shouldHideEnterPasscodeText) {
+            UIBezierPath *instructionsPath = [self.instructionsPath copy];
+            CGSize instructionsPathSize = CGPathGetPathBoundingBox(instructionsPath.CGPath).size;
+            CGFloat instructionsPathScale = (self.instructionsHeight/instructionsPathSize.height);
+            [instructionsPath applyTransform:CGAffineTransformMakeScale(instructionsPathScale, instructionsPathScale)];
+            [instructionsPath applyTransform:CGAffineTransformMakeTranslation(leftEdgeOffset+(rightEdgeOffset-leftEdgeOffset)/2-(instructionsPathSize.width*instructionsPathScale)/2, (self.bounds.size.height-self.keyboardHeight-self.clock.radius-self.textFieldHeight-instructionsPathSize.height*instructionsPathScale)/2+10)];
+            [mask appendPath:instructionsPath];
+        }
     }
     else if(self.securityType == ALSLockScreenSecurityTypeNone) {
         //find how much to add to the minimum circle size
