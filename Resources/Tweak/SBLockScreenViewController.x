@@ -15,10 +15,17 @@
 #import "SBUIPasscodeLockViewBase.h"
 #import <objc/runtime.h>
 
+@interface SBUIPasscodeLockViewSimple4DigitKeypad
+
+- (void)_noteStringEntered:(id)arg1 eligibleForPlayingSounds:(BOOL)arg2;
+
+@end
+
 @interface SBLockScreenViewController()
 
 @property (nonatomic, strong) ALSCustomLockScreenContainer *customLockScreenContainer;
 
+- (void)passcodeLockViewEmergencyCallButtonPressed:(id)arg1;
 - (void)passcodeLockViewPasscodeEnteredViaMesa:(id)arg1;
 - (void)passcodeLockViewPasscodeEntered:(id)arg1;
 - (void)passcodeLockViewPasscodeDidChange:(id)arg1;
@@ -32,6 +39,14 @@
 @end
 
 %hook SBLockScreenViewController
+
+- (void)_mediaControlsDidHideOrShow:(id)arg1 {
+    %orig;
+    
+    BOOL shouldHide = [[arg1 name] hasSuffix:@"Hide"];
+    [[self customProperties] setObject:@(shouldHide) forKey:@"MediaControlsShouldHide"];
+    [self.customLockScreenContainer mediaControlsBecameHidden:shouldHide];
+}
 
 %new
 - (void)addCustomLockScreen {
@@ -210,12 +225,16 @@
     }
 }
 
-- (void)_mediaControlsDidHideOrShow:(id)arg1 {
-    %orig;
-    
-    BOOL shouldHide = [[arg1 name] hasSuffix:@"Hide"];
-    [[self customProperties] setObject:@(shouldHide) forKey:@"MediaControlsShouldHide"];
-    [self.customLockScreenContainer mediaControlsBecameHidden:shouldHide];
+%new
+- (void)showEmergencyDialer {
+    [self.customLockScreenContainer removeFromSuperview];
+    [ALSHideableViewManager setShouldHide:NO];
+    [[self lockScreenScrollView] setShouldHideSubviews:NO];
+    [self setHintGestureRecognizersEnabled:YES];
+    [[self lockScreenScrollView] setContentOffset:CGPointZero];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self passcodeLockViewEmergencyCallButtonPressed:nil];
+    });
 }
 
 /*
@@ -241,6 +260,7 @@
     ALSLockScreenSecurityType securityType = ALSLockScreenSecurityTypeNone;
     for(UIView *view in [[self lockScreenScrollView] subviews]) {
         if([view isKindOfClass:[%c(SBUIPasscodeLockViewSimple4DigitKeypad) class]]) {
+            [self.customLockScreenContainer setKeypadView:(SBUIPasscodeLockViewWithKeypad *)view];
             securityType = ALSLockScreenSecurityTypeCode;
             break;
         }

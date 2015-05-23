@@ -5,5 +5,6 @@
 }
 
 - (id)passcode;
+- (BOOL)playsKeypadSounds;
 
 @end

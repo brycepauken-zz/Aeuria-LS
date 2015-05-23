@@ -317,7 +317,11 @@
     return [UIBezierPath bezierPathWithRoundedRect:CGRectMake(center.x-radius, center.y-radius, radius*2, radius*2) byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(radius, radius)];
 }
 
-- (void)removeAllDotsWithCompletion:(void (^)())completion {
+- (void)removeAllDotsAndAnimate:(BOOL)animate withCompletion:(void (^)())completion {
+    if(!self.dotsLayer.sublayers.count) {
+        return;
+    }
+    
     [CATransaction begin];
     [CATransaction setCompletionBlock:^{
         self.dotsLayer.sublayers = nil;
@@ -327,7 +331,7 @@
     }];
     for(CALayer *subdot in [self.dotsLayer.sublayers copy]) {
         CABasicAnimation *scaleAnimation = [CABasicAnimation animationWithKeyPath:@"transform"];
-        [scaleAnimation setDuration:0.1];
+        [scaleAnimation setDuration:animate?0.1:0];
         [scaleAnimation setFromValue:[NSValue valueWithCATransform3D:CATransform3DIdentity]];
         [scaleAnimation setToValue:[NSValue valueWithCATransform3D:CATransform3DMakeScale(0, 0, 1)]];
         [subdot addAnimation:scaleAnimation forKey:@"transform"];
@@ -346,6 +350,9 @@
     CALayer *lastDot;
     for(CALayer *subdot in [self.dotsLayer.sublayers copy]) {
         int dotIndex = [[subdot valueForKey:@"indexNum"] intValue];
+        if(dotIndex == -1) {
+            continue;
+        }
         
         CGFloat newPositionX = firstDotOffset+(self.dotRadius*2+self.dotPadding)*dotIndex;
         CABasicAnimation *positionAnimation = [CABasicAnimation animationWithKeyPath:@"position.x"];
@@ -368,6 +375,8 @@
     }];
     [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
     if(lastDot) {
+        [lastDot setValue:@(-1) forKey:@"indexNum"];
+        
         //animate alpha
         CABasicAnimation *opacityAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
         [opacityAnimation setDuration:animate?0.1:0];

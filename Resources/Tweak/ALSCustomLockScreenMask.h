@@ -21,7 +21,7 @@ typedef NS_ENUM(NSInteger, ALSLockScreenSecurityType) {
 - (BOOL)isAnimating;
 - (CGFloat)lastKnownRadius;
 - (BOOL)needsUpdate;
-- (void)removeAllDotsWithCompletion:(void (^)())completion;
+- (void)removeAllDotsAndAnimate:(BOOL)animate withCompletion:(void (^)())completion;
 - (void)removeDotAndAnimate:(BOOL)animate;
 - (void)resetMask;
 - (ALSLockScreenSecurityType)securityType;

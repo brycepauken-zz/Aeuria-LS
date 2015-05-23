@@ -9,6 +9,7 @@
 @interface ALSCustomLockScreen()
 
 @property (nonatomic) BOOL buttonHighlighted;
+@property (nonatomic, copy) void (^buttonTapped)(int index);
 @property (nonatomic, strong) CADisplayLink *displayLink;
 @property (nonatomic, strong) UIView *filledOverlay;
 @property (nonatomic, strong) ALSCustomLockScreenMask *filledOverlayMask;
@@ -16,7 +17,6 @@
 @property (nonatomic) CGRect lastKnownBounds;
 @property (nonatomic, strong) UIImage *lockscreenWallpaper;
 @property (nonatomic) BOOL needsUpdate;
-@property (nonatomic) NSMutableString *passcode;
 @property (nonatomic, copy) void (^passcodeEntered)(NSString *passcode);
 @property (nonatomic) CGFloat percentage;
 @property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
@@ -57,7 +57,6 @@
         _shouldShowWithNotifications = ![[_preferencesManager preferenceForKey:@"shouldHideForNotificationsOrMedia"] boolValue];
         
         _lastKnownBounds = self.bounds;
-        _passcode = [[NSMutableString alloc] init];
         _percentage = 0;
         _previousPercentage = 0;
         
@@ -123,7 +122,7 @@
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-    if(self.filledOverlayMask.securityType!=ALSLockScreenSecurityTypeCode || self.passcode.length >= 4) {
+    if(self.filledOverlayMask.securityType!=ALSLockScreenSecurityTypeCode) {
         return nil;
     }
     
@@ -232,26 +231,8 @@
                 self.needsUpdate = YES;
                 
                 [self.filledOverlayMask addDotAndAnimate:YES];
-                if(self.highlightedButtonIndex<9) {
-                    [self.passcode appendFormat:@"%i",self.highlightedButtonIndex+1];
-                }
-                else if(self.highlightedButtonIndex==10) {
-                    [self.passcode appendString:@"0"];
-                }
-                if(self.passcode.length == 4) {
-                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                        [self.filledOverlayMask removeAllDotsWithCompletion:^{
-                            self.passcode = [[NSMutableString alloc] init];
-                        }];
-                    });
-                    if(self.passcodeEntered) {
-                        [self.superview setUserInteractionEnabled:NO];
-                        UIScrollView *scrollView = ((ALSCustomLockScreenContainer *)self.superview).scrollView;
-                        [scrollView setScrollEnabled:NO];
-                        [scrollView setScrollEnabled:YES];
-                        [scrollView setContentOffset:CGPointZero];
-                        self.passcodeEntered([self.passcode copy]);
-                    }
+                if(self.buttonTapped) {
+                    self.buttonTapped(self.highlightedButtonIndex);
                 }
             }
         }
@@ -260,7 +241,6 @@
 
 - (void)resetView {
     self.needsUpdate = YES;
-    self.passcode = [[NSMutableString alloc] init];
     self.previousPercentage = 0;
     [self.filledOverlayMask resetMask];
     [self updateViews];

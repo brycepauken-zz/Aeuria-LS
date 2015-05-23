@@ -3,6 +3,7 @@
 #import "ALSCustomLockScreen.h"
 #import "ALSCustomLockScreenMask.h"
 #import "ALSCustomLockScreenOverlay.h"
+#import "SBUIPasscodeLockViewWithKeypad.h"
 
 @interface ALSCustomLockScreenContainer()
 
@@ -20,8 +21,12 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if(self) {
+        __weak ALSCustomLockScreenContainer *weakSelf = self;
         _customLockScreen = [[ALSCustomLockScreen alloc] initWithFrame:self.bounds];
         [_customLockScreen setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
+        [_customLockScreen setButtonTapped:^(int index) {
+            [weakSelf.keypadView _noteStringEntered:[NSString stringWithFormat:@"%i",(index==10?0:index+1)] eligibleForPlayingSounds:[weakSelf.keypadView playsKeypadSounds]];
+        }];
         [self addSubview:_customLockScreen];
         
         _scrollView = [[ALSCustomLockScreenOverlay alloc] initWithFrame:self.bounds];
@@ -84,10 +89,11 @@
             }
         }
         else {
-            for(int i=0;i<-characterCountDiff;i++) {
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(i*0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    [[self.customLockScreen filledOverlayMask] removeDotAndAnimate:YES];
-                });
+            if(characterCountDiff == -1) {
+                [[self.customLockScreen filledOverlayMask] removeDotAndAnimate:YES];
+            }
+            else {
+                [[self.customLockScreen filledOverlayMask] removeAllDotsAndAnimate:YES withCompletion:nil];
             }
         }
         self.passcodeTextFieldCharacterCount = newCharacterCount;
@@ -115,8 +121,8 @@
     [self.mediaControlsViewBackground setAlpha:1-percentage];
     [self.keyboardViewBackground setAlpha:percentage*0.75];
     
-    if(self.passcodeTextField && percentage==1 && ![self.passcodeTextField isFirstResponder]) {
-        //[self.passcodeTextField becomeFirstResponder];
+    if(percentage==0) {
+        [[self.customLockScreen filledOverlayMask] removeAllDotsAndAnimate:NO withCompletion:nil];
     }
 }
 

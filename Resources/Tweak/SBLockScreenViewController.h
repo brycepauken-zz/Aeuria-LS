@@ -23,5 +23,6 @@
 - (void)failedPasscode;
 - (void)resetForScreenOff;
 - (void)setCustomLockScreenHidden:(BOOL)hidden;
+- (void)showEmergencyDialer;
 
 @end
