@@ -20,10 +20,8 @@
 	<integer>1</integer>
 	<key>shouldBlurLockScreen</key>
 	<false/>
-	<key>shouldDisableLockScreenColorOnBlur</key>
-	<true/>
-	<key>lockScreenBlurStrength</key>
-	<integer>4</integer>
+	<key>lockScreenBlurType</key>
+	<integer>0</integer>
 	<key>shouldColorBackground</key>
 	<true/>
 	<key>backgroundColor</key>

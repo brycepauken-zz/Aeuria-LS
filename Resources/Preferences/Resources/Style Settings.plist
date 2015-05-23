@@ -44,7 +44,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Lock Screen Blur</string>
+			<string>Lock Screen Blur (iOS 8+)</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -52,37 +52,33 @@
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
-			<string>Add Blur to Lock Screen</string>
+			<string>Use Blur Instead of Color</string>
 			<key>key</key>
 			<string>shouldBlurLockScreen</string>
 		</dict>
 		<dict>
 			<key>cell</key>
-			<string>PSSwitchCell</string>
+			<string>PSLinkListCell</string>
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
+			<key>detail</key>
+			<string>ALSPreferencesListItemsController</string>
 			<key>label</key>
-			<string>Disable Color With Blur</string>
+			<string>Blur Type</string>
 			<key>key</key>
-			<string>shouldDisableLockScreenColorOnBlur</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>label</key>
-			<string>Lock Screen Blur Strength</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSliderCell</string>
-			<key>defaults</key>
-			<string>com.brycepauken.aeurials</string>
-			<key>key</key>
-			<string>lockScreenBlurStrength</string>
-			<key>min</key>
-			<integer>0</integer>
-			<key>max</key>
-			<real>1</real>
+			<string>lockScreenBlurType</string>
+			<key>validTitles</key>
+			<array>
+				<string>Normal</string>
+				<string>Light</string>
+				<string>Dark</string>
+			</array>
+			<key>validValues</key>
+			<array>
+				<real>0</real>
+				<integer>1</integer>
+				<integer>2</integer>
+			</array>
 		</dict>
 		<dict>
 			<key>cell</key>

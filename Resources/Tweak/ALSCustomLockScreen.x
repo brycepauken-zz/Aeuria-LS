@@ -14,6 +14,7 @@
 @property (nonatomic, strong) ALSCustomLockScreenMask *filledOverlayMask;
 @property (nonatomic) int highlightedButtonIndex;
 @property (nonatomic) CGRect lastKnownBounds;
+@property (nonatomic, strong) UIImage *lockscreenWallpaper;
 @property (nonatomic) BOOL needsUpdate;
 @property (nonatomic) NSMutableString *passcode;
 @property (nonatomic, copy) void (^passcodeEntered)(NSString *passcode);
@@ -24,8 +25,10 @@
 //preference properties
 @property (nonatomic) int buttonPadding;
 @property (nonatomic) int buttonRadius;
+@property (nonatomic) float lockScreenBlurType;
 @property (nonatomic, strong) UIColor *lockScreenColor;
 @property (nonatomic) float lockScreenColorAlpha;
+@property (nonatomic) BOOL shouldBlurLockScreen;
 @property (nonatomic) BOOL shouldShowWithNotifications;
 
 @end
@@ -39,8 +42,10 @@
         
         _buttonPadding = [[_preferencesManager preferenceForKey:@"passcodeButtonPadding"] intValue];
         _buttonRadius = [[_preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
+        _lockScreenBlurType = [[_preferencesManager preferenceForKey:@"lockScreenBlurType"] intValue];
         _lockScreenColor = [_preferencesManager preferenceForKey:@"lockScreenColor"];
         _lockScreenColorAlpha = [[_preferencesManager preferenceForKey:@"lockScreenColorAlpha"] floatValue];
+        _shouldBlurLockScreen = [[_preferencesManager preferenceForKey:@"shouldBlurLockScreen"] boolValue];
         _shouldShowWithNotifications = ![[_preferencesManager preferenceForKey:@"shouldHideForNotificationsOrMedia"] boolValue];
         
         _lastKnownBounds = self.bounds;
@@ -52,8 +57,18 @@
         _filledOverlayMask = [[ALSCustomLockScreenMask alloc] initWithFrame:CGRectMake((self.bounds.size.width-maxDimension)/2, (self.bounds.size.height-maxDimension)/2, maxDimension, maxDimension) preferencesManager:_preferencesManager];
         _filledOverlay = [[UIView alloc] initWithFrame:self.bounds];
         [_filledOverlay setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
-        [_filledOverlay setBackgroundColor:[_lockScreenColor colorWithAlphaComponent:_lockScreenColorAlpha]];
         [_filledOverlay.layer setMask:_filledOverlayMask];
+        
+        if(!_shouldBlurLockScreen || ![UIBlurEffect class] || ![UIVisualEffectView class]) {
+            [_filledOverlay setBackgroundColor:[_lockScreenColor colorWithAlphaComponent:_lockScreenColorAlpha]];
+        }
+        else {
+            UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:(_lockScreenBlurType==0?UIBlurEffectStyleLight:(_lockScreenBlurType==1?UIBlurEffectStyleExtraLight:UIBlurEffectStyleDark))];
+            UIVisualEffectView *visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+            [visualEffectView setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
+            [visualEffectView setFrame:_filledOverlay.bounds];
+            [_filledOverlay addSubview:visualEffectView];
+        }
         
         ALSProxyTarget *proxyTarget = [ALSProxyTarget proxyForTarget:self selector:@selector(updateViews)];
         _displayLink = [CADisplayLink displayLinkWithTarget:proxyTarget selector:@selector(tick:)];
