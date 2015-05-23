@@ -71,7 +71,7 @@
         _instructionsHeight = [[preferencesManager preferenceForKey:@"enterPasscodeTextHeight"] intValue];
         _largeCircleInnerPadding = [[preferencesManager preferenceForKey:@"clockInnerPadding"] intValue];
         _largeCircleMinRadius = [[preferencesManager preferenceForKey:@"clockRadius"] intValue];
-        _pressedButtonAlpha = [[preferencesManager preferenceForKey:@"passcodeButtonPressedAlpha"] doubleValue];
+        _pressedButtonAlpha = [[preferencesManager preferenceForKey:@"passcodeButtonPressedAlpha"] floatValue];
         _textFieldCornerRadius = [[preferencesManager preferenceForKey:@"passcodeTextFieldCornerRadius"] intValue];
         _textFieldHeight = [[preferencesManager preferenceForKey:@"passcodeTextFieldHeight"] intValue];
         _textFieldHorizontalPadding = [[preferencesManager preferenceForKey:@"passcodeTextFieldSidePadding"] intValue];
@@ -467,8 +467,6 @@
     
     UIBezierPath *mask = [UIBezierPath bezierPathWithRect:self.bounds];
     
-    CGFloat clockScale = MAX(0,(1-percentage/self.clockInvisibleAt));
-    CGFloat clockRadiusScaled = self.clock.radius*clockScale;
     UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute];
     if(clockPath != self.lastKnownClockPath) {
         self.lastKnownClockPath = clockPath;
@@ -522,9 +520,6 @@
         self.clockLayer.contents = (id)image.CGImage;
     }
     
-    [self.clockLayer setTransform:CATransform3DMakeScale(clockScale, clockScale, 1)];
-    [mask appendPath:[[self class] pathForCircleWithRadius:clockRadiusScaled center:boundsCenter]];
-    
     if(self.securityType == ALSLockScreenSecurityTypeCode) {
         //find how much to add to the minimum circle size
         CGFloat largeCircleIncrement = self.largeCircleMaxRadiusIncrement*percentage;
@@ -533,13 +528,11 @@
         //mask the whole thing to the large outer circle
         [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
         
-        //add clock to internal path
-        /*CGFloat clockScale = MAX(0,(1-percentage/self.clockInvisibleAt));
+        //transform clock path and cut out area below
+        CGFloat clockScale = MAX(0,(1-percentage/self.clockInvisibleAt));
         CGFloat clockRadiusScaled = self.clock.radius*clockScale;
-        UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute];
-        [clockPath applyTransform:CGAffineTransformMakeScale(clockScale, clockScale)];
-        [clockPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-clockRadiusScaled, boundsCenter.y-clockRadiusScaled)];
-        [mask appendPath:clockPath];*/
+        [self.clockLayer setTransform:CATransform3DMakeScale(clockScale, clockScale, 1)];
+        [mask appendPath:[[self class] pathForCircleWithRadius:clockRadiusScaled center:boundsCenter]];
         
         //add buttons to internal path
         UIBezierPath *buttonsPath = [self.buttons buttonsPathForRadius:largeRadius middleButtonStartingRadius:(self.largeCircleMinRadius+self.largeCircleMaxRadiusIncrement*self.clockInvisibleAt)];
@@ -576,9 +569,12 @@
         
         [self.circleMaskLayer setPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(boundsCenter.x-largeRadius, boundsCenter.y-self.largeCircleMinRadius, largeRadius*2, self.largeCircleMinRadius*2) cornerRadius:self.largeCircleMinRadius].CGPath];
     
-        /*UIBezierPath *clockPath = [[self.clock clockPathForHour:self.currentHour minute:self.currentMinute] bezierPathByReversingPath];
-        [clockPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-self.clock.radius+largeCircleIncrement, boundsCenter.y-self.clock.radius)];
-        [mask appendPath:clockPath];*/
+        //transform clock path and cut out area below
+        CGFloat verticalTranslation = self.bounds.size.height/2-boundsCenter.y;
+        [self.clockLayer setTransform:CATransform3DMakeTranslation(largeCircleIncrement, -verticalTranslation, 1)];
+        UIBezierPath *clockCutOut = [[self class] pathForCircleWithRadius:self.clock.radius center:boundsCenter];
+        [clockCutOut applyTransform:CGAffineTransformMakeTranslation(largeCircleIncrement, 0)];
+        [mask appendPath:clockCutOut];
         
         CGFloat leftEdgeOffset = MAX(self.textFieldHorizontalPadding, boundsCenter.x-self.clock.radius-MAX(self.textFieldHorizontalPadding,largeCircleIncrement)+self.textFieldHorizontalPadding);
         CGFloat rightEdgeOffset = MIN(self.bounds.size.width-self.textFieldHorizontalPadding, boundsCenter.x-self.clock.radius+MAX(self.textFieldHorizontalPadding,largeCircleIncrement)-self.textFieldHorizontalPadding);
@@ -599,13 +595,11 @@
         //mask the whole thing to the large outer circle
         [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
     
-        //add clock to internal path
-        /*CGFloat clockScale = largeCircleIncrement/self.largeCircleMinRadius+1;
+        //transform clock path and cut out area below
+        CGFloat clockScale = largeCircleIncrement/self.largeCircleMinRadius+1;
         CGFloat clockRadiusScaled = self.clock.radius*clockScale;
-        UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute];
-        [clockPath applyTransform:CGAffineTransformMakeScale(clockScale, clockScale)];
-        [clockPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-clockRadiusScaled, boundsCenter.y-clockRadiusScaled)];
-        [mask appendPath:clockPath];*/
+        [self.clockLayer setTransform:CATransform3DMakeScale(clockScale, clockScale, 1)];
+        [mask appendPath:[[self class] pathForCircleWithRadius:clockRadiusScaled center:boundsCenter]];
         
         [self.internalLayerOverlay setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
         [CATransaction begin];
@@ -630,11 +624,6 @@
     NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:NSCalendarUnitHour|NSCalendarUnitMinute fromDate:date];
     NSInteger currentMinute = [dateComponents minute];
     NSInteger currentHour = [dateComponents hour];
-    
-    currentHour %= 12;
-    if(currentHour == 0) {
-        currentHour = 12;
-    }
     
     self.currentHour = currentHour;
     self.currentMinute = currentMinute;

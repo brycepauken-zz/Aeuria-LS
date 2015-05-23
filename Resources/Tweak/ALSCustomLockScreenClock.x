@@ -27,6 +27,7 @@
 @property (nonatomic) int hourTickOuterWidth;
 @property (nonatomic) int hourTickPadding;
 @property (nonatomic) int maxDigitalTimeHeight;
+@property (nonatomic) float maxSubtitleTitleRatio;
 @property (nonatomic) int maxSubtitleHeight;
 @property (nonatomic) int maxTitleHeight;
 @property (nonatomic, strong) NSString *mainFont;
@@ -35,6 +36,7 @@
 @property (nonatomic, strong) NSString *secondaryFont;
 @property (nonatomic) BOOL shouldShowAmPm;
 @property (nonatomic) BOOL shouldShowLeadingZero;
+@property (nonatomic) BOOL shouldUseTwentyFourHourTime;
 @property (nonatomic) int subtitleOffset;
 
 @end
@@ -57,6 +59,7 @@
         _hourTickOuterWidth = [[preferencesManager preferenceForKey:@"hourTickMarkOuterWidth"] intValue];
         _hourTickPadding = [[preferencesManager preferenceForKey:@"hourTickMarkPadding"] intValue];
         _maxDigitalTimeHeight = [[preferencesManager preferenceForKey:@"maxDigitalTimeHeight"] intValue];
+        _maxSubtitleTitleRatio = [[preferencesManager preferenceForKey:@"maxSubtitleTitleRatio"] floatValue];
         _maxSubtitleHeight = [[preferencesManager preferenceForKey:@"maxSubtitleHeight"] intValue];
         _maxTitleHeight = [[preferencesManager preferenceForKey:@"maxTitleHeight"] intValue];
         _mainFont = [preferencesManager preferenceForKey:@"mainFont"];
@@ -65,6 +68,7 @@
         _secondaryFont = [preferencesManager preferenceForKey:@"secondaryFont"];
         _shouldShowAmPm = [[preferencesManager preferenceForKey:@"shouldShowAmPm"] boolValue];
         _shouldShowLeadingZero = [[preferencesManager preferenceForKey:@"shouldShowLeadingZero"] boolValue];
+        _shouldUseTwentyFourHourTime = [[preferencesManager preferenceForKey:@"shouldUseTwentyFourHourTime"] boolValue];
         _subtitleOffset = [[preferencesManager preferenceForKey:@"clockSubtitleTopPadding"] intValue];
         
         _radius = radius;
@@ -79,6 +83,13 @@
  being used previously, or due to the new path being preloaded).
  */
 - (UIBezierPath *)clockPathForHour:(NSInteger)hour minute:(NSInteger)minute {
+    if(!self.shouldUseTwentyFourHourTime) {
+        hour %= 12;
+        if(hour == 0) {
+            hour = 12;
+        }
+    }
+    
     //if given hour and minute different from last call (which is cached in self.currentPath);
     if(!self.currentPath || hour!=self.currentHour || minute!=self.currentMinute) {
         //update current hour and minute
@@ -121,6 +132,7 @@
         
         CGSize largeMinutePathSize = CGPathGetPathBoundingBox(largeMinutePath).size;
         CGFloat minuteScale = [[self class] scaleForPathOfSize:largeMinutePathSize withinRadius:self.radius isHalfCircle:YES withOffsetFromCenter:self.subtitleOffset maxHeight:self.maxSubtitleHeight];
+        minuteScale = MIN(minuteScale, hourScale*self.maxSubtitleTitleRatio);
         UIBezierPath *minutePath = [UIBezierPath bezierPathWithCGPath:largeMinutePath];
         [minutePath applyTransform:CGAffineTransformMakeScale(minuteScale, minuteScale)];
         [minutePath applyTransform:CGAffineTransformMakeTranslation(self.radius-(largeMinutePathSize.width*minuteScale)/2, self.radius+self.subtitleOffset)];

@@ -74,6 +74,8 @@
 	<integer>0</integer>
 	<key>maxDigitalTimeHeight</key>
 	<integer>48</integer>
+	<key>maxSubtitleTitleRatio</key>
+	<real>0.75</real>
 	<key>maxSubtitleHeight</key>
 	<integer>30</integer>
 	<key>maxTitleHeight</key>

@@ -230,6 +230,18 @@
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
+			<string>Max Subtitle/Title Ratio:</string>
+			<key>key</key>
+			<string>maxSubtitleTitleRatio</string>
+			<key>isDecimalPad</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
 			<string>Max Subtitle Height:</string>
 			<key>key</key>
 			<string>maxSubtitleHeight</string>
