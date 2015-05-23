@@ -283,18 +283,7 @@
     clockLayerFrame.origin.y = -clockLayerFrame.size.height*2;
     [self.clockRenderingLayer setFrame:clockLayerFrame];
     
-    //dotsLayer's frame is a long horizontal bar placed dotVerticalOffset pixels above the highest button
-    CGSize screenSize = [[UIScreen mainScreen] bounds].size;
-    CGFloat maxScreenDimension = MAX(screenSize.width, screenSize.height);
-    CGRect dotsLayerFrame = CGRectMake((self.bounds.size.width-maxScreenDimension)/2, self.bounds.size.height/2-self.buttonRadius*3-self.buttonPadding-self.dotVerticalOffset-self.dotRadius*2-4, maxScreenDimension, self.dotRadius*2+8);
-    [self.dotsDisplayLayer setFrame:dotsLayerFrame];
-    if(self.securityType == ALSLockScreenSecurityTypePhrase) {
-        dotsLayerFrame.origin.y = (self.bounds.size.height-self.keyboardHeight)/2-dotsLayerFrame.size.height/2;
-    }
-    else {
-        dotsLayerFrame.origin.y = -dotsLayerFrame.size.height*2;
-    }
-    [self.dotsLayer setFrame:dotsLayerFrame];
+    [self updateDotsLayerFrame];
     
     self.largeCircleMaxRadiusIncrement = ceilf(sqrt(self.bounds.size.width*self.bounds.size.width+self.bounds.size.height*self.bounds.size.height)/2)-self.largeCircleMinRadius;
     
@@ -436,7 +425,7 @@
 
 - (void)setSecurityType:(ALSLockScreenSecurityType)securityType {
     _securityType = securityType;
-    [self setNeedsLayout];
+    [self updateDotsLayerFrame];
 }
 
 - (void)setupTimer {
@@ -465,6 +454,21 @@
     [shakeAnimation setRepeatCount:4];
     [shakeAnimation setToValue:[NSValue valueWithCGPoint:CGPointMake(self.dotsDisplayLayer.position.x+10, self.dotsDisplayLayer.position.y)]];
     [self.dotsDisplayLayer addAnimation:shakeAnimation forKey:@"ShakeAnimation"];
+}
+
+- (void)updateDotsLayerFrame {
+    //dotsLayer's frame is a long horizontal bar placed dotVerticalOffset pixels above the highest button
+    CGSize screenSize = [[UIScreen mainScreen] bounds].size;
+    CGFloat maxScreenDimension = MAX(screenSize.width, screenSize.height);
+    CGRect dotsLayerFrame = CGRectMake((self.bounds.size.width-maxScreenDimension)/2, self.bounds.size.height/2-self.buttonRadius*3-self.buttonPadding-self.dotVerticalOffset-self.dotRadius*2-4, maxScreenDimension, self.dotRadius*2+8);
+    [self.dotsDisplayLayer setFrame:dotsLayerFrame];
+    if(self.securityType == ALSLockScreenSecurityTypePhrase) {
+        dotsLayerFrame.origin.y = (self.bounds.size.height-self.keyboardHeight)/2-dotsLayerFrame.size.height/2;
+    }
+    else {
+        dotsLayerFrame.origin.y = -dotsLayerFrame.size.height*2;
+    }
+    [self.dotsLayer setFrame:dotsLayerFrame];
 }
 
 - (void)updateMaskWithPercentage:(CGFloat)percentage {
