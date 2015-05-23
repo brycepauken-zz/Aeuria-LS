@@ -23,12 +23,15 @@
 @property (nonatomic) CGFloat previousPercentage;
 
 //preference properties
+@property (nonatomic, strong) UIColor *backgroundColor;
+@property (nonatomic) float backgroundColorAlpha;
 @property (nonatomic) int buttonPadding;
 @property (nonatomic) int buttonRadius;
 @property (nonatomic) float lockScreenBlurType;
 @property (nonatomic, strong) UIColor *lockScreenColor;
 @property (nonatomic) float lockScreenColorAlpha;
 @property (nonatomic) BOOL shouldBlurLockScreen;
+@property (nonatomic) BOOL shouldColorBackground;
 @property (nonatomic) BOOL shouldShowWithNotifications;
 
 @end
@@ -40,12 +43,15 @@
     if(self) {
         _preferencesManager = [[ALSPreferencesManager alloc] init];
         
+        _backgroundColor = [_preferencesManager preferenceForKey:@"backgroundColor"];
+        _backgroundColorAlpha = [[_preferencesManager preferenceForKey:@"backgroundColorAlpha"] floatValue];
         _buttonPadding = [[_preferencesManager preferenceForKey:@"passcodeButtonPadding"] intValue];
         _buttonRadius = [[_preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
         _lockScreenBlurType = [[_preferencesManager preferenceForKey:@"lockScreenBlurType"] intValue];
         _lockScreenColor = [_preferencesManager preferenceForKey:@"lockScreenColor"];
         _lockScreenColorAlpha = [[_preferencesManager preferenceForKey:@"lockScreenColorAlpha"] floatValue];
         _shouldBlurLockScreen = [[_preferencesManager preferenceForKey:@"shouldBlurLockScreen"] boolValue];
+        _shouldColorBackground = [[_preferencesManager preferenceForKey:@"shouldColorBackground"] boolValue];
         _shouldShowWithNotifications = ![[_preferencesManager preferenceForKey:@"shouldHideForNotificationsOrMedia"] boolValue];
         
         _lastKnownBounds = self.bounds;
@@ -59,6 +65,7 @@
         [_filledOverlay setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
         [_filledOverlay.layer setMask:_filledOverlayMask];
         
+        //check if blur should be added
         if(!_shouldBlurLockScreen || ![UIBlurEffect class] || ![UIVisualEffectView class]) {
             [_filledOverlay setBackgroundColor:[_lockScreenColor colorWithAlphaComponent:_lockScreenColorAlpha]];
         }
@@ -68,6 +75,14 @@
             [visualEffectView setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
             [visualEffectView setFrame:_filledOverlay.bounds];
             [_filledOverlay addSubview:visualEffectView];
+        }
+        
+        //check if background color overlay should be added
+        if(_shouldColorBackground) {
+            UIView *backgroundColorOverlay = [[UIView alloc] initWithFrame:self.bounds];
+            [backgroundColorOverlay setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
+            [backgroundColorOverlay setBackgroundColor:[_backgroundColor colorWithAlphaComponent:_backgroundColorAlpha]];
+            [self addSubview:backgroundColorOverlay];
         }
         
         ALSProxyTarget *proxyTarget = [ALSProxyTarget proxyForTarget:self selector:@selector(updateViews)];
