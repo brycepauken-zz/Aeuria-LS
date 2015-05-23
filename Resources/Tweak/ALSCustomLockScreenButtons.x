@@ -29,7 +29,7 @@
     return self;
 }
 
-- (UIBezierPath *)buttonsPathForRadius:(CGFloat)radius middleButtonStartingRadius:(CGFloat)middleButtonStartingRadius {
+- (UIBezierPath *)buttonsPathForRadius:(CGFloat)radius {
     UIBezierPath *returnPath = [UIBezierPath bezierPath];
     
     //holds sqrt computations

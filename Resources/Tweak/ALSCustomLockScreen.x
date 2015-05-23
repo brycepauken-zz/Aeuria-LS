@@ -25,6 +25,7 @@
 //preference properties
 @property (nonatomic, strong) UIColor *backgroundColor;
 @property (nonatomic) float backgroundColorAlpha;
+@property (nonatomic) int buttonDistanceFromEdge;
 @property (nonatomic) int buttonPadding;
 @property (nonatomic) int buttonRadius;
 @property (nonatomic) float lockScreenBlurType;
@@ -45,6 +46,7 @@
         
         _backgroundColor = [_preferencesManager preferenceForKey:@"backgroundColor"];
         _backgroundColorAlpha = [[_preferencesManager preferenceForKey:@"backgroundColorAlpha"] floatValue];
+        _buttonDistanceFromEdge = [[_preferencesManager preferenceForKey:@"passcodeButtonDistanceFromEdge"] intValue];
         _buttonPadding = [[_preferencesManager preferenceForKey:@"passcodeButtonPadding"] intValue];
         _buttonRadius = [[_preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
         _lockScreenBlurType = [[_preferencesManager preferenceForKey:@"lockScreenBlurType"] intValue];
@@ -121,27 +123,58 @@
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-    if(self.filledOverlayMask.securityType!=ALSLockScreenSecurityTypeCode || self.percentage < 1 || self.passcode.length >= 4) {
+    if(self.filledOverlayMask.securityType!=ALSLockScreenSecurityTypeCode || self.passcode.length >= 4) {
         return nil;
     }
     
+    //center the tapped point
     point.x -= self.bounds.size.width/2;
     point.y -= self.bounds.size.height/2;
-    for(int y=0;y<4;y++) {
-        CGFloat yOffset = (y-1)*(self.buttonRadius*2+self.buttonPadding);
-        if(fabs(yOffset-point.y) < self.buttonRadius) {
-            for(int x=0;x<3;x++) {
-                //bottom-left/right buttons not used yet
-                if(y==3 && x!=1) {
-                    continue;
-                }
-                CGFloat xOffset = (x-1)*(self.buttonRadius*2+self.buttonPadding);
-                if(fabs(xOffset-point.x) < self.buttonRadius) {
-                    UIView *tempView = [[UIView alloc] init];
-                    //used to determine button index
-                    [tempView setTag:x+y*3];
-                    return tempView;
-                }
+    
+    //holds sqrt computations
+    static NSMutableDictionary *distances;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        distances = [[NSMutableDictionary alloc] init];
+    });
+    
+    //buttons in order: 1-9, bottom-left, 0, bottom-right
+    for(int i=0;i<12;i++) {
+        //bottom-left/right buttons functionality still coming
+        if(i==9 || i==11) {
+            continue;
+        }
+        
+        CGFloat xOffset = (i%3-1)*(self.buttonRadius*2+self.buttonPadding);
+        CGFloat yOffset = (i/3-1)*(self.buttonRadius*2+self.buttonPadding);
+        CGFloat distSquared = xOffset*xOffset + yOffset*yOffset;
+        
+        if(i==4) {
+            xOffset = 0;
+            yOffset = 0;
+            CGFloat fakeOffset = self.buttonRadius*2+self.buttonPadding;
+            distSquared = fakeOffset*fakeOffset + fakeOffset*fakeOffset;
+        }
+        else {
+            xOffset = (i%3-1)*(self.buttonRadius*2+self.buttonPadding);
+            yOffset = (i/3-1)*(self.buttonRadius*2+self.buttonPadding);
+            distSquared = xOffset*xOffset + yOffset*yOffset;
+        }
+        
+        NSNumber *distSquaredNumber = @(distSquared);
+        NSNumber *distNumber = [distances objectForKey:distSquaredNumber];
+        if(!distNumber) {
+            distNumber = @(sqrt(distSquared));
+            [distances setObject:distNumber forKey:distSquaredNumber];
+        }
+        CGFloat buttonRadius = MAX(0,MIN(self.buttonRadius,self.filledOverlayMask.lastKnownRadius-self.buttonDistanceFromEdge-[distNumber floatValue]-self.buttonRadius));
+        
+        if(buttonRadius > 0) {
+            if(fabs(yOffset-point.y) < buttonRadius && fabs(xOffset-point.x) < buttonRadius) {
+                UIView *tempView = [[UIView alloc] init];
+                //used to determine button index
+                [tempView setTag:i];
+                return tempView;
             }
         }
     }

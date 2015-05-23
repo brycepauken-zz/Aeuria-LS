@@ -19,6 +19,7 @@ typedef NS_ENUM(NSInteger, ALSLockScreenSecurityType) {
 - (void)addDotAndAnimate:(BOOL)animate;
 - (void)buttonAtIndex:(int)index setHighlighted:(BOOL)highlighted;
 - (BOOL)isAnimating;
+- (CGFloat)lastKnownRadius;
 - (BOOL)needsUpdate;
 - (void)removeAllDotsWithCompletion:(void (^)())completion;
 - (void)removeDotAndAnimate:(BOOL)animate;

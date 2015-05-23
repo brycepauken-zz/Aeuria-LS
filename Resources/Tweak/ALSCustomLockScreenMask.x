@@ -28,6 +28,7 @@
 @property (nonatomic) CGFloat keyboardHeight;
 @property (nonatomic) CGFloat largeCircleMaxRadiusIncrement;
 @property (nonatomic, strong) UIBezierPath *lastKnownClockPath;
+@property (nonatomic) CGFloat lastKnownRadius;
 @property (nonatomic, strong) CAShapeLayer *maskLayer;
 @property (nonatomic, strong) NSTimer *minuteTimer;
 @property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
@@ -524,6 +525,7 @@
         //find how much to add to the minimum circle size
         CGFloat largeCircleIncrement = self.largeCircleMaxRadiusIncrement*percentage;
         CGFloat largeRadius = self.largeCircleMinRadius+largeCircleIncrement;
+        self.lastKnownRadius = largeRadius;
         
         //mask the whole thing to the large outer circle
         [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
@@ -535,7 +537,7 @@
         [mask appendPath:[[self class] pathForCircleWithRadius:clockRadiusScaled center:boundsCenter]];
         
         //add buttons to internal path
-        UIBezierPath *buttonsPath = [self.buttons buttonsPathForRadius:largeRadius middleButtonStartingRadius:(self.largeCircleMinRadius+self.largeCircleMaxRadiusIncrement*self.clockInvisibleAt)];
+        UIBezierPath *buttonsPath = [self.buttons buttonsPathForRadius:largeRadius];
         [buttonsPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x, boundsCenter.y)];
         [mask appendPath:buttonsPath];
         

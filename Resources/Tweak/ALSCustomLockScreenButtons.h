@@ -4,7 +4,7 @@
 
 @interface ALSCustomLockScreenButtons : ALSCustomLockScreenElement
 
-- (UIBezierPath *)buttonsPathForRadius:(CGFloat)radius middleButtonStartingRadius:(CGFloat)middleButtonStartingRadius;
+- (UIBezierPath *)buttonsPathForRadius:(CGFloat)radius;
 - (void)setClockInvisibleAt:(float)clockInvisibleAt;
 
 @end
