@@ -31,8 +31,10 @@
 - (void)passcodeLockViewPasscodeDidChange:(id)arg1;
 
 - (void)addCustomLockScreen;
+- (BOOL)customLockScreenHiddenForEmergency;
 - (id)customProperties;
 - (id)findViewOfClass:(Class)class inView:(UIView *)view maxDepth:(int)depth;
+- (void)setCustomLockScreenHiddenForEmergency:(BOOL)hidden;
 - (void)setHintGestureRecognizersEnabled:(BOOL)enabled;
 - (void)updateSecurityType;
 
@@ -50,6 +52,11 @@
 
 %new
 - (void)addCustomLockScreen {
+    if([self customLockScreenHiddenForEmergency]) {
+        [self setCustomLockScreenHiddenForEmergency:NO];
+        [self setCustomLockScreenHidden:[self customLockScreenHidden]];
+    }
+    
     if([self customLockScreenHidden]) {
         return;
     }
@@ -77,6 +84,7 @@
     self.customLockScreenContainer = [[ALSCustomLockScreenContainer alloc] initWithFrame:[[self lockScreenView] bounds]];
     [self.customLockScreenContainer setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
     [self.customLockScreenContainer setKeyboardView:keyboardView];
+    [self.customLockScreenContainer setLockScreenViewController:self];
     [self.customLockScreenContainer setMediaControlsView:mediaControlsView];
     [self.customLockScreenContainer setNotificationView:notificationView];
     [self.customLockScreenContainer setPasscodeTextField:passcodeTextField];
@@ -118,6 +126,16 @@
         return NO;
     }
     return [customLockScreenHiddenNum boolValue];
+}
+
+%new
+- (BOOL)customLockScreenHiddenForEmergency {
+    NSNumber *customLockScreenHiddenForEmergencyNum = objc_getAssociatedObject(self, @selector(customLockScreenHiddenForEmergency));
+    if(!customLockScreenHiddenForEmergencyNum) {
+        objc_setAssociatedObject(self, @selector(customLockScreenHiddenForEmergency), @(NO), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        return NO;
+    }
+    return [customLockScreenHiddenForEmergencyNum boolValue];
 }
 
 %new
@@ -212,6 +230,11 @@
 }
 
 %new
+- (void)setCustomLockScreenHiddenForEmergency:(BOOL)hidden {
+    objc_setAssociatedObject(self, @selector(customLockScreenHiddenForEmergency), @(hidden), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+%new
 - (void)setHintGestureRecognizersEnabled:(BOOL)enabled {
     return;
     UIView *currentView = self.view;
@@ -232,6 +255,7 @@
     [[self lockScreenScrollView] setShouldHideSubviews:NO];
     [self setHintGestureRecognizersEnabled:YES];
     [[self lockScreenScrollView] setContentOffset:CGPointZero];
+    [self setCustomLockScreenHiddenForEmergency:YES];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self passcodeLockViewEmergencyCallButtonPressed:nil];
     });

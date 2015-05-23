@@ -402,7 +402,7 @@
         else {
             //all freed near-immediately
             CGPathRef instructionsEnterPathRef = [ALSCustomLockScreenElement createPathForText:@"Enter" fontName:@"AvenirNext-Medium"];
-            CGPathRef instructionsDashPathRef = [ALSCustomLockScreenElement createPathForText:@"--" fontName:@"AvenirNext-Medium"];
+            CGPathRef instructionsDashPathRef = [ALSCustomLockScreenElement createPathForText:@".." fontName:@"AvenirNext-Medium"];
             CGPathRef instructionsPasscodePathRef = [ALSCustomLockScreenElement createPathForText:@"Passcode" fontName:@"AvenirNext-Regular"];
             
             CGSize instructionsEnterPathSize = CGPathGetPathBoundingBox(instructionsEnterPathRef).size;

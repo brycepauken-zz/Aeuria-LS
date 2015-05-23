@@ -124,7 +124,14 @@
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
     if(self.filledOverlayMask.securityType!=ALSLockScreenSecurityTypeCode) {
+        if(self.filledOverlayMask.securityType==ALSLockScreenSecurityTypePhrase && CGRectContainsPoint(CGRectMake(self.bounds.size.width/2-50, 20, 100, 80), point)) {
+            return self;
+        }
         return nil;
+    }
+    
+    if(CGRectContainsPoint(CGRectMake(0, self.bounds.size.height-50, 100, 50), point) || CGRectContainsPoint(CGRectMake(self.bounds.size.width-100, self.bounds.size.height-50, 100, 50), point)) {
+        return self;
     }
     
     //center the tapped point
@@ -207,6 +214,34 @@
 
 - (void)panGestureRecognizerCalled:(UIPanGestureRecognizer *)gestureRecognizer {
     CGPoint point = [gestureRecognizer locationInView:self];
+    
+    //check delete & emergency buttons
+    if(self.buttonTapped) {
+        if(self.filledOverlayMask.securityType == ALSLockScreenSecurityTypePhrase) {
+            self.highlightedButtonIndex = -1;
+            if(gestureRecognizer.state == UIGestureRecognizerStateEnded && CGRectContainsPoint(CGRectMake(self.bounds.size.width/2-50, 20, 100, 80), point)) {
+                self.buttonTapped(-1);
+            }
+            return;
+        }
+        
+        if(CGRectContainsPoint(CGRectMake(0, self.bounds.size.height-50, 100, 50), point)) {
+            self.highlightedButtonIndex = -1;
+            if(gestureRecognizer.state == UIGestureRecognizerStateEnded) {
+                self.buttonTapped(-1);
+            }
+            return;
+        }
+        else if(CGRectContainsPoint(CGRectMake(self.bounds.size.width-100, self.bounds.size.height-50, 100, 50), point)) {
+            self.highlightedButtonIndex = -1;
+            if(gestureRecognizer.state == UIGestureRecognizerStateEnded) {
+                [self.filledOverlayMask removeDotAndAnimate:YES];
+                self.buttonTapped(-2);
+            }
+            return;
+        }
+    }
+    
     if(gestureRecognizer.state == UIGestureRecognizerStateBegan) {
         UIView *tappedButton = [self hitTest:point withEvent:nil];
         if(tappedButton) {

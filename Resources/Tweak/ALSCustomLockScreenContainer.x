@@ -3,6 +3,7 @@
 #import "ALSCustomLockScreen.h"
 #import "ALSCustomLockScreenMask.h"
 #import "ALSCustomLockScreenOverlay.h"
+#import "SBLockScreenViewController.h"
 #import "SBUIPasscodeLockViewWithKeypad.h"
 
 @interface ALSCustomLockScreenContainer()
@@ -25,7 +26,17 @@
         _customLockScreen = [[ALSCustomLockScreen alloc] initWithFrame:self.bounds];
         [_customLockScreen setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
         [_customLockScreen setButtonTapped:^(int index) {
-            [weakSelf.keypadView _noteStringEntered:[NSString stringWithFormat:@"%i",(index==10?0:index+1)] eligibleForPlayingSounds:[weakSelf.keypadView playsKeypadSounds]];
+            if(index == -1) {
+                //emergency button tapped
+                [weakSelf.lockScreenViewController showEmergencyDialer];
+            }
+            else if(index == -2) {
+                //delete button tapped
+                [weakSelf.keypadView _noteBackspaceHit];
+            }
+            else {
+                [weakSelf.keypadView _noteStringEntered:[NSString stringWithFormat:@"%i",(index==10?0:index+1)] eligibleForPlayingSounds:[weakSelf.keypadView playsKeypadSounds]];
+            }
         }];
         [self addSubview:_customLockScreen];
         
