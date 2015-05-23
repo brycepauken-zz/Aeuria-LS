@@ -135,8 +135,8 @@
 - (void)setKeyboardView:(UIView *)keyboardView {
     _keyboardView = keyboardView;
     
-    if([UIPrintInteractionController class]) {
-        UIVisualEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    if([UIBlurEffect class] && [UIVisualEffectView class]) {
+        UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
         UIVisualEffectView *visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
         [visualEffectView setFrame:keyboardView.frame];
         [self setKeyboardViewBackground:visualEffectView];
