@@ -32,6 +32,9 @@ void preferencesChanged(CFNotificationCenterRef center, void *observer, CFString
             }
             CFRelease(keyList);
         }
+        else {
+            [preferencesManager setPreferences:[[NSMutableDictionary alloc] init]];
+        }
     }
     else {
         [preferencesManager setPreferences:[[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.brycepauken.aeurials.plist"]];
