@@ -30,6 +30,8 @@
 	<real>0.5</real>
 	<key>shouldDisableExistingBlur</key>
 	<true/>
+	<key>shouldHideStatusBar</key>
+	<false/>
 	<key>shouldHideEnterPasscodeText</key>
 	<false/>
 	<key>shouldHideZeroButton</key>

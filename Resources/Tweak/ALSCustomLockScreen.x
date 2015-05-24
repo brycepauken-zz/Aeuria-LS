@@ -33,6 +33,7 @@
 @property (nonatomic) float lockScreenColorAlpha;
 @property (nonatomic) BOOL shouldBlurLockScreen;
 @property (nonatomic) BOOL shouldColorBackground;
+@property (nonatomic) BOOL shouldHideStatusBar;
 @property (nonatomic) BOOL shouldShowWithNotifications;
 
 @end
@@ -54,6 +55,7 @@
         _lockScreenColorAlpha = [[_preferencesManager preferenceForKey:@"lockScreenColorAlpha"] floatValue];
         _shouldBlurLockScreen = [[_preferencesManager preferenceForKey:@"shouldBlurLockScreen"] boolValue];
         _shouldColorBackground = [[_preferencesManager preferenceForKey:@"shouldColorBackground"] boolValue];
+        _shouldHideStatusBar = [[_preferencesManager preferenceForKey:@"shouldHideStatusBar"] boolValue];
         _shouldShowWithNotifications = ![[_preferencesManager preferenceForKey:@"shouldHideForNotificationsOrMedia"] boolValue];
         
         _lastKnownBounds = self.bounds;

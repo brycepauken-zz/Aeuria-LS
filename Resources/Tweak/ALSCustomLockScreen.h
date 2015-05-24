@@ -18,6 +18,7 @@
 - (void)setKeyboardHeight:(CGFloat)keyboardHeight;
 - (void)setPasscodeEntered:(void (^)(NSString *passcode))passcodeEntered;
 - (void)setSecurityType:(NSInteger)securityType;
+- (BOOL)shouldHideStatusBar;
 - (BOOL)shouldShowWithNotifications;
 - (void)updateScrollPercentage:(CGFloat)percentage;
 

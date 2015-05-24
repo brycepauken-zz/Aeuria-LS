@@ -227,6 +227,7 @@
         [self addCustomLockScreen];
     }
     [[self lockScreenScrollView] layoutSubviews];
+    [self setNeedsStatusBarAppearanceUpdate];
 }
 
 %new
@@ -276,7 +277,14 @@
  Simply hides the statusbar on the lock screen.
  */
 - (long long)statusBarStyle {
-    return 3;
+    if(![self customLockScreenContainer]) {
+        [self addCustomLockScreen];
+    }
+    
+    if([[self customLockScreenContainer] customLockScreen] && [[[self customLockScreenContainer] customLockScreen] shouldHideStatusBar]) {
+        return 3;
+    }
+    return %orig;
 }
 
 %new
