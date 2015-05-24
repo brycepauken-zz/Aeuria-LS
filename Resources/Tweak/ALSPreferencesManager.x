@@ -20,16 +20,21 @@ static NSString *kALSPreferencesDefaultsPath = @"/Library/PreferenceBundles/Aeur
 void preferencesChanged(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
     ALSPreferencesManager *preferencesManager = (__bridge ALSPreferencesManager *)observer;
     
-    CFStringRef bundleID = CFSTR("com.brycepauken.aeurials");
-    //freed at end of method
-    CFArrayRef keyList = CFPreferencesCopyKeyList(bundleID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
-    if(keyList) {
-        //freed automatically by ARC
-        NSDictionary *newPreferences = CFBridgingRelease(CFPreferencesCopyMultiple(keyList, bundleID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
-        if(newPreferences) {
-            [preferencesManager setPreferences:(NSMutableDictionary *)newPreferences];
+    if([[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] != NSOrderedAscending) {
+        CFStringRef bundleID = CFSTR("com.brycepauken.aeurials");
+        //freed at end of statement
+        CFArrayRef keyList = CFPreferencesCopyKeyList(bundleID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+        if(keyList) {
+            //freed automatically by ARC
+            NSDictionary *newPreferences = CFBridgingRelease(CFPreferencesCopyMultiple(keyList, bundleID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
+            if(newPreferences) {
+                [preferencesManager setPreferences:(NSMutableDictionary *)newPreferences];
+            }
+            CFRelease(keyList);
         }
-        CFRelease(keyList);
+    }
+    else {
+        [preferencesManager setPreferences:[[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.brycepauken.aeurials.plist"]];
     }
 }
 
