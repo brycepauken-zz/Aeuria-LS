@@ -14,6 +14,22 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
+			<string> </string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkCell</string>
+			<key>detail</key>
+			<string>ALSPreferencesSupportersListController</string>
+			<key>height</key>
+			<integer>60</integer>
+			<key>label</key>
+			<string>Supporters (♡)</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
 			<string>Change the clock&apos;s format</string>
 		</dict>
 		<dict>

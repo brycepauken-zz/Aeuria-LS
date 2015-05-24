@@ -44,7 +44,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Lock Screen Blur (iOS 8+)</string>
+			<string>Lock Screen Blur</string>
 		</dict>
 		<dict>
 			<key>cell</key>

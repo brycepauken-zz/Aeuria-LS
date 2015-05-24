@@ -7,6 +7,7 @@
 @interface ALSPreferencesHeader()
 
 @property (nonatomic, strong) NSArray *descriptionLabels;
+@property (nonatomic, strong) UIView *descriptionView;
 @property (nonatomic, strong) UIView *filledOverlay;
 @property (nonatomic, strong) CAShapeLayer *filledOverlayMask;
 @property (nonatomic, strong) UIView *headerContainer;
@@ -16,8 +17,6 @@
 @property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
 @property (nonatomic) BOOL tableViewSearched;
 @property (nonatomic, strong) UIImageView *wallpaperView;
-
-
 
 @end
 
@@ -40,8 +39,43 @@ static CGFloat _wallpaperViewHeight;
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier specifier:(PSSpecifier *)specifier {
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"ALSPreferencesHeader" specifier:specifier];
     if(self) {
+        //add the description view containing credits
+        _descriptionLabels = @[[UILabel new], [UILabel new]];
+        _descriptionView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 0)];
+        NSArray *leadingStrings = @[@"Initial Concept by ", @"Tweak Programmed by "];
+        NSArray *names = @[@"Zach Williams (Reddit)", @"Bryce Pauken (Twitter)"];
+        CGFloat currentOffset = kLabelPadding;
+        for(int i=0;i<_descriptionLabels.count;i++) {
+            NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
+            [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:[leadingStrings objectAtIndex:i] attributes:@{NSUnderlineStyleAttributeName:@(NSUnderlineStyleNone)}]];
+            [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:[names objectAtIndex:i] attributes:@{NSUnderlineStyleAttributeName:@(NSUnderlineStyleSingle)}]];
+            
+            UILabel *label = [_descriptionLabels objectAtIndex:i];
+            [label setAttributedText:attributedString];
+            [label setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin];
+            [label setBackgroundColor:[UIColor clearColor]];
+            [label setFont:[UIFont systemFontOfSize:13]];
+            [label setTextColor:[UIColor lightGrayColor]];
+            [label setTag:i];
+            [label setUserInteractionEnabled:YES];
+            [label sizeToFit];
+            [label setCenter:CGPointMake(50, currentOffset+label.bounds.size.height/2)];
+            [_descriptionView addSubview:label];
+            
+            UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(descriptionLabelTapped:)];
+            [tapGestureRecognizer setNumberOfTapsRequired:1];
+            [label addGestureRecognizer:tapGestureRecognizer];
+            
+            currentOffset += (label.bounds.size.height+kLabelPadding);
+        }
+        [_descriptionView setFrame:CGRectMake(0, 0, 100, currentOffset-20)];
+        [_descriptionView setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleWidth];
+        [_descriptionView setBackgroundColor:[UIColor clearColor]];
+        
         //called to initialize _wallpaperViewHeight if we haven't already
         CGFloat preferredHeight = [self preferredHeightForWidth:0];
+        
+        [_descriptionView setFrame:CGRectMake(0, preferredHeight-_descriptionView.frame.size.height+10, self.bounds.size.width, _descriptionView.frame.size.height)];
         
         //create a container to hold (and clip) our header's subviews
         _headerContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, _wallpaperViewHeight)];
@@ -99,12 +133,6 @@ static CGFloat _wallpaperViewHeight;
             [_headerContainer addSubview:shadowCastingView];
         }
         
-        //add the description view containing credits
-        UIView *descriptionView = [self descriptionView];
-        [descriptionView setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleWidth];
-        [descriptionView setBackgroundColor:[UIColor clearColor]];
-        [descriptionView setFrame:CGRectMake(0, preferredHeight-descriptionView.frame.size.height+10, self.bounds.size.width, descriptionView.frame.size.height)];
-        
         __weak ALSPreferencesHeader *weakSelf = self;
         _preferencesManager = [[ALSPreferencesManager alloc] init];
         [_preferencesManager setPreferencesChanged:^{
@@ -119,6 +147,7 @@ static CGFloat _wallpaperViewHeight;
                 [weakSelf.filledOverlay setBackgroundColor:[[weakSelf.preferencesManager preferenceForKey:@"lockScreenColor"] colorWithAlphaComponent:[[weakSelf.preferencesManager preferenceForKey:@"lockScreenColorAlpha"] floatValue]]];
             }
             else {
+                [weakSelf.filledOverlay setBackgroundColor:[UIColor clearColor]];
                 [[weakSelf.filledOverlay subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
                 int lockScreenBlurType = [[weakSelf.preferencesManager preferenceForKey:@"lockScreenBlurType"] intValue];
                 UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:(lockScreenBlurType==0?UIBlurEffectStyleLight:(lockScreenBlurType==1?UIBlurEffectStyleExtraLight:UIBlurEffectStyleDark))];
@@ -135,7 +164,7 @@ static CGFloat _wallpaperViewHeight;
         [self setBackgroundColor:[UIColor clearColor]];
         [self updateFilledOverlay];
         [self addSubview:_headerContainer];
-        [self addSubview:descriptionView];
+        [self addSubview:_descriptionView];
     }
     
     return self;
@@ -159,50 +188,13 @@ static CGFloat _wallpaperViewHeight;
     }
 }
 
-- (UIView *)descriptionView {
-    static UIView *descriptionView;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        self.descriptionLabels = @[[UILabel new], [UILabel new]];
-        descriptionView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 0)];
-        NSArray *leadingStrings = @[@"Initial Concept by ", @"Tweak Programmed by "];
-        NSArray *names = @[@"Zach Williams (Reddit)", @"Bryce Pauken (Twitter)"];
-        CGFloat currentOffset = kLabelPadding;
-        for(int i=0;i<self.descriptionLabels.count;i++) {
-            NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
-            [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:[leadingStrings objectAtIndex:i] attributes:@{NSUnderlineStyleAttributeName:@(NSUnderlineStyleNone)}]];
-            [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:[names objectAtIndex:i] attributes:@{NSUnderlineStyleAttributeName:@(NSUnderlineStyleSingle)}]];
-            
-            UILabel *label = [self.descriptionLabels objectAtIndex:i];
-            [label setAttributedText:attributedString];
-            [label setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin];
-            [label setBackgroundColor:[UIColor clearColor]];
-            [label setFont:[UIFont systemFontOfSize:13]];
-            [label setTextColor:[UIColor lightGrayColor]];
-            [label setTag:i];
-            [label setUserInteractionEnabled:YES];
-            [label sizeToFit];
-            [label setCenter:CGPointMake(50, currentOffset+label.bounds.size.height/2)];
-            [descriptionView addSubview:label];
-            
-            UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(descriptionLabelTapped:)];
-            [tapGestureRecognizer setNumberOfTapsRequired:1];
-            [label addGestureRecognizer:tapGestureRecognizer];
-            
-            currentOffset += (label.bounds.size.height+kLabelPadding);
-        }
-        [descriptionView setFrame:CGRectMake(0, 0, 100, currentOffset)];
-    });
-    return descriptionView;
-}
-
 /*
  We override hitTest:withEvent: to allow for tapping labels outisde of their view
  (plus adding a bit of padding around the outside while we're at it)
  */
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
     for(UILabel *label in self.descriptionLabels) {
-        if(CGRectContainsPoint(CGRectInset([self convertRect:label.frame fromView:label.superview], kLabelPadding/2, kLabelPadding/2), point)) {
+        if(CGRectContainsPoint(CGRectInset([self convertRect:label.frame fromView:label.superview], -kLabelPadding/2, -kLabelPadding/2), point)) {
             return label;
         }
     }
@@ -355,7 +347,7 @@ static CGFloat _wallpaperViewHeight;
         CGRect screenBounds = [[UIScreen mainScreen] bounds];
         _wallpaperViewHeight = ceilf(sqrtf(MIN(screenBounds.size.width, screenBounds.size.height)*30));
         
-        preferredHeight = _wallpaperViewHeight+[[self descriptionView] bounds].size.height;
+        preferredHeight = _wallpaperViewHeight+self.descriptionView.bounds.size.height;
     });
     return preferredHeight;
 }

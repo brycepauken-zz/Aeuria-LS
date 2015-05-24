@@ -1,9 +1,9 @@
 Package: com.brycepauken.aeurials
 Name: Aeuria LS
-Depends: mobilesubstrate
+Depends: mobilesubstrate, preferenceloader, firmware (>= 7.0)
 Version: 1.0.0
 Architecture: iphoneos-arm
-Description: Aeuria LS
+Description: Aeuria LS makes your lock screen look different.
 Maintainer: Bryce Pauken <brycepauken@gmail.com>
 Author: Bryce Pauken <brycepauken@gmail.com>
 Section: Tweaks

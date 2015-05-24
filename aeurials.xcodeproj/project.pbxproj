@@ -48,6 +48,8 @@
 		02530BF21ADF1940004F3488 /* Clock Face Settings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Clock Face Settings.plist"; sourceTree = "<group>"; };
 		02530BF31ADF1C5E004F3488 /* ALSPreferencesSubListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesSubListController.h; sourceTree = "<group>"; };
 		02530BF41ADF1C5E004F3488 /* ALSPreferencesSubListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesSubListController.m; sourceTree = "<group>"; };
+		0254280B1B117CAF00FAF035 /* ALSPreferencesSupportersListController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesSupportersListController.h; sourceTree = "<group>"; };
+		0254280C1B117CAF00FAF035 /* ALSPreferencesSupportersListController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesSupportersListController.m; sourceTree = "<group>"; };
 		025915741B0156AE00B0FE29 /* ALSProxyObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSProxyObject.h; sourceTree = "<group>"; };
 		025915751B0156AE00B0FE29 /* ALSProxyObject.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSProxyObject.x; sourceTree = "<group>"; };
 		0260B5F41AF42E51003AE8C5 /* Passcode Page Settings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Passcode Page Settings.plist"; sourceTree = "<group>"; };
@@ -213,6 +215,8 @@
 				02AC497A1AE8ECD000426584 /* ALSPreferencesProxyTarget.m */,
 				02530BF31ADF1C5E004F3488 /* ALSPreferencesSubListController.h */,
 				02530BF41ADF1C5E004F3488 /* ALSPreferencesSubListController.m */,
+				0254280B1B117CAF00FAF035 /* ALSPreferencesSupportersListController.h */,
+				0254280C1B117CAF00FAF035 /* ALSPreferencesSupportersListController.m */,
 				02BED8DC1AD3B86D0075EAB0 /* PSListController.h */,
 				02A101511AEF3B42003296EB /* PSListItemsController.h */,
 				02BED8E41AD3BEC50075EAB0 /* PSSpecifier.h */,
