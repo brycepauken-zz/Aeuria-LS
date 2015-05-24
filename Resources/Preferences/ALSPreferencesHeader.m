@@ -1,5 +1,6 @@
 #import "ALSPreferencesHeader.h"
 
+#import "ALSPreferencesManager.h"
 #import "PSSpecifier.h"
 #import "SBWallpaperController.h"
 
@@ -12,6 +13,7 @@
 @property (nonatomic, strong) UIImage *lockscreenWallpaper;
 @property (nonatomic, weak) UINavigationBar *navigationBar;
 @property (nonatomic, weak) UITableView *parentTableView;
+@property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
 @property (nonatomic) BOOL tableViewSearched;
 @property (nonatomic, strong) UIImageView *wallpaperView;
 
@@ -42,16 +44,16 @@ static CGFloat _wallpaperViewHeight;
         CGFloat preferredHeight = [self preferredHeightForWidth:0];
         
         //create a container to hold (and clip) our header's subviews
-        self.headerContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, _wallpaperViewHeight)];
-        [self.headerContainer setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-        [self.headerContainer setBackgroundColor:[UIColor clearColor]];
-        [self.headerContainer setClipsToBounds:YES];
+        _headerContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, _wallpaperViewHeight)];
+        [_headerContainer setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
+        [_headerContainer setBackgroundColor:[UIColor clearColor]];
+        [_headerContainer setClipsToBounds:YES];
         
         //create the wallpaper view
         _wallpaperView = [[UIImageView alloc] initWithFrame:CGRectInset(self.headerContainer.bounds, 0, -50)];
         [_wallpaperView setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
         [_wallpaperView setContentMode:UIViewContentModeScaleAspectFill];
-        [self.headerContainer addSubview:_wallpaperView];
+        [_headerContainer addSubview:_wallpaperView];
         
         //get the user's current lock screen wallpaper
         NSData *lockscreenWallpaperData = [NSData dataWithContentsOfFile:@"/var/mobile/Library/SpringBoard/LockBackground.cpbitmap"];
@@ -71,15 +73,18 @@ static CGFloat _wallpaperViewHeight;
             CFRelease(wallpaperArray);
         }
         
+        UIView *backgroundColorOverlay = [[UIView alloc] initWithFrame:_headerContainer.bounds];
+        [backgroundColorOverlay setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
+        [_headerContainer addSubview:backgroundColorOverlay];
+        
         //create the filled overlay that shows the title and circle
         _filledOverlay = [[UIView alloc] initWithFrame:self.headerContainer.bounds];
         [_filledOverlay setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-        [_filledOverlay setBackgroundColor:[UIColor whiteColor]];
         _filledOverlayMask = [[CAShapeLayer alloc] init];
         [_filledOverlayMask setFillColor:[[UIColor blackColor] CGColor]];
         [_filledOverlayMask setFillRule:kCAFillRuleEvenOdd];
         [_filledOverlay.layer setMask:_filledOverlayMask];
-        [self.headerContainer addSubview:_filledOverlay];
+        [_headerContainer addSubview:_filledOverlay];
         
         //create views outside of the self.headerContainer to cast a shadow inside
         CGRect screenBounds = [[UIScreen mainScreen] bounds];
@@ -91,7 +96,7 @@ static CGFloat _wallpaperViewHeight;
             [shadowCastingView.layer setShadowOffset:CGSizeMake(0, 0)];
             [shadowCastingView.layer setShadowOpacity:0.4];
             [shadowCastingView.layer setShadowRadius:2];
-            [self.headerContainer addSubview:shadowCastingView];
+            [_headerContainer addSubview:shadowCastingView];
         }
         
         //add the description view containing credits
@@ -100,9 +105,36 @@ static CGFloat _wallpaperViewHeight;
         [descriptionView setBackgroundColor:[UIColor clearColor]];
         [descriptionView setFrame:CGRectMake(0, preferredHeight-descriptionView.frame.size.height+10, self.bounds.size.width, descriptionView.frame.size.height)];
         
+        __weak ALSPreferencesHeader *weakSelf = self;
+        _preferencesManager = [[ALSPreferencesManager alloc] init];
+        [_preferencesManager setPreferencesChanged:^{
+            if([[weakSelf.preferencesManager preferenceForKey:@"shouldColorBackground"] boolValue]) {
+                [backgroundColorOverlay setBackgroundColor:[[weakSelf.preferencesManager preferenceForKey:@"backgroundColor"] colorWithAlphaComponent:[[weakSelf.preferencesManager preferenceForKey:@"backgroundColorAlpha"] floatValue]]];
+            }
+            else {
+                [backgroundColorOverlay setBackgroundColor:[UIColor clearColor]];
+            }
+            
+            if(![[weakSelf.preferencesManager preferenceForKey:@"shouldBlurLockScreen"] boolValue] || ![UIBlurEffect class] || ![UIVisualEffectView class]) {
+                [weakSelf.filledOverlay setBackgroundColor:[[weakSelf.preferencesManager preferenceForKey:@"lockScreenColor"] colorWithAlphaComponent:[[weakSelf.preferencesManager preferenceForKey:@"lockScreenColorAlpha"] floatValue]]];
+            }
+            else {
+                [[weakSelf.filledOverlay subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+                int lockScreenBlurType = [[weakSelf.preferencesManager preferenceForKey:@"lockScreenBlurType"] intValue];
+                UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:(lockScreenBlurType==0?UIBlurEffectStyleLight:(lockScreenBlurType==1?UIBlurEffectStyleExtraLight:UIBlurEffectStyleDark))];
+                UIVisualEffectView *visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+                [visualEffectView setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
+                [visualEffectView setFrame:weakSelf.filledOverlay.bounds];
+                [weakSelf.filledOverlay addSubview:visualEffectView];
+            }
+        }];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            _preferencesManager.preferencesChanged();
+        });
+        
         [self setBackgroundColor:[UIColor clearColor]];
         [self updateFilledOverlay];
-        [self addSubview:self.headerContainer];
+        [self addSubview:_headerContainer];
         [self addSubview:descriptionView];
     }
     
