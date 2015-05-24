@@ -26,7 +26,6 @@
 @property (nonatomic, strong) NSString *instructions;
 @property (nonatomic, strong) UIBezierPath *instructionsPath;
 @property (nonatomic, strong) CAShapeLayer *internalLayer;
-@property (nonatomic, strong) CAShapeLayer *internalLayerOverlay;
 @property (nonatomic) CGFloat keyboardHeight;
 @property (nonatomic) CGFloat largeCircleMaxRadiusIncrement;
 @property (nonatomic, strong) UIBezierPath *lastKnownClockPath;
@@ -111,10 +110,6 @@
         [_clockLayerMask setFillColor:[[UIColor blackColor] CGColor]];
         [_clockLayerMask setFillRule:kCAFillRuleEvenOdd];
         [_clockRenderingLayer setMask:_clockLayerMask];
-        
-        _internalLayerOverlay = [[CAShapeLayer alloc] init];
-        [_internalLayerOverlay setFillColor:[[UIColor blackColor] CGColor]];
-        [_internalLayer addSublayer:_internalLayerOverlay];
         
         //holds dots above passcode entry
         _dotsLayer = [[CAShapeLayer alloc] init];
@@ -276,7 +271,6 @@
     [self.circleMaskLayer setFrame:self.bounds];
     [self.highlightedButtonLayer setFrame:self.bounds];
     [self.internalLayer setFrame:self.bounds];
-    [self.internalLayerOverlay setFrame:self.bounds];
     [self.maskLayer setFrame:self.bounds];
     
     CGRect clockLayerFrame = CGRectMake(self.bounds.size.width/2-self.largeCircleMinRadius, self.bounds.size.height/2-self.largeCircleMinRadius, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2);
@@ -613,24 +607,15 @@
         }
     }
     else if(self.securityType == ALSLockScreenSecurityTypeNone) {
-        //find how much to add to the minimum circle size
-        CGFloat largeCircleIncrement = self.largeCircleMaxRadiusIncrement*percentage;
-        CGFloat largeRadius = self.largeCircleMinRadius+largeCircleIncrement;
+        CGFloat largeCircleIncrement = (self.largeCircleMaxRadiusIncrement+self.largeCircleMinRadius)*percentage;
         
-        //mask the whole thing to the large outer circle
-        [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
-    
+        [self.circleMaskLayer setPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(boundsCenter.x-self.largeCircleMinRadius+largeCircleIncrement, boundsCenter.y-self.largeCircleMinRadius, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2) cornerRadius:self.largeCircleMinRadius].CGPath];
+        
         //transform clock path and cut out area below
-        CGFloat clockScale = largeCircleIncrement/self.largeCircleMinRadius+1;
-        CGFloat clockRadiusScaled = self.clock.radius*clockScale;
-        [self.clockLayer setTransform:CATransform3DMakeScale(clockScale, clockScale, 1)];
-        [mask appendPath:[[self class] pathForCircleWithRadius:clockRadiusScaled center:boundsCenter]];
-        
-        [self.internalLayerOverlay setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
-        [CATransaction begin];
-        [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
-        [self.internalLayerOverlay setOpacity:percentage];
-        [CATransaction commit];
+        [self.clockLayer setTransform:CATransform3DMakeTranslation(largeCircleIncrement, 0, 1)];
+        UIBezierPath *clockCutOut = [[self class] pathForCircleWithRadius:self.clock.radius center:boundsCenter];
+        [clockCutOut applyTransform:CGAffineTransformMakeTranslation(largeCircleIncrement, 0)];
+        [mask appendPath:clockCutOut];
     }
     
     [self.maskLayer setPath:mask.CGPath];
