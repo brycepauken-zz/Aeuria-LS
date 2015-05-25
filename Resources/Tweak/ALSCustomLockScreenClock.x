@@ -83,6 +83,7 @@
  being used previously, or due to the new path being preloaded).
  */
 - (UIBezierPath *)clockPathForHour:(NSInteger)hour minute:(NSInteger)minute {
+    BOOL isPM = (hour>=12);
     if(!self.shouldUseTwentyFourHourTime) {
         hour %= 12;
         if(hour == 0) {
@@ -101,7 +102,7 @@
             self.currentPath = self.preloadedPath;
         }
         else {
-            self.currentPath = [self generatePathForHour:hour minute:minute];
+            self.currentPath = [self generatePathForHour:hour minute:minute isPM:isPM];
         }
     }
     return self.currentPath;
@@ -111,7 +112,7 @@
  The generatePathForHour:forMinute: method creates the UIBezierPath representing
  the clock cutout for the given hour and minute.
  */
-- (UIBezierPath *)generatePathForHour:(NSInteger)hour minute:(NSInteger)minute {
+- (UIBezierPath *)generatePathForHour:(NSInteger)hour minute:(NSInteger)minute isPM:(BOOL)isPM {
     UIBezierPath *returnPath;
     if(self.type == ALSClockTypeText) {
         //get the hour and minute as strings
@@ -145,7 +146,7 @@
         CGPathRelease(largeMinutePath);
     }
     else if(self.type == ALSClockTypeDigital) {
-        NSString *timeString = [NSString stringWithFormat:[NSString stringWithFormat:@"%%%@i:%%02i%%@",(self.shouldShowLeadingZero?@"02":@"")],(int)hour,(int)minute,(self.shouldShowAmPm?@" AM":@"")];
+        NSString *timeString = [NSString stringWithFormat:[NSString stringWithFormat:@"%%%@i:%%02i%%@",(self.shouldShowLeadingZero?@"02":@"")],(int)hour,(int)minute,(self.shouldShowAmPm?(isPM?@" PM":@" AM"):@"")];
         
         //freed before return
         CGPathRef largeTimePath = [[self class] createPathForText:timeString fontName:self.digitalTimeFont];
@@ -251,9 +252,17 @@
  upcoming minute) to make transitions more seamless.
  */
 - (void)preloadPathForHour:(NSInteger)hour minute:(NSInteger)minute {
+    BOOL isPM = (hour>=12);
+    if(!self.shouldUseTwentyFourHourTime) {
+        hour %= 12;
+        if(hour == 0) {
+            hour = 12;
+        }
+    }
+    
     //check if we need to update preloaded path
     if(!self.preloadedPath || hour!=self.preloadedHour || minute!=self.preloadedMinute) {
-        self.preloadedPath = [self generatePathForHour:hour minute:minute];
+        self.preloadedPath = [self generatePathForHour:hour minute:minute isPM:isPM];
         
         self.preloadedHour = hour;
         self.preloadedMinute = minute;

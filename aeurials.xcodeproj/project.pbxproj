@@ -35,8 +35,6 @@
 		0237241F1AC25213007FAFC1 /* SBFLockScreenDateView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBFLockScreenDateView.x; sourceTree = "<group>"; };
 		023724221AC25213007FAFC1 /* SBLockScreenViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBLockScreenViewController.h; sourceTree = "<group>"; };
 		023724231AC25213007FAFC1 /* SBLockScreenViewController.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBLockScreenViewController.x; sourceTree = "<group>"; };
-		023724241AC25213007FAFC1 /* SBWallpaperEffectView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBWallpaperEffectView.h; sourceTree = "<group>"; };
-		023724251AC25213007FAFC1 /* SBWallpaperEffectView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBWallpaperEffectView.x; sourceTree = "<group>"; };
 		023747251AEEECB700825E1C /* ALSPreferencesColorPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesColorPicker.h; sourceTree = "<group>"; };
 		023747261AEEECB700825E1C /* ALSPreferencesColorPicker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesColorPicker.m; sourceTree = "<group>"; };
 		0237472F1AEEEE0400825E1C /* ALSPreferencesColorGradient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesColorGradient.h; sourceTree = "<group>"; };
@@ -175,8 +173,6 @@
 				027FFDAB1AFA9E0400FA1486 /* SBUIPasscodeLockViewBase.x */,
 				022C65B11B11133900132878 /* SBUIPasscodeLockViewWithKeypad.h */,
 				022C65B21B1144E600132878 /* SBUIPasscodeLockViewWithKeypad.x */,
-				023724241AC25213007FAFC1 /* SBWallpaperEffectView.h */,
-				023724251AC25213007FAFC1 /* SBWallpaperEffectView.x */,
 			);
 			name = Tweak;
 			path = Resources/Tweak;
