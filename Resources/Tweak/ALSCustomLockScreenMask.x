@@ -15,10 +15,12 @@
 @property (nonatomic, strong) CAShapeLayer *clockLayerMask;
 @property (nonatomic) float clockInvisibleAt;
 @property (nonatomic, strong) CAShapeLayer *clockRenderingLayer;
+@property (nonatomic) NSString *currentDate;
 @property (nonatomic) NSInteger currentHour;
 @property (nonatomic) NSInteger currentMinute;
 @property (nonatomic) CGFloat currentPercentage;
 @property (nonatomic, weak) UIView *customLockScreen;
+@property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @property (nonatomic, strong) CAShapeLayer *dotsDisplayLayer;
 @property (nonatomic, strong) CAShapeLayer *dotsLayer;
 @property (nonatomic, strong) NSMutableArray *highlightedButtonIndexes;
@@ -42,6 +44,7 @@
 @property (nonatomic) int buttonRadius;
 @property (nonatomic) int clockDotRadius;
 @property (nonatomic) int clockType;
+@property (nonatomic) NSString *dateFormat;
 @property (nonatomic) int dotPadding;
 @property (nonatomic) int dotRadius;
 @property (nonatomic) int dotVerticalOffset;
@@ -67,6 +70,7 @@
         _buttonRadius = [[preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
         _clockDotRadius = [[preferencesManager preferenceForKey:@"clockDotRadius"] intValue];
         _clockType = [[preferencesManager preferenceForKey:@"clockType"] intValue];
+        _dateFormat = [preferencesManager preferenceForKey:@"dateFormat"];
         _dotPadding = [[preferencesManager preferenceForKey:@"characterDotSidePadding"] intValue];
         _dotRadius = [[preferencesManager preferenceForKey:@"characterDotRadius"] intValue];
         _dotVerticalOffset = [[preferencesManager preferenceForKey:@"characterDotBottomPadding"] intValue];
@@ -84,6 +88,9 @@
         _currentPercentage = 0;
         _highlightedButtonIndexes = [[NSMutableArray alloc] init];
         _updateUntilTime = -1;
+        
+        _dateFormatter = [[NSDateFormatter alloc] init];
+        [_dateFormatter setDateFormat:_dateFormat];
         
         _internalLayer = [[CAShapeLayer alloc] init];
         
@@ -480,7 +487,7 @@
     
     UIBezierPath *mask = [UIBezierPath bezierPathWithRect:self.bounds];
     
-    UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute];
+    UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute date:self.currentDate];
     if(clockPath != self.lastKnownClockPath) {
         self.lastKnownClockPath = clockPath;
         
@@ -637,16 +644,19 @@
     
     self.currentHour = currentHour;
     self.currentMinute = currentMinute;
+    self.currentDate = [self.dateFormatter stringFromDate:date];
     
     [self updateMaskWithPercentage:self.currentPercentage];
     self.updateUntilTime = CACurrentMediaTime()+0.1;
     
     //preload the mask for the next minute
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        NSDateComponents *preloadDateComponents = [[NSCalendar currentCalendar] components:NSCalendarUnitHour|NSCalendarUnitMinute fromDate:[NSDate dateWithTimeInterval:60 sinceDate:date]];
+        NSDate *preloadDate = [NSDate dateWithTimeInterval:60 sinceDate:date];
+        NSDateComponents *preloadDateComponents = [[NSCalendar currentCalendar] components:NSCalendarUnitHour|NSCalendarUnitMinute fromDate:preloadDate];
         NSInteger preloadMinute = [preloadDateComponents minute];
         NSInteger preloadHour = [preloadDateComponents hour];
-        [self.clock preloadPathForHour:preloadHour minute:preloadMinute];
+        NSString *preloadDateString = [self.dateFormatter stringFromDate:preloadDate];
+        [self.clock preloadPathForHour:preloadHour minute:preloadMinute date:preloadDateString];
     });
 }
 

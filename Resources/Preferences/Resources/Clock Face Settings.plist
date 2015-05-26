@@ -46,9 +46,15 @@
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
-			<string>24 Hour Time</string>
+			<string>Show AM/PM on Digital</string>
 			<key>key</key>
-			<string>shouldUseTwentyFourHourTime</string>
+			<string>shouldShowAmPm</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Date Format</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -56,9 +62,31 @@
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
-			<string>Show AM/PM on Digital</string>
+			<string>Show Date on Digital</string>
 			<key>key</key>
-			<string>shouldShowAmPm</string>
+			<string>shouldShowDate</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkListCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>detail</key>
+			<string>ALSPreferencesListItemsController</string>
+			<key>label</key>
+			<string>Date Format</string>
+			<key>key</key>
+			<string>dateFormat</string>
+			<key>validTitles</key>
+			<array>
+				<string>MMM d</string>
+				<string>EEE, MMM d</string>
+			</array>
+			<key>validValues</key>
+			<array>
+				<string>MMM d</string>
+				<string>EEE, MMM d</string>
+			</array>
 		</dict>
 		<dict>
 			<key>cell</key>

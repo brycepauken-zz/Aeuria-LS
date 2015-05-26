@@ -8,6 +8,10 @@
 	<false/>
 	<key>shouldShowAmPm</key>
 	<false/>
+	<key>shouldShowDate</key>
+	<false/>
+	<key>dateFormat</key>
+	<string>MMM d</string>
 	<key>mainFont</key>
 	<string>AvenirNext-DemiBold</string>
 	<key>secondaryFont</key>

@@ -35,6 +35,7 @@
 @property (nonatomic) int minuteHandLength;
 @property (nonatomic, strong) NSString *secondaryFont;
 @property (nonatomic) BOOL shouldShowAmPm;
+@property (nonatomic) BOOL shouldShowDate;
 @property (nonatomic) BOOL shouldShowLeadingZero;
 @property (nonatomic) BOOL shouldUseTwentyFourHourTime;
 @property (nonatomic) int subtitleOffset;
@@ -67,6 +68,7 @@
         _minuteHandLength = [[preferencesManager preferenceForKey:@"minuteHandLength"] intValue];
         _secondaryFont = [preferencesManager preferenceForKey:@"secondaryFont"];
         _shouldShowAmPm = [[preferencesManager preferenceForKey:@"shouldShowAmPm"] boolValue];
+        _shouldShowDate = [[preferencesManager preferenceForKey:@"shouldShowDate"] boolValue];
         _shouldShowLeadingZero = [[preferencesManager preferenceForKey:@"shouldShowLeadingZero"] boolValue];
         _shouldUseTwentyFourHourTime = [[preferencesManager preferenceForKey:@"shouldUseTwentyFourHourTime"] boolValue];
         _subtitleOffset = [[preferencesManager preferenceForKey:@"clockSubtitleTopPadding"] intValue];
@@ -82,7 +84,7 @@
  the clock cutout, taking into cached paths (due to the same hour and minute
  being used previously, or due to the new path being preloaded).
  */
-- (UIBezierPath *)clockPathForHour:(NSInteger)hour minute:(NSInteger)minute {
+- (UIBezierPath *)clockPathForHour:(NSInteger)hour minute:(NSInteger)minute date:(NSString *)date {
     BOOL isPM = (hour>=12);
     if(!self.shouldUseTwentyFourHourTime) {
         hour %= 12;
@@ -102,7 +104,7 @@
             self.currentPath = self.preloadedPath;
         }
         else {
-            self.currentPath = [self generatePathForHour:hour minute:minute isPM:isPM];
+            self.currentPath = [self generatePathForHour:hour minute:minute date:date isPM:isPM];
         }
     }
     return self.currentPath;
@@ -112,7 +114,7 @@
  The generatePathForHour:forMinute: method creates the UIBezierPath representing
  the clock cutout for the given hour and minute.
  */
-- (UIBezierPath *)generatePathForHour:(NSInteger)hour minute:(NSInteger)minute isPM:(BOOL)isPM {
+- (UIBezierPath *)generatePathForHour:(NSInteger)hour minute:(NSInteger)minute date:(NSString *)date isPM:(BOOL)isPM {
     UIBezierPath *returnPath;
     if(self.type == ALSClockTypeText) {
         //get the hour and minute as strings
@@ -150,17 +152,42 @@
         
         //freed before return
         CGPathRef largeTimePath = [[self class] createPathForText:timeString fontName:self.digitalTimeFont];
-        
         CGSize largeTimePathSize = CGPathGetPathBoundingBox(largeTimePath).size;
-        CGFloat timeScale = [[self class] scaleForPathOfSize:largeTimePathSize withinRadius:self.radius isHalfCircle:NO withOffsetFromCenter:0 maxHeight:self.maxDigitalTimeHeight];
-        UIBezierPath *timePath = [UIBezierPath bezierPathWithCGPath:largeTimePath];
-        [timePath applyTransform:CGAffineTransformMakeScale(timeScale, timeScale)];
-        [timePath applyTransform:CGAffineTransformMakeTranslation(self.radius-(largeTimePathSize.width*timeScale)/2, self.radius-(largeTimePathSize.height*timeScale)/2)];
         
-        returnPath = [UIBezierPath bezierPath];
-        [returnPath appendPath:timePath];
-        
-        CGPathRelease(largeTimePath);
+        if(!self.shouldShowDate) {
+            CGFloat timeScale = [[self class] scaleForPathOfSize:largeTimePathSize withinRadius:self.radius isHalfCircle:NO withOffsetFromCenter:0 maxHeight:self.maxDigitalTimeHeight];
+            UIBezierPath *timePath = [UIBezierPath bezierPathWithCGPath:largeTimePath];
+            [timePath applyTransform:CGAffineTransformMakeScale(timeScale, timeScale)];
+            [timePath applyTransform:CGAffineTransformMakeTranslation(self.radius-(largeTimePathSize.width*timeScale)/2, self.radius-(largeTimePathSize.height*timeScale)/2)];
+            
+            returnPath = [UIBezierPath bezierPath];
+            [returnPath appendPath:timePath];
+            
+            CGPathRelease(largeTimePath);
+        }
+        else {
+            CGFloat timeScale = [[self class] scaleForPathOfSize:largeTimePathSize withinRadius:self.radius isHalfCircle:YES withOffsetFromCenter:0 maxHeight:self.maxTitleHeight];
+            UIBezierPath *timePath = [UIBezierPath bezierPathWithCGPath:largeTimePath];
+            [timePath applyTransform:CGAffineTransformMakeScale(timeScale, timeScale)];
+            [timePath applyTransform:CGAffineTransformMakeTranslation(self.radius-(largeTimePathSize.width*timeScale)/2, self.radius-(largeTimePathSize.height*timeScale))];
+            
+            //freed before return
+            CGPathRef largeDatePath = [[self class] createPathForText:date fontName:self.secondaryFont];
+            
+            CGSize largeDatePathSize = CGPathGetPathBoundingBox(largeDatePath).size;
+            CGFloat dateScale = [[self class] scaleForPathOfSize:largeDatePathSize withinRadius:self.radius isHalfCircle:YES withOffsetFromCenter:self.subtitleOffset maxHeight:self.maxSubtitleHeight];
+            dateScale = MIN(dateScale, timeScale*self.maxSubtitleTitleRatio);
+            UIBezierPath *datePath = [UIBezierPath bezierPathWithCGPath:largeDatePath];
+            [datePath applyTransform:CGAffineTransformMakeScale(dateScale, dateScale)];
+            [datePath applyTransform:CGAffineTransformMakeTranslation(self.radius-(largeDatePathSize.width*dateScale)/2, self.radius+self.subtitleOffset)];
+            
+            returnPath = [UIBezierPath bezierPath];
+            [returnPath appendPath:timePath];
+            [returnPath appendPath:datePath];
+            
+            CGPathRelease(largeTimePath);
+            CGPathRelease(largeDatePath);
+        }
     }
     else if(self.type == ALSClockTypeAnalog) {
         returnPath = [UIBezierPath bezierPath];
@@ -200,7 +227,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         ones = @[@"zero", @"one", @"two", @"three", @"four", @"five", @"six", @"seven", @"eight", @"nine", @"ten", @"eleven", @"twelve", @"thirteen", @"fourteen", @"fifteen", @"sixteen", @"seventeen", @"eighteen", @"nineteen"];
-        tens = @[@"zero", @"ten", @"twenty", @"thirty", @"fourty", @"fifty"];
+        tens = @[@"zero", @"ten", @"twenty", @"thirty", @"forty", @"fifty"];
     });
     
     if(num>=0 && num<tens.count*10) {
@@ -251,7 +278,7 @@
  The preloadPathForHour:forMinute: method caches a path (generally for the
  upcoming minute) to make transitions more seamless.
  */
-- (void)preloadPathForHour:(NSInteger)hour minute:(NSInteger)minute {
+- (void)preloadPathForHour:(NSInteger)hour minute:(NSInteger)minute date:(NSString *)date {
     BOOL isPM = (hour>=12);
     if(!self.shouldUseTwentyFourHourTime) {
         hour %= 12;
@@ -262,7 +289,7 @@
     
     //check if we need to update preloaded path
     if(!self.preloadedPath || hour!=self.preloadedHour || minute!=self.preloadedMinute) {
-        self.preloadedPath = [self generatePathForHour:hour minute:minute isPM:isPM];
+        self.preloadedPath = [self generatePathForHour:hour minute:minute date:date isPM:isPM];
         
         self.preloadedHour = hour;
         self.preloadedMinute = minute;

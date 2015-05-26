@@ -13,8 +13,8 @@ typedef NS_ENUM(NSInteger, ALSClockType) {
 @interface ALSCustomLockScreenClock : ALSCustomLockScreenElement
 
 - (instancetype)initWithRadius:(CGFloat)radius type:(ALSClockType)clockType preferencesManager:(ALSPreferencesManager *)preferencesManager;
-- (UIBezierPath *)clockPathForHour:(NSInteger)hour minute:(NSInteger)minute;
-- (void)preloadPathForHour:(NSInteger)hour minute:(NSInteger)minute;
+- (UIBezierPath *)clockPathForHour:(NSInteger)hour minute:(NSInteger)minute date:(NSString *)date;
+- (void)preloadPathForHour:(NSInteger)hour minute:(NSInteger)minute date:(NSString *)date;
 - (CGFloat)radius;
 
 @end
