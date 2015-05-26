@@ -11,8 +11,10 @@
 @property (nonatomic, strong) ALSCustomLockScreenButtons *buttons;
 @property (nonatomic, strong) CAShapeLayer *circleMaskLayer;
 @property (nonatomic, strong) ALSCustomLockScreenClock *clock;
+@property (nonatomic, strong) CAShapeLayer *clockCutOutLayer;
 @property (nonatomic, strong) CAShapeLayer *clockLayer;
 @property (nonatomic, strong) CAShapeLayer *clockLayerMask;
+@property (nonatomic, strong) CAShapeLayer *clockRenderingLayerMask;
 @property (nonatomic) float clockInvisibleAt;
 @property (nonatomic, strong) CAShapeLayer *clockRenderingLayer;
 @property (nonatomic) NSString *currentDate;
@@ -25,6 +27,7 @@
 @property (nonatomic, strong) CAShapeLayer *dotsLayer;
 @property (nonatomic, strong) NSMutableArray *highlightedButtonIndexes;
 @property (nonatomic, strong) CAShapeLayer *highlightedButtonLayer;
+@property (nonatomic) CGFloat horizontalPosition;
 @property (nonatomic, strong) NSString *instructions;
 @property (nonatomic, strong) UIBezierPath *instructionsPath;
 @property (nonatomic, strong) CAShapeLayer *internalLayer;
@@ -37,6 +40,7 @@
 @property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
 @property (nonatomic) ALSLockScreenSecurityType securityType;
 @property (nonatomic) NSTimeInterval updateUntilTime;
+@property (nonatomic) CGFloat verticalPosition;
 
 //preference properties
 @property (nonatomic) int buttonDistanceFromEdge;
@@ -89,6 +93,9 @@
         _highlightedButtonIndexes = [[NSMutableArray alloc] init];
         _updateUntilTime = -1;
         
+        _horizontalPosition = 0.5;
+        _verticalPosition = 0.5;
+        
         _dateFormatter = [[NSDateFormatter alloc] init];
         [_dateFormatter setDateFormat:_dateFormat];
         
@@ -109,14 +116,24 @@
         [_clockLayer setFillColor:[[UIColor blackColor] CGColor]];
         [_internalLayer addSublayer:_clockLayer];
         
+        _clockLayerMask = [[CAShapeLayer alloc] init];
+        [_clockLayerMask setFillColor:[[UIColor blackColor] CGColor]];
+        [_clockLayerMask setFillRule:kCAFillRuleEvenOdd];
+        [_clockLayer setMask:_clockLayerMask];
+        
         _clockRenderingLayer = [[CAShapeLayer alloc] init];
         [_clockRenderingLayer setFillColor:[[UIColor blackColor] CGColor]];
         [_internalLayer addSublayer:_clockRenderingLayer];
         
-        _clockLayerMask = [[CAShapeLayer alloc] init];
-        [_clockLayerMask setFillColor:[[UIColor blackColor] CGColor]];
-        [_clockLayerMask setFillRule:kCAFillRuleEvenOdd];
-        [_clockRenderingLayer setMask:_clockLayerMask];
+        _clockRenderingLayerMask = [[CAShapeLayer alloc] init];
+        [_clockRenderingLayerMask setFillColor:[[UIColor blackColor] CGColor]];
+        [_clockRenderingLayerMask setFillRule:kCAFillRuleEvenOdd];
+        [_clockRenderingLayer setMask:_clockRenderingLayerMask];
+        
+        _clockCutOutLayer = [[CAShapeLayer alloc] init];
+        [_clockCutOutLayer setFillColor:[[UIColor blackColor] CGColor]];
+        [_clockCutOutLayer setFillRule:kCAFillRuleEvenOdd];
+        [_maskLayer setMask:_clockCutOutLayer];
         
         //holds dots above passcode entry
         _dotsLayer = [[CAShapeLayer alloc] init];
@@ -279,16 +296,22 @@
     [self.highlightedButtonLayer setFrame:self.bounds];
     [self.internalLayer setFrame:self.bounds];
     [self.maskLayer setFrame:self.bounds];
+    [self.clockCutOutLayer setFrame:self.bounds];
     
-    CGRect clockLayerFrame = CGRectMake(self.bounds.size.width/2-self.largeCircleMinRadius, self.bounds.size.height/2-self.largeCircleMinRadius, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2);
+    CGRect clockLayerFrame = CGRectMake(self.bounds.size.width*self.horizontalPosition-self.largeCircleMinRadius, self.bounds.size.height*self.verticalPosition-self.largeCircleMinRadius, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2);
     [self.clockLayer setFrame:clockLayerFrame];
     [self.clockLayerMask setFrame:CGRectMake(0, 0, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2)];
+    [self.clockLayerMask setPath:[[self class] pathForCircleWithRadius:self.largeCircleMinRadius center:CGPointMake(self.largeCircleMinRadius, self.largeCircleMinRadius)].CGPath];
+    [self.clockRenderingLayerMask setFrame:CGRectMake(0, 0, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2)];
     clockLayerFrame.origin.y = -clockLayerFrame.size.height*2;
     [self.clockRenderingLayer setFrame:clockLayerFrame];
     
     [self updateDotsLayerFrame];
     
-    self.largeCircleMaxRadiusIncrement = ceilf(sqrt(self.bounds.size.width*self.bounds.size.width+self.bounds.size.height*self.bounds.size.height)/2)-self.largeCircleMinRadius;
+    //self.largeCircleMaxRadiusIncrement = ceilf(sqrt(self.bounds.size.width*self.bounds.size.width+self.bounds.size.height*self.bounds.size.height)/2)-self.largeCircleMinRadius;
+    CGFloat largestHorizontalDistanceToEdge = (0.5+fabs(0.5-self.horizontalPosition))*self.bounds.size.width;
+    CGFloat largestVerticalDistanceToEdge = (0.5+fabs(0.5-self.verticalPosition))*self.bounds.size.height;
+    self.largeCircleMaxRadiusIncrement = sqrt(largestHorizontalDistanceToEdge*largestHorizontalDistanceToEdge+largestVerticalDistanceToEdge*largestVerticalDistanceToEdge)-self.largeCircleMinRadius;
     
     CGFloat clockInvisibleNeededRadiusIncrement = (self.buttonDistanceFromEdge+(self.buttonRadius*2+self.buttonPadding)*M_SQRT2+self.buttonRadius)-self.largeCircleMinRadius;
     self.clockInvisibleAt = clockInvisibleNeededRadiusIncrement/self.largeCircleMaxRadiusIncrement;
@@ -484,8 +507,10 @@
     else {
         boundsCenter = CGPointMake(self.bounds.size.width/2, (self.bounds.size.height-self.keyboardHeight*percentage)/2);
     }
+    CGPoint clockCenter = CGPointMake(self.bounds.size.width*self.horizontalPosition, self.bounds.size.height*self.verticalPosition);
     
     UIBezierPath *mask = [UIBezierPath bezierPathWithRect:self.bounds];
+    UIBezierPath *clockCutOutMask = [UIBezierPath bezierPathWithRect:self.bounds];
     
     UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute date:self.currentDate];
     if(clockPath != self.lastKnownClockPath) {
@@ -495,11 +520,11 @@
         [newClockPath applyTransform:CGAffineTransformMakeTranslation(self.clockLayer.bounds.size.width/2-self.clock.radius, self.clockLayer.bounds.size.height/2-self.clock.radius)];
         [self.clockRenderingLayer setPath:newClockPath.CGPath];
         
-        UIBezierPath *clockLayerMaskPath = [UIBezierPath bezierPathWithRect:self.clockLayerMask.bounds];
+        UIBezierPath *clockRenderingLayerMaskPath = [UIBezierPath bezierPathWithRect:self.clockRenderingLayerMask.bounds];
         if(self.clockType == ALSClockTypeAnalog && self.clockDotRadius>0) {
-            [clockLayerMaskPath appendPath:[[self class] pathForCircleWithRadius:self.clockDotRadius center:CGPointMake(self.clockLayerMask.bounds.size.width/2, self.clockLayerMask.bounds.size.height/2)]];
+            [clockRenderingLayerMaskPath appendPath:[[self class] pathForCircleWithRadius:self.clockDotRadius center:CGPointMake(self.clockRenderingLayerMask.bounds.size.width/2, self.clockRenderingLayerMask.bounds.size.height/2)]];
         }
-        [self.clockLayerMask setPath:clockLayerMaskPath.CGPath];
+        [self.clockRenderingLayerMask setPath:clockRenderingLayerMaskPath.CGPath];
         
         static const int bytesPerPixel = 4;
         static const int bitsPerComponent = 8;
@@ -547,16 +572,16 @@
         self.lastKnownRadius = largeRadius;
         
         //mask the whole thing to the large outer circle
-        [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:boundsCenter].CGPath];
+        [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:clockCenter].CGPath];
         
         //transform clock path and cut out area below
         CGFloat clockScale = MAX(0,(1-percentage/self.clockInvisibleAt));
         CGFloat clockRadiusScaled = self.clock.radius*clockScale;
         [self.clockLayer setTransform:CATransform3DMakeScale(clockScale, clockScale, 1)];
-        [mask appendPath:[[self class] pathForCircleWithRadius:clockRadiusScaled center:boundsCenter]];
+        [clockCutOutMask appendPath:[[self class] pathForCircleWithRadius:clockRadiusScaled center:clockCenter]];
         
         //add buttons to internal path
-        UIBezierPath *buttonsPath = [self.buttons buttonsPathForRadius:largeRadius];
+        UIBezierPath *buttonsPath = [self.buttons buttonsPathForRadius:largeRadius horizontalCenterOffset:(clockCenter.x-boundsCenter.x) verticalCenterOffset:(clockCenter.y-boundsCenter.y)];
         [buttonsPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x, boundsCenter.y)];
         [mask appendPath:buttonsPath];
         
@@ -597,7 +622,7 @@
         [self.clockLayer setTransform:CATransform3DMakeTranslation(largeCircleIncrement, -verticalTranslation, 1)];
         UIBezierPath *clockCutOut = [[self class] pathForCircleWithRadius:self.clock.radius center:boundsCenter];
         [clockCutOut applyTransform:CGAffineTransformMakeTranslation(largeCircleIncrement, 0)];
-        [mask appendPath:clockCutOut];
+        [clockCutOutMask appendPath:clockCutOut];
         
         CGFloat screenOffset = (self.bounds.size.width-self.customLockScreen.bounds.size.width)/2;
         CGFloat leftEdgeOffset = MAX(self.textFieldHorizontalPadding+screenOffset, boundsCenter.x-self.clock.radius-MAX(self.textFieldHorizontalPadding,largeCircleIncrement)+self.textFieldHorizontalPadding);
@@ -622,10 +647,11 @@
         [self.clockLayer setTransform:CATransform3DMakeTranslation(largeCircleIncrement, 0, 1)];
         UIBezierPath *clockCutOut = [[self class] pathForCircleWithRadius:self.clock.radius center:boundsCenter];
         [clockCutOut applyTransform:CGAffineTransformMakeTranslation(largeCircleIncrement, 0)];
-        [mask appendPath:clockCutOut];
+        [clockCutOutMask appendPath:clockCutOut];
     }
     
     [self.maskLayer setPath:mask.CGPath];
+    [self.clockCutOutLayer setPath:clockCutOutMask.CGPath];
     
     [CATransaction commit];
 }

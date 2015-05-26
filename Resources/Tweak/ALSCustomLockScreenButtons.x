@@ -32,7 +32,7 @@
     return self;
 }
 
-- (UIBezierPath *)buttonsPathForRadius:(CGFloat)radius {
+- (UIBezierPath *)buttonsPathForRadius:(CGFloat)radius horizontalCenterOffset:(CGFloat)horizontalCenterOffset verticalCenterOffset:(CGFloat)verticalCenterOffset {
     UIBezierPath *returnPath = [UIBezierPath bezierPath];
     
     //holds sqrt computations
@@ -50,19 +50,17 @@
             continue;
         }
         
-        CGFloat xOffset = (i%3-1)*(self.buttonRadius*2+self.buttonPadding);
-        CGFloat yOffset = (i/3-1)*(self.buttonRadius*2+self.buttonPadding);
-        CGFloat distSquared = xOffset*xOffset + yOffset*yOffset;
-        
-        if(i==4) {
-            xOffset = 0;
-            yOffset = 0;
-            CGFloat fakeOffset = self.buttonRadius*2+self.buttonPadding;
-            distSquared = fakeOffset*fakeOffset + fakeOffset*fakeOffset;
+        CGFloat xOffset, yOffset, distSquared;
+        if(horizontalCenterOffset==0 && verticalCenterOffset==0 && i==4) {
+            xOffset = -horizontalCenterOffset;
+            yOffset = -verticalCenterOffset;
+            CGFloat fakeXOffset = self.buttonRadius*2+self.buttonPadding-horizontalCenterOffset;
+            CGFloat fakeYOffset = self.buttonRadius*2+self.buttonPadding-verticalCenterOffset;
+            distSquared = fakeXOffset*fakeXOffset + fakeYOffset*fakeYOffset;
         }
         else {
-            xOffset = (i%3-1)*(self.buttonRadius*2+self.buttonPadding);
-            yOffset = (i/3-1)*(self.buttonRadius*2+self.buttonPadding);
+            xOffset = (i%3-1)*(self.buttonRadius*2+self.buttonPadding)-horizontalCenterOffset;
+            yOffset = (i/3-1)*(self.buttonRadius*2+self.buttonPadding)-verticalCenterOffset;
             distSquared = xOffset*xOffset + yOffset*yOffset;
         }
         
@@ -75,6 +73,8 @@
         CGFloat buttonRadius = MAX(0,MIN(self.buttonRadius,radius-self.buttonDistanceFromEdge-[distNumber floatValue]-self.buttonRadius));
         
         if(buttonRadius > 0) {
+            xOffset += horizontalCenterOffset;
+            yOffset += verticalCenterOffset;
             [returnPath appendPath:[[self class] pathForCircleWithRadius:buttonRadius center:CGPointMake(xOffset, yOffset)]];
             
             //freed at end of if statement
