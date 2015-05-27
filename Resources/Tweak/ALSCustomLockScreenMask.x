@@ -301,6 +301,7 @@
     [self.maskLayer setFrame:self.bounds];
     [self.clockCutOutLayer setFrame:self.bounds];
     
+    [self.clockLayer setTransform:CATransform3DIdentity];
     CGRect clockLayerFrame = CGRectMake(self.bounds.size.width*self.horizontalPosition-self.largeCircleMinRadius, self.bounds.size.height*self.verticalPosition-self.largeCircleMinRadius, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2);
     [self.clockLayer setFrame:clockLayerFrame];
     [self.clockLayerMask setFrame:CGRectMake(0, 0, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2)];
@@ -420,6 +421,7 @@
     self.horizontalPosition = horizontalPosition;
     self.verticalPosition = verticalPosition;
     [self layoutSublayers];
+    [self updateMaskWithPercentage:self.currentPercentage];
 }
 
 - (void)setInstructions:(NSString *)instructions {
