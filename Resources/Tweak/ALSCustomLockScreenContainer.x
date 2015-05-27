@@ -10,8 +10,8 @@
 
 @property (nonatomic, strong) ALSCustomLockScreen *customLockScreen;
 @property (nonatomic, strong) UIView *keyboardViewBackground;
-@property (nonatomic, strong) UIView *mediaControlsViewBackground;
-@property (nonatomic, strong) UIView *notificationViewBackground;
+@property (nonatomic) BOOL mediaControlsViewHidden;
+@property (nonatomic) BOOL notificationViewHidden;
 @property (nonatomic) NSInteger passcodeTextFieldCharacterCount;
 @property (nonatomic, strong) ALSCustomLockScreenOverlay *scrollView;
 
@@ -51,6 +51,8 @@
         [_scrollView setShowsHorizontalScrollIndicator:NO];
         [_scrollView setShowsVerticalScrollIndicator:NO];
         [self addSubview:_scrollView];
+        
+        [self repositionClockIfNeeded];
     }
     return self;
 }
@@ -64,13 +66,12 @@
     [super layoutSubviews];
     
     [self.scrollView setContentSize:CGSizeMake(self.bounds.size.width*2, self.bounds.size.height)];
-    [self.notificationViewBackground setFrame:CGRectMake(0, 0, self.scrollView.bounds.size.width, self.notificationView.frame.size.height)];
-    [self.mediaControlsViewBackground setFrame:CGRectMake(0, self.scrollView.bounds.size.height-self.mediaControlsView.frame.size.height-20, self.scrollView.bounds.size.width, self.mediaControlsView.frame.size.height+20)];
     [self.keyboardViewBackground setFrame:CGRectMake(0, self.bounds.size.height-self.keyboardView.frame.size.height, self.bounds.size.width, self.keyboardView.frame.size.height)];
 }
 
 - (void)mediaControlsBecameHidden:(BOOL)hidden {
-    [self.mediaControlsViewBackground setHidden:hidden];
+    self.mediaControlsViewHidden = hidden;
+    [self repositionClockIfNeeded];
 }
 
 - (void)notificationViewChanged {
@@ -85,7 +86,8 @@
         }
     }
     BOOL shouldHideNotificationView = numberOfRows==0;
-    [self.notificationViewBackground setHidden:shouldHideNotificationView];
+    self.notificationViewHidden = shouldHideNotificationView;
+    [self repositionClockIfNeeded];
 }
 
 - (void)passcodeTextFieldDidChange:(UITextField *)textField {
@@ -116,6 +118,16 @@
     [super removeFromSuperview];
 }
 
+- (void)repositionClockIfNeeded {
+    if(!self.mediaControlsViewHidden || !self.notificationViewHidden) {
+        [self.customLockScreen setClockToPosition:CGPointMake(0.5, 0.25)];
+    }
+    else {
+        [self.customLockScreen setClockToDefaultPosition];
+        
+    }
+}
+
 - (void)resetView {
     [self setUserInteractionEnabled:YES];
     [self.scrollView setContentOffset:CGPointMake(self.bounds.size.width, 0)];
@@ -127,9 +139,7 @@
     CGFloat percentage = 1-(scrollView.contentOffset.x/self.bounds.size.width);
     [self.customLockScreen updateScrollPercentage:percentage];
     [self.notificationView setAlpha:1-percentage];
-    [self.notificationViewBackground setAlpha:1-percentage];
     [self.mediaControlsView setAlpha:1-percentage];
-    [self.mediaControlsViewBackground setAlpha:1-percentage];
     [self.keyboardViewBackground setAlpha:percentage*0.75];
     
     if(percentage==0) {
@@ -173,11 +183,6 @@
  */
 - (void)setMediaControlsView:(UIView *)mediaControlsView {
     _mediaControlsView = mediaControlsView;
-    
-    [self setMediaControlsViewBackground:[[UIView alloc] initWithFrame:mediaControlsView.frame]];
-    [self.mediaControlsViewBackground setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
-    [self insertSubview:self.mediaControlsViewBackground belowSubview:self.scrollView];
-    
     [self mediaControlsBecameHidden:YES];
 }
 
@@ -187,11 +192,6 @@
  */
 - (void)setNotificationView:(UIView *)notificationView {
     _notificationView = notificationView;
-    
-    [self setNotificationViewBackground:[[UIView alloc] initWithFrame:notificationView.frame]];
-    [self.notificationViewBackground setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
-    [self insertSubview:self.notificationViewBackground belowSubview:self.scrollView];
-    
     [self notificationViewChanged];
 }
 

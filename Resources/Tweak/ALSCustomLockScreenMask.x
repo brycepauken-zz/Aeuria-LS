@@ -292,6 +292,9 @@
 - (void)layoutSublayers {
     [super layoutSublayers];
     
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    
     [self.circleMaskLayer setFrame:self.bounds];
     [self.highlightedButtonLayer setFrame:self.bounds];
     [self.internalLayer setFrame:self.bounds];
@@ -308,7 +311,6 @@
     
     [self updateDotsLayerFrame];
     
-    //self.largeCircleMaxRadiusIncrement = ceilf(sqrt(self.bounds.size.width*self.bounds.size.width+self.bounds.size.height*self.bounds.size.height)/2)-self.largeCircleMinRadius;
     CGFloat largestHorizontalDistanceToEdge = (0.5+fabs(0.5-self.horizontalPosition))*self.bounds.size.width;
     CGFloat largestVerticalDistanceToEdge = (0.5+fabs(0.5-self.verticalPosition))*self.bounds.size.height;
     self.largeCircleMaxRadiusIncrement = sqrt(largestHorizontalDistanceToEdge*largestHorizontalDistanceToEdge+largestVerticalDistanceToEdge*largestVerticalDistanceToEdge)-self.largeCircleMinRadius;
@@ -316,6 +318,8 @@
     CGFloat clockInvisibleNeededRadiusIncrement = (self.buttonDistanceFromEdge+(self.buttonRadius*2+self.buttonPadding)*M_SQRT2+self.buttonRadius)-self.largeCircleMinRadius;
     self.clockInvisibleAt = clockInvisibleNeededRadiusIncrement/self.largeCircleMaxRadiusIncrement;
     self.buttons.clockInvisibleAt = self.clockInvisibleAt;
+    
+    [CATransaction commit];
 }
 
 - (BOOL)needsUpdate {
@@ -410,6 +414,12 @@
         [subdot removeFromSuperlayer];
     }
     [self setupTimer];
+}
+
+- (void)setHorizontalPosition:(CGFloat)horizontalPosition verticalPosition:(CGFloat)verticalPosition {
+    self.horizontalPosition = horizontalPosition;
+    self.verticalPosition = verticalPosition;
+    [self layoutSublayers];
 }
 
 - (void)setInstructions:(NSString *)instructions {

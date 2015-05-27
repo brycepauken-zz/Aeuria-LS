@@ -28,6 +28,8 @@
 @property (nonatomic) int buttonDistanceFromEdge;
 @property (nonatomic) int buttonPadding;
 @property (nonatomic) int buttonRadius;
+@property (nonatomic) float defaultClockHorizontalPosition;
+@property (nonatomic) float defaultClockVerticalPosition;
 @property (nonatomic) float lockScreenBlurType;
 @property (nonatomic, strong) UIColor *lockScreenColor;
 @property (nonatomic) float lockScreenColorAlpha;
@@ -50,6 +52,8 @@
         _buttonDistanceFromEdge = [[_preferencesManager preferenceForKey:@"passcodeButtonDistanceFromEdge"] intValue];
         _buttonPadding = [[_preferencesManager preferenceForKey:@"passcodeButtonPadding"] intValue];
         _buttonRadius = [[_preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
+        _defaultClockHorizontalPosition = 0.5;
+        _defaultClockVerticalPosition = 0.5;
         _lockScreenBlurType = [[_preferencesManager preferenceForKey:@"lockScreenBlurType"] intValue];
         _lockScreenColor = [_preferencesManager preferenceForKey:@"lockScreenColor"];
         _lockScreenColorAlpha = [[_preferencesManager preferenceForKey:@"lockScreenColorAlpha"] floatValue];
@@ -296,7 +300,14 @@
     self.previousPercentage = 0;
     [self.filledOverlayMask resetMask];
     [self updateViews];
-    
+}
+
+- (void)setClockToDefaultPosition {
+    [self.filledOverlayMask setHorizontalPosition:self.defaultClockHorizontalPosition verticalPosition:self.defaultClockVerticalPosition];
+}
+
+- (void)setClockToPosition:(CGPoint)position {
+    [self.filledOverlayMask setHorizontalPosition:position.x verticalPosition:position.y];
 }
 
 - (void)setDisplayLinkPaused:(BOOL)paused {

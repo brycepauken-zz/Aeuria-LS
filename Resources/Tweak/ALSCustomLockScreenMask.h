@@ -26,6 +26,7 @@ typedef NS_ENUM(NSInteger, ALSLockScreenSecurityType) {
 - (void)resetMask;
 - (ALSLockScreenSecurityType)securityType;
 - (void)setCustomLockScreen:(UIView *)customLockScreen;
+- (void)setHorizontalPosition:(CGFloat)horizontalPosition verticalPosition:(CGFloat)verticalPosition;
 - (void)setKeyboardHeight:(CGFloat)keyboardHeight;
 - (void)setSecurityType:(ALSLockScreenSecurityType)securityType;
 - (void)shakeDots;

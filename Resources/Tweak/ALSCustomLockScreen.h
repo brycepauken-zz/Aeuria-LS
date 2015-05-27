@@ -14,6 +14,8 @@
 - (ALSCustomLockScreenMask *)filledOverlayMask;
 - (void)resetView;
 - (void)setButtonTapped:(void (^)(int index))buttonTapped;
+- (void)setClockToDefaultPosition;
+- (void)setClockToPosition:(CGPoint)position;
 - (void)setDisplayLinkPaused:(BOOL)paused;
 - (void)setKeyboardHeight:(CGFloat)keyboardHeight;
 - (void)setPasscodeEntered:(void (^)(NSString *passcode))passcodeEntered;
