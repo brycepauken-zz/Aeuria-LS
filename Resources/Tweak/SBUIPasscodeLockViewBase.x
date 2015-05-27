@@ -1,15 +1,14 @@
 #import "SBUIPasscodeLockViewBase.h"
 
+#import "ALSHideableViewManager.h"
 #import "SBLockScreenViewController.h"
 
 %hook SBUIPasscodeLockViewBase
 
 - (void)layoutSubviews {
-    for(UIView *subview in self.subviews) {
-        if([subview isKindOfClass:[UILabel class]]) {
-            [subview setHidden:YES];
-        }
-    }
+    %orig;
+    [ALSHideableViewManager addView:self];
+    [self setHidden:[self isHidden]];
 }
 
 %new
@@ -33,18 +32,23 @@
     [[self lockScreenViewController] failedPasscode];
 }
 
+- (void)resetForScreenOff {
+    %orig;
+    
+    [[self lockScreenViewController] resetForScreenOff];
+}
+
+- (void)setHidden:(BOOL)hidden {
+    [ALSHideableViewManager setViewHidden:hidden forView:self];
+    %orig([ALSHideableViewManager shouldHide]?YES:[ALSHideableViewManager viewHidden:self]);
+}
+
 - (void)updateStatusTextForBioEvent:(unsigned long long)arg1 animated:(bool)arg2 {
     %orig;
     
     if(arg1 > 0) {
         [[self lockScreenViewController] failedBio];
     }
-}
-
-- (void)resetForScreenOff {
-    %orig;
-    
-     [[self lockScreenViewController] resetForScreenOff];
 }
 
 %end

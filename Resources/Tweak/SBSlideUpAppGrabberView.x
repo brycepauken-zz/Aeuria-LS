@@ -1,14 +1,8 @@
-#import "SBFLockScreenDateView.h"
+#import "SBSlideUpAppGrabberView.h"
 
 #import "ALSHideableViewManager.h"
 
-/*
- The SBFLockScreenDateView class represents the date and time on the lock screen.
- While the clock is hidden when added to the lock screen scrollview, it's visible
- shortly beforehand, so we hide it here as well.
- */
-
-%hook SBFLockScreenDateView
+%hook SBSlideUpAppGrabberView
 
 - (void)layoutSubviews {
     %orig;

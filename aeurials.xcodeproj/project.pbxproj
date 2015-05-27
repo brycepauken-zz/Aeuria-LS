@@ -70,6 +70,10 @@
 		0281DD311B0F542B00683910 /* SBLockScreenHintLongPressGestureRecognizer.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBLockScreenHintLongPressGestureRecognizer.x; sourceTree = "<group>"; };
 		028285EE1AF0836D0079E923 /* Defaults.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
 		028687AE1AE9F78900BDD74A /* AeuriaPath.dat */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = AeuriaPath.dat; sourceTree = "<group>"; };
+		02884B811B166CC800D8D8E0 /* UIGlintyStringView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIGlintyStringView.h; sourceTree = "<group>"; };
+		02884B821B166CC800D8D8E0 /* UIGlintyStringView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = UIGlintyStringView.x; sourceTree = "<group>"; };
+		02884B831B16747900D8D8E0 /* SBSlideUpAppGrabberView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBSlideUpAppGrabberView.h; sourceTree = "<group>"; };
+		02884B841B16747900D8D8E0 /* SBSlideUpAppGrabberView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBSlideUpAppGrabberView.x; sourceTree = "<group>"; };
 		0298578B1AE859980014B5C2 /* ALSProxyTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSProxyTarget.h; sourceTree = "<group>"; };
 		0298578C1AE859980014B5C2 /* ALSProxyTarget.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSProxyTarget.x; sourceTree = "<group>"; };
 		02A1014F1AEF3AE8003296EB /* ALSPreferencesListItemsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesListItemsController.h; sourceTree = "<group>"; };
@@ -169,10 +173,14 @@
 				02A99F1B1AFD1FFF00B197D7 /* SBLockScreenScrollView.x */,
 				023724221AC25213007FAFC1 /* SBLockScreenViewController.h */,
 				023724231AC25213007FAFC1 /* SBLockScreenViewController.x */,
+				02884B831B16747900D8D8E0 /* SBSlideUpAppGrabberView.h */,
+				02884B841B16747900D8D8E0 /* SBSlideUpAppGrabberView.x */,
 				027F9B531AF7041100180368 /* SBUIPasscodeLockViewBase.h */,
 				027FFDAB1AFA9E0400FA1486 /* SBUIPasscodeLockViewBase.x */,
 				022C65B11B11133900132878 /* SBUIPasscodeLockViewWithKeypad.h */,
 				022C65B21B1144E600132878 /* SBUIPasscodeLockViewWithKeypad.x */,
+				02884B811B166CC800D8D8E0 /* UIGlintyStringView.h */,
+				02884B821B166CC800D8D8E0 /* UIGlintyStringView.x */,
 			);
 			name = Tweak;
 			path = Resources/Tweak;

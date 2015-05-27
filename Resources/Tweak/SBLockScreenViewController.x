@@ -108,7 +108,7 @@
     });
     
     [self.customLockScreenContainer.layer setZPosition:MAXFLOAT];
-    [[self lockScreenView] addSubview:self.customLockScreenContainer];
+    [[[self lockScreenScrollView] superview] addSubview:self.customLockScreenContainer];
 }
 
 /*
@@ -336,7 +336,7 @@
  
  Example Logging
  
- [[self performSelector:@selector(recursiveDescription)] writeToFile:@"/var/mobile/Documents/out1.txt" atomically:NO encoding:NSStringEncodingConversionAllowLossy error:nil];
+ [[self performSelector:@selector(recursiveDescription)] writeToFile:@"/var/mobile/Documents/out1.txt" atomically:YES encoding:NSUTF8StringEncoding error:nil];
  
  */
 

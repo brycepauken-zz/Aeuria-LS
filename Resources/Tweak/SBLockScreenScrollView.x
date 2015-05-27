@@ -14,36 +14,16 @@
 
 @property (nonatomic, strong) NSMutableDictionary *customProperties;
 
-- (NSArray *)ancestorsOfView:(UIView *)view;
 - (void)checkShouldShowCustomLockScreen;
 - (id)findViewOfClass:(Class)class inView:(UIView *)view maxDepth:(int)depth;
 - (void)hideSubviewsIfNeeded;
 - (id)lockScreenViewController;
 - (void)searchSubviews;
-+ (void)setNonAncestorsHidden:(BOOL)hidden fromView:(UIView *)view withAncestorsList:(NSArray *)ancestorsList currentDepth:(NSInteger)currentDepth;
 - (void)setProperty:(id)property forKey:(id<NSCopying>)key;
 
 @end
 
 %hook SBLockScreenScrollView
-
-/*
- Returns an array containing, in order, the views in the
- hierarchy leading from `self` to `view`.
- */
-%new
-- (NSArray *)ancestorsOfView:(UIView *)view {
-    NSMutableArray *ancestors = [[NSMutableArray alloc] init];
-    UIView *currentView = view.superview;
-    while(currentView!=self && currentView) {
-        [ancestors insertObject:currentView atIndex:0];
-        currentView = currentView.superview;
-    }
-    if(currentView == self) {
-        return ancestors;
-    }
-    return nil;
-}
 
 %new
 - (void)checkShouldShowCustomLockScreen {
@@ -110,27 +90,14 @@
 %new
 - (void)hideSubviewsIfNeeded {
     BOOL shouldHideSubviews = [self shouldHideSubviews];
-    NSArray *mediaControlsViewAncestors = [self.customProperties objectForKey:@"mediaControlsViewAncestors"];
-    NSArray *notificationViewAncestors = [self.customProperties objectForKey:@"notificationViewAncestors"];
     
     for(UIView *subview in self.subviews) {
-        if([subview isKindOfClass:[%c(SBUIPasscodeLockViewWithKeyboard) class]]) {
-            for(UIView *passcodeViewSubview in subview.subviews) {
-                if([passcodeViewSubview isKindOfClass:[UILabel class]]) {
-                    //we also remove the 'enter passcode' label, since it's tricky to keep hidden
-                    [passcodeViewSubview removeFromSuperview];
+        if(subview.frame.origin.x == self.bounds.size.width) {
+            for(UIView *secondarySubview in subview.subviews) {
+                if(secondarySubview.frame.size.width == self.bounds.size.width*2) {
+                    [secondarySubview setHidden:shouldHideSubviews];
                 }
-                [passcodeViewSubview setHidden:(shouldHideSubviews && ![passcodeViewSubview isKindOfClass:[%c(SBPasscodeKeyboard) class]])];
             }
-        }
-        else if(subview == [mediaControlsViewAncestors firstObject]) {
-            [[self class] setNonAncestorsHidden:shouldHideSubviews fromView:subview withAncestorsList:mediaControlsViewAncestors currentDepth:1];
-        }
-        else if(subview == [notificationViewAncestors firstObject]) {
-            [[self class] setNonAncestorsHidden:shouldHideSubviews fromView:subview withAncestorsList:notificationViewAncestors currentDepth:1];
-        }
-        else {
-            [subview setHidden:shouldHideSubviews];
         }
     }
 }
@@ -220,43 +187,19 @@
     if(![self.customProperties objectForKey:@"mediaControlsView"]) {
         UIView *mediaControlsView = [self findViewOfClass:[%c(MPUSystemMediaControlsView) class] inView:self maxDepth:9];
         [self setProperty:mediaControlsView forKey:@"mediaControlsView"];
-        [self setProperty:[self ancestorsOfView:mediaControlsView] forKey:@"mediaControlsViewAncestors"];
     }
     if(![self.customProperties objectForKey:@"notificationView"]) {
         UIView *notificationView = [self findViewOfClass:[%c(SBLockScreenNotificationTableView) class] inView:self maxDepth:6];
         [self setProperty:notificationView forKey:@"notificationView"];
-        [self setProperty:[self ancestorsOfView:notificationView] forKey:@"notificationViewAncestors"];
     }
 }
 
 - (void)setContentOffset:(CGPoint)offset {
+    offset.x = MAX(0, offset.x);
     %orig;
     [[[[[self lockScreenViewController] customLockScreenContainer] customLockScreen] layer] removeAnimationForKey:@"ShakeAnimation"];
     [[[[self lockScreenViewController] customLockScreenContainer] scrollView] setContentOffset:offset];
 };
-
-/*
- Recurses through the view hierarchy and updates the hidden
- property on views that aren't part of the given ancestor
- list (i.e., hides everything not needed to show the
- notification or media controls views)
- */
-%new
-+ (void)setNonAncestorsHidden:(BOOL)hidden fromView:(UIView *)view withAncestorsList:(NSArray *)ancestorsList currentDepth:(NSInteger)currentDepth {
-    [view setHidden:NO];
-    if(currentDepth >= ancestorsList.count) {
-        return;
-    }
-    UIView *ancestor = [ancestorsList objectAtIndex:currentDepth];
-    for(UIView *subview in view.subviews) {
-        if(subview == ancestor) {
-            [self setNonAncestorsHidden:hidden fromView:subview withAncestorsList:ancestorsList currentDepth:currentDepth+1];
-        }
-        else {
-            [subview setHidden:hidden];
-        }
-    }
-}
 
 %new
 - (void)setProperty:(id)property forKey:(id<NSCopying>)key {
