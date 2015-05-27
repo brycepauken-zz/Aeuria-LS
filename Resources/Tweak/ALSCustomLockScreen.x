@@ -127,13 +127,13 @@
     }
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.filledOverlayMask removeAllDotsAndAnimate:YES withCompletion:^{
-            [self.superview setUserInteractionEnabled:YES];
+            [self setUserInteractionEnabled:YES];
         }];
     });
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-    if(!self.superview.userInteractionEnabled) {
+    if(!self.userInteractionEnabled) {
         return nil;
     }
     
@@ -229,7 +229,7 @@
 }
 
 - (void)panGestureRecognizerCalled:(UIPanGestureRecognizer *)gestureRecognizer {
-    if(!self.superview.userInteractionEnabled) {
+    if(!self.userInteractionEnabled) {
         return;
     }
     

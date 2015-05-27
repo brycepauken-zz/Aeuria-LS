@@ -2,13 +2,6 @@
 
 #import "SBLockScreenViewController.h"
 
-@interface SBLockScreenNotificationListView()
-
-- (id)customProperties;
-- (id)lockScreenViewController;
-
-@end
-
 %hook SBLockScreenNotificationListView
 
 - (void)_updateTotalContentHeight {
@@ -22,69 +15,6 @@
         }
         currentView = currentView.superview;
     }
-}
-
-%new
-- (id)customProperties {
-    id customProperties;
-    @synchronized(self) {
-        customProperties = objc_getAssociatedObject(self, @selector(customProperties));
-        if(!customProperties) {
-            customProperties = [[NSMutableDictionary alloc] init];
-            objc_setAssociatedObject(self, @selector(customProperties), customProperties, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        }
-    }
-    return customProperties;
-}
-
-- (void)layoutSubviews {
-    %orig;
-    
-    UIView *firstSubview = [[self subviews] objectAtIndex:0];
-    CGRect firstSubviewFrame = firstSubview.frame;
-    
-    if(![[self customProperties] objectForKey:@"originalYOffset"]) {
-        [[self customProperties] setObject:@(firstSubviewFrame.origin.y) forKey:@"originalYOffset"];
-    }
-    if(![[self customProperties] objectForKey:@"originalHeight"]) {
-        [[self customProperties] setObject:@(firstSubviewFrame.size.height) forKey:@"originalHeight"];
-    }
-    
-    CGFloat height;
-    if([[self lockScreenViewController] customLockScreenHidden]) {
-        height = [[[self customProperties] objectForKey:@"originalHeight"] doubleValue];
-        firstSubviewFrame.origin.y = [[[self customProperties] objectForKey:@"originalYOffset"] doubleValue];
-    }
-    else {
-        height = [[[self customProperties] objectForKey:@"originalHeight"] doubleValue]/2;
-        firstSubviewFrame.origin.y = 0;
-    }
-    firstSubviewFrame.size.height = height;
-    [firstSubview setFrame:firstSubviewFrame];
-    for(UIView *secondSubview in firstSubview.subviews) {
-        if([secondSubview isKindOfClass:[UITableView class]]) {
-            CGRect secondSubviewFrame = firstSubview.frame;
-            secondSubviewFrame.origin.y = 0;
-            secondSubviewFrame.size.height = height;
-            [secondSubview setFrame:secondSubviewFrame];
-            break;
-        }
-    }
-}
-
-%new
-- (id)lockScreenViewController {
-    __weak static SBLockScreenViewController *lockScreenViewController;
-    if(!lockScreenViewController) {
-        UIView *currentView = self;
-        while(currentView.superview && ![currentView isKindOfClass:[%c(SBLockScreenView) class]]) {
-            currentView = currentView.superview;
-        }
-        if([currentView.nextResponder isKindOfClass:[%c(SBLockScreenViewController) class]]) {
-            lockScreenViewController = (SBLockScreenViewController *)currentView.nextResponder;
-        }
-    }
-    return lockScreenViewController;
 }
 
 %end

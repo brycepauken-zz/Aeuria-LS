@@ -1,5 +1,7 @@
 #import "SBUIPasscodeLockViewWithKeypad.h"
 
+#import "ALSCustomLockScreen.h"
+#import "ALSCustomLockScreenContainer.h"
 #import "SBLockScreenViewController.h"
 
 @interface SBUIPasscodeLockViewWithKeypad()
@@ -11,7 +13,7 @@
 %hook SBUIPasscodeLockViewWithKeypad
 
 - (void)_notifyDelegatePasscodeEntered {
-    [[[self lockScreenViewController] customLockScreenContainer] setUserInteractionEnabled:NO];
+    [[[[self lockScreenViewController] customLockScreenContainer] customLockScreen] setUserInteractionEnabled:NO];
     
     %orig;
 }

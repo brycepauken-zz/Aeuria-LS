@@ -88,6 +88,7 @@
     [self.customLockScreenContainer setMediaControlsView:mediaControlsView];
     [self.customLockScreenContainer setNotificationView:notificationView];
     [self.customLockScreenContainer setPasscodeTextField:passcodeTextField];
+    [self.customLockScreenContainer setUserInteractionEnabled:NO];
     [self.customLockScreenContainer setPasscodeEntered:^(NSString *passcode) {
         //create a proxy passcode handler (returns the entered passcode, forwards all other requests)
         id passcodeView = [[weakSelf lockScreenView] passcodeView];
@@ -106,7 +107,8 @@
         [self updateSecurityType];
     });
     
-    [[[self lockScreenScrollView] superview] insertSubview:self.customLockScreenContainer belowSubview:[self lockScreenScrollView]];
+    [self.customLockScreenContainer.layer setZPosition:MAXFLOAT];
+    [[self lockScreenView] addSubview:self.customLockScreenContainer];
 }
 
 /*
