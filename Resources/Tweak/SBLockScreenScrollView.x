@@ -197,6 +197,16 @@
 - (void)setContentOffset:(CGPoint)offset {
     offset.x = MAX(0, offset.x);
     %orig;
+    if(self.contentSize.width > self.bounds.size.width) {
+        CGAffineTransform translation;
+        if(offset.x > self.bounds.size.width) {
+            translation = CGAffineTransformMakeTranslation(self.bounds.size.width-offset.x, 0);
+        }
+        else {
+            translation = CGAffineTransformIdentity;
+        }
+        [(UIView *)[[self lockScreenViewController] customLockScreenContainer] setTransform:translation];
+    }
     [[[[[self lockScreenViewController] customLockScreenContainer] customLockScreen] layer] removeAnimationForKey:@"ShakeAnimation"];
     [[[[self lockScreenViewController] customLockScreenContainer] scrollView] setContentOffset:offset];
 };
