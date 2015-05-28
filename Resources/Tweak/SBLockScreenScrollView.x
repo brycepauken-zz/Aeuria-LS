@@ -84,8 +84,7 @@
 }
 
 /*
- Updates all subviews other than SBPasscodeKeyboard (a subview of
- SBUIPasscodeLockViewWithKeyboard) to be hidden or shown as needed
+ Hides subviews that should be hidden
  */
 %new
 - (void)hideSubviewsIfNeeded {
@@ -94,7 +93,7 @@
     for(UIView *subview in self.subviews) {
         if(subview.frame.origin.x == self.bounds.size.width) {
             for(UIView *secondarySubview in subview.subviews) {
-                if(secondarySubview.frame.size.width == self.bounds.size.width*2) {
+                if(secondarySubview.frame.size.width > self.bounds.size.width) {
                     [secondarySubview setHidden:shouldHideSubviews];
                 }
             }
