@@ -672,18 +672,22 @@
     else if(self.securityType == ALSLockScreenSecurityTypeNone) {
         largeCircleIncrement = (self.largeCircleMaxRadiusIncrement+self.largeCircleMinRadius)*percentage;
         
-        [self.circleLayer setPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(boundsCenter.x-self.largeCircleMinRadius+largeCircleIncrement, boundsCenter.y-self.largeCircleMinRadius, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2) cornerRadius:self.largeCircleMinRadius].CGPath];
+        [self.circleLayer setPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(clockCenter.x-self.largeCircleMinRadius+largeCircleIncrement, clockCenter.y-self.largeCircleMinRadius, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2) cornerRadius:self.largeCircleMinRadius].CGPath];
         
         //transform clock path and cut out area below
         [self.clockLayer setTransform:CATransform3DMakeTranslation(largeCircleIncrement, 0, 1)];
-        UIBezierPath *clockCutOut = [[self class] pathForCircleWithRadius:self.clock.radius center:boundsCenter];
+        UIBezierPath *clockCutOut = [[self class] pathForCircleWithRadius:self.clock.radius center:clockCenter];
         [clockCutOut applyTransform:CGAffineTransformMakeTranslation(largeCircleIncrement, 0)];
         [clockCutOutMask appendPath:clockCutOut];
     }
     
     if(self.shouldMaskEdgesForSymmetry) {
-        CGFloat minHorizontalDistanceAwayFromEdge = MIN(self.largeCircleMinRadius, MIN(clockCenter.x, self.bounds.size.width-clockCenter.x)-self.symmetryEdgePadding)+largeCircleIncrement*self.symmetryEdgeSpeed;
-        CGFloat minVerticalDistanceAwayFromEdge = MIN(self.largeCircleMinRadius, MIN(clockCenter.y, self.bounds.size.height-clockCenter.y)-self.symmetryEdgePadding)+largeCircleIncrement*self.symmetryEdgeSpeed;
+        CGFloat minHorizontalDistanceAwayFromEdge = MIN(self.largeCircleMinRadius, MIN(clockCenter.x, self.bounds.size.width-clockCenter.x)-self.symmetryEdgePadding);
+        CGFloat minVerticalDistanceAwayFromEdge = MIN(self.largeCircleMinRadius, MIN(clockCenter.y, self.bounds.size.height-clockCenter.y)-self.symmetryEdgePadding);
+        
+        minHorizontalDistanceAwayFromEdge += largeCircleIncrement*(self.securityType==ALSLockScreenSecurityTypeNone?1:self.symmetryEdgeSpeed);
+        minVerticalDistanceAwayFromEdge += largeCircleIncrement*(self.securityType==ALSLockScreenSecurityTypeNone?0:self.symmetryEdgeSpeed);
+        
         [self.symmetryEdgeMask setPath:[UIBezierPath bezierPathWithRect:CGRectMake(clockCenter.x-minHorizontalDistanceAwayFromEdge, clockCenter.y-minVerticalDistanceAwayFromEdge, minHorizontalDistanceAwayFromEdge*2, minVerticalDistanceAwayFromEdge*2)].CGPath];
     }
     
