@@ -9,6 +9,7 @@
 
 //general properties
 @property (nonatomic, strong) ALSCustomLockScreenButtons *buttons;
+@property (nonatomic, strong) CAShapeLayer *circleLayer;
 @property (nonatomic, strong) CAShapeLayer *circleMaskLayer;
 @property (nonatomic, strong) ALSCustomLockScreenClock *clock;
 @property (nonatomic, strong) CAShapeLayer *clockCutOutLayer;
@@ -39,6 +40,7 @@
 @property (nonatomic, strong) NSTimer *minuteTimer;
 @property (nonatomic, strong) ALSPreferencesManager *preferencesManager;
 @property (nonatomic) ALSLockScreenSecurityType securityType;
+@property (nonatomic, strong) CAShapeLayer *symmetryEdgeMask;
 @property (nonatomic) NSTimeInterval updateUntilTime;
 @property (nonatomic) CGFloat verticalPosition;
 
@@ -57,6 +59,9 @@
 @property (nonatomic) int largeCircleMinRadius;
 @property (nonatomic) float pressedButtonAlpha;
 @property (nonatomic) BOOL shouldHideEnterPasscodeText;
+@property (nonatomic) BOOL shouldMaskEdgesForSymmetry;
+@property (nonatomic) int symmetryEdgePadding;
+@property (nonatomic) CGFloat symmetryEdgeSpeed;
 @property (nonatomic) int textFieldCornerRadius;
 @property (nonatomic) int textFieldHeight;
 @property (nonatomic) int textFieldHorizontalPadding;
@@ -83,6 +88,9 @@
         _largeCircleMinRadius = [[preferencesManager preferenceForKey:@"clockRadius"] intValue];
         _pressedButtonAlpha = [[preferencesManager preferenceForKey:@"passcodeButtonPressedAlpha"] floatValue];
         _shouldHideEnterPasscodeText = [[preferencesManager preferenceForKey:@"shouldHideEnterPasscodeText"] boolValue];
+        _shouldMaskEdgesForSymmetry = YES;
+        _symmetryEdgePadding = 0;
+        _symmetryEdgeSpeed = 1.25;
         _textFieldCornerRadius = [[preferencesManager preferenceForKey:@"passcodeTextFieldCornerRadius"] intValue];
         _textFieldHeight = [[preferencesManager preferenceForKey:@"passcodeTextFieldHeight"] intValue];
         _textFieldHorizontalPadding = [[preferencesManager preferenceForKey:@"passcodeTextFieldSidePadding"] intValue];
@@ -101,10 +109,19 @@
         
         _internalLayer = [[CAShapeLayer alloc] init];
         
+        //holds the large circle used to mask the outer bounds
+        _circleLayer = [[CAShapeLayer alloc] init];
+        [_circleLayer setFillColor:[[UIColor blackColor] CGColor]];
+        
         //masks to outer bounds
         _circleMaskLayer = [[CAShapeLayer alloc] init];
         [_circleMaskLayer setFillColor:[[UIColor blackColor] CGColor]];
+        [_circleMaskLayer addSublayer:_circleLayer];
         [_internalLayer setMask:_circleMaskLayer];
+        
+        _symmetryEdgeMask = [[CAShapeLayer alloc] init];
+        [_symmetryEdgeMask setFillColor:[[UIColor blackColor] CGColor]];
+        [_circleLayer setMask:_symmetryEdgeMask];
         
         //holds main mask (clock & buttons)
         _maskLayer = [[CAShapeLayer alloc] init];
@@ -295,7 +312,9 @@
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     
+    [self.circleLayer setFrame:self.bounds];
     [self.circleMaskLayer setFrame:self.bounds];
+    [self.symmetryEdgeMask setFrame:self.bounds];
     [self.highlightedButtonLayer setFrame:self.bounds];
     [self.internalLayer setFrame:self.bounds];
     [self.maskLayer setFrame:self.bounds];
@@ -577,14 +596,15 @@
         self.clockLayer.contents = (id)image.CGImage;
     }
     
+    CGFloat largeCircleIncrement;
     if(self.securityType == ALSLockScreenSecurityTypeCode) {
         //find how much to add to the minimum circle size
-        CGFloat largeCircleIncrement = self.largeCircleMaxRadiusIncrement*percentage;
+        largeCircleIncrement = self.largeCircleMaxRadiusIncrement*percentage;
         CGFloat largeRadius = self.largeCircleMinRadius+largeCircleIncrement;
         self.lastKnownRadius = largeRadius;
         
         //mask the whole thing to the large outer circle
-        [self.circleMaskLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:clockCenter].CGPath];
+        [self.circleLayer setPath:[[self class] pathForCircleWithRadius:largeRadius center:clockCenter].CGPath];
         
         //transform clock path and cut out area below
         CGFloat clockScale = MAX(0,(1-percentage/self.clockInvisibleAt));
@@ -624,10 +644,10 @@
         [self.highlightedButtonLayer setPath:highlightedButtonsPath.CGPath];
     }
     else if(self.securityType == ALSLockScreenSecurityTypePhrase) {
-        CGFloat largeCircleIncrement = (self.largeCircleMaxRadiusIncrement+self.largeCircleMinRadius)*percentage;
+        largeCircleIncrement = (self.largeCircleMaxRadiusIncrement+self.largeCircleMinRadius)*percentage;
         CGFloat largeRadius = self.largeCircleMinRadius+largeCircleIncrement;
         
-        [self.circleMaskLayer setPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(boundsCenter.x-largeRadius, boundsCenter.y-self.largeCircleMinRadius, largeRadius*2, self.largeCircleMinRadius*2) cornerRadius:self.largeCircleMinRadius].CGPath];
+        [self.circleLayer setPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(boundsCenter.x-largeRadius, boundsCenter.y-self.largeCircleMinRadius, largeRadius*2, self.largeCircleMinRadius*2) cornerRadius:self.largeCircleMinRadius].CGPath];
     
         //transform clock path and cut out area below
         CGFloat verticalTranslation = self.bounds.size.height/2-boundsCenter.y;
@@ -651,15 +671,21 @@
         }
     }
     else if(self.securityType == ALSLockScreenSecurityTypeNone) {
-        CGFloat largeCircleIncrement = (self.largeCircleMaxRadiusIncrement+self.largeCircleMinRadius)*percentage;
+        largeCircleIncrement = (self.largeCircleMaxRadiusIncrement+self.largeCircleMinRadius)*percentage;
         
-        [self.circleMaskLayer setPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(boundsCenter.x-self.largeCircleMinRadius+largeCircleIncrement, boundsCenter.y-self.largeCircleMinRadius, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2) cornerRadius:self.largeCircleMinRadius].CGPath];
+        [self.circleLayer setPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(boundsCenter.x-self.largeCircleMinRadius+largeCircleIncrement, boundsCenter.y-self.largeCircleMinRadius, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2) cornerRadius:self.largeCircleMinRadius].CGPath];
         
         //transform clock path and cut out area below
         [self.clockLayer setTransform:CATransform3DMakeTranslation(largeCircleIncrement, 0, 1)];
         UIBezierPath *clockCutOut = [[self class] pathForCircleWithRadius:self.clock.radius center:boundsCenter];
         [clockCutOut applyTransform:CGAffineTransformMakeTranslation(largeCircleIncrement, 0)];
         [clockCutOutMask appendPath:clockCutOut];
+    }
+    
+    if(self.shouldMaskEdgesForSymmetry) {
+        CGFloat minHorizontalDistanceAwayFromEdge = MIN(self.largeCircleMinRadius, MIN(clockCenter.x, self.bounds.size.width-clockCenter.x)-self.symmetryEdgePadding)+largeCircleIncrement*self.symmetryEdgeSpeed;
+        CGFloat minVerticalDistanceAwayFromEdge = MIN(self.largeCircleMinRadius, MIN(clockCenter.y, self.bounds.size.height-clockCenter.y)-self.symmetryEdgePadding)+largeCircleIncrement*self.symmetryEdgeSpeed;
+        [self.symmetryEdgeMask setPath:[UIBezierPath bezierPathWithRect:CGRectMake(clockCenter.x-minHorizontalDistanceAwayFromEdge, clockCenter.y-minVerticalDistanceAwayFromEdge, minHorizontalDistanceAwayFromEdge*2, minVerticalDistanceAwayFromEdge*2)].CGPath];
     }
     
     [self.maskLayer setPath:mask.CGPath];
