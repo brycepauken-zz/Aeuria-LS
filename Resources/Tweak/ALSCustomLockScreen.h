@@ -10,6 +10,8 @@
 
 @interface ALSCustomLockScreen : UIView <UIScrollViewDelegate>
 
+- (UIColor *)backgroundColor;
+- (float)backgroundColorAlpha;
 - (void)failedEntry;
 - (ALSCustomLockScreenMask *)filledOverlayMask;
 - (void)resetView;
@@ -20,6 +22,7 @@
 - (void)setKeyboardHeight:(CGFloat)keyboardHeight;
 - (void)setPasscodeEntered:(void (^)(NSString *passcode))passcodeEntered;
 - (void)setSecurityType:(NSInteger)securityType;
+- (BOOL)shouldColorBackground;
 - (BOOL)shouldHideStatusBar;
 - (BOOL)shouldShowWithNotifications;
 - (void)updateScrollPercentage:(CGFloat)percentage;

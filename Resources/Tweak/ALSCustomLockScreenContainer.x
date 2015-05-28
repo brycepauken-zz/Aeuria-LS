@@ -77,6 +77,7 @@
 
 - (void)mediaControlsBecameHidden:(BOOL)hidden {
     self.mediaControlsViewHidden = hidden;
+    [self updateCustomLockScreenAlpha];
     [self repositionClockIfNeeded];
 }
 
@@ -137,6 +138,8 @@
     [self.notificationView setAlpha:1-percentage];
     [self.mediaControlsView setAlpha:1-percentage];
     [self.keyboardViewBackground setAlpha:percentage*0.75];
+    
+    [self updateCustomLockScreenAlpha];
     
     if(percentage==0) {
         [[self.customLockScreen filledOverlayMask] removeAllDotsAndAnimate:NO withCompletion:nil];
@@ -204,6 +207,11 @@
     _passcodeTextField = passcodeTextField;
     [_passcodeTextField addTarget:self action:@selector(passcodeTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     self.passcodeTextFieldCharacterCount = passcodeTextField.text.length;
+}
+
+- (void)updateCustomLockScreenAlpha {
+    CGFloat percentage = 1-(self.scrollView.contentOffset.x/self.bounds.size.width);
+    [self.customLockScreen setAlpha:(self.mediaControlsViewHidden?1:percentage)];
 }
 
 @end

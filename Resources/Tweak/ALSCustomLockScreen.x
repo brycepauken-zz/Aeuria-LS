@@ -85,14 +85,6 @@
             [_filledOverlay addSubview:visualEffectView];
         }
         
-        //check if background color overlay should be added
-        if(_shouldColorBackground) {
-            UIView *backgroundColorOverlay = [[UIView alloc] initWithFrame:self.bounds];
-            [backgroundColorOverlay setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
-            [backgroundColorOverlay setBackgroundColor:[_backgroundColor colorWithAlphaComponent:_backgroundColorAlpha]];
-            [self addSubview:backgroundColorOverlay];
-        }
-        
         ALSProxyTarget *proxyTarget = [ALSProxyTarget proxyForTarget:self selector:@selector(updateViews)];
         _displayLink = [CADisplayLink displayLinkWithTarget:proxyTarget selector:@selector(tick:)];
         [_displayLink setFrameInterval:1];

@@ -23,6 +23,7 @@
 
 @interface SBLockScreenViewController()
 
+@property (nonatomic, strong) UIView *backgroundColorOverlay;
 @property (nonatomic, strong) ALSCustomLockScreenContainer *customLockScreenContainer;
 
 - (void)passcodeLockViewEmergencyCallButtonPressed:(id)arg1;
@@ -80,9 +81,10 @@
     [self setHintGestureRecognizersEnabled:NO];
     [ALSHideableViewManager setShouldHide:YES];
     if(self.customLockScreenContainer) {
-        if(self.customLockScreenContainer.superview) {
-            [self.customLockScreenContainer removeFromSuperview];
-        }
+        [self.customLockScreenContainer removeFromSuperview];
+    }
+    if(self.backgroundColorOverlay) {
+        [self.backgroundColorOverlay removeFromSuperview];
     }
     
     __weak SBLockScreenViewController *weakSelf = self;
@@ -109,6 +111,15 @@
     }];
     [self.customLockScreenContainer mediaControlsBecameHidden:shouldHideMediaControls];
     
+    //check if background color overlay should be added
+    if(self.customLockScreenContainer.customLockScreen.shouldColorBackground) {
+        UIView *backgroundColorOverlay = [[UIView alloc] initWithFrame:[[[self lockScreenScrollView] superview] bounds]];
+        [backgroundColorOverlay setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
+        [backgroundColorOverlay setBackgroundColor:[self.customLockScreenContainer.customLockScreen.backgroundColor colorWithAlphaComponent:self.customLockScreenContainer.customLockScreen.backgroundColorAlpha]];
+        [[[self lockScreenScrollView] superview] insertSubview:backgroundColorOverlay atIndex:0];
+        self.backgroundColorOverlay = backgroundColorOverlay;
+    }
+    
     [self updateSecurityType];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self updateSecurityType];
@@ -119,6 +130,11 @@
     
     [self.customLockScreenContainer.layer setZPosition:MAXFLOAT];
     [[[self lockScreenScrollView] superview] addSubview:self.customLockScreenContainer];
+}
+
+%new
+- (id)backgroundColorOverlay {
+    return objc_getAssociatedObject(self, @selector(backgroundColorOverlay));
 }
 
 /*
@@ -204,6 +220,11 @@
     if(self.customLockScreenContainer && self.customLockScreenContainer.superview) {
         [self.customLockScreenContainer removeFromSuperview];
     }
+}
+
+%new
+- (void)setBackgroundColorOverlay:(id)backgroundColorOverlay {
+    objc_setAssociatedObject(self, @selector(backgroundColorOverlay), backgroundColorOverlay, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 /*
