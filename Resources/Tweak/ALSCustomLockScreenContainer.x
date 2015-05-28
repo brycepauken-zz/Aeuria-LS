@@ -9,7 +9,6 @@
 @interface ALSCustomLockScreenContainer()
 
 @property (nonatomic, strong) ALSCustomLockScreen *customLockScreen;
-@property (nonatomic, strong) UIView *keyboardViewBackground;
 @property (nonatomic, strong) ALSCustomLockScreenOverlay *scrollView;
 
 @end
@@ -63,7 +62,6 @@
     [super layoutSubviews];
     
     [self.scrollView setContentSize:CGSizeMake(self.bounds.size.width*2, self.bounds.size.height)];
-    [self.keyboardViewBackground setFrame:CGRectMake(0, self.bounds.size.height-self.keyboardView.frame.size.height, self.bounds.size.width, self.keyboardView.frame.size.height)];
     [self repositionClockIfNeeded];
 }
 
@@ -137,7 +135,6 @@
     [self.customLockScreen updateScrollPercentage:percentage];
     [self.notificationView setAlpha:1-percentage];
     [self.mediaControlsView setAlpha:1-percentage];
-    [self.keyboardViewBackground setAlpha:percentage*0.75];
     
     [self updateCustomLockScreenAlpha];
     
@@ -155,30 +152,15 @@
 }
 
 /*
- Stores a reference to the passcode keyboard view,
- and adds a background behind it.
+ Stores a reference to the passcode keyboard view.
  */
 - (void)setKeyboardView:(UIView *)keyboardView {
     _keyboardView = keyboardView;
-    
-    if([UIBlurEffect class] && [UIVisualEffectView class]) {
-        UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-        UIVisualEffectView *visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-        [visualEffectView setFrame:keyboardView.frame];
-        [self setKeyboardViewBackground:visualEffectView];
-    }
-    else {
-        [self setKeyboardViewBackground:[[UIView alloc] initWithFrame:keyboardView.frame]];
-        [self.keyboardViewBackground setBackgroundColor:[UIColor colorWithWhite:0.5 alpha:0.75]];
-    }
-    [self.keyboardViewBackground setAlpha:0];
-    [self insertSubview:self.keyboardViewBackground belowSubview:self.scrollView];
     [self.customLockScreen setKeyboardHeight:keyboardView.frame.size.height];
 }
 
 /*
- Stores a reference to the media controls view,
- and adds a background behind it.
+ Stores a reference to the media controls view.
  */
 - (void)setMediaControlsView:(UIView *)mediaControlsView {
     _mediaControlsView = mediaControlsView;
@@ -186,8 +168,7 @@
 }
 
 /*
- Stores a reference to the notification view,
- and adds a background behind it.
+ Stores a reference to the notification view.
  */
 - (void)setNotificationView:(UIView *)notificationView {
     _notificationView = notificationView;

@@ -531,14 +531,14 @@
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     
+    CGPoint clockCenter = CGPointMake(self.bounds.size.width*self.horizontalPosition, self.bounds.size.height*self.verticalPosition);
     CGPoint boundsCenter;
     if(self.securityType != ALSLockScreenSecurityTypePhrase || !self.keyboardHeight) {
         boundsCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
     }
     else {
-        boundsCenter = CGPointMake(self.bounds.size.width/2, (self.bounds.size.height-self.keyboardHeight*percentage)/2);
+        boundsCenter = CGPointMake(self.bounds.size.width/2, clockCenter.y+((self.bounds.size.height-self.keyboardHeight)/2-clockCenter.y)*percentage);
     }
-    CGPoint clockCenter = CGPointMake(self.bounds.size.width*self.horizontalPosition, self.bounds.size.height*self.verticalPosition);
     
     UIBezierPath *mask = [UIBezierPath bezierPathWithRect:self.bounds];
     UIBezierPath *clockCutOutMask = [UIBezierPath bezierPathWithRect:self.bounds];
@@ -573,7 +573,6 @@
         unsigned char *data = calloc(width * height * bytesPerPixel, 1);
         CGContextRef ctx = CGBitmapContextCreate(data, width, height, bitsPerComponent, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast|kCGBitmapByteOrder32Big);
         CGContextTranslateCTM(ctx, 0, height);
-        //CGContextScaleCTM(ctx, 1.0, -1.0);
         CGContextScaleCTM(ctx, screenScale, -screenScale);
         [self.clockRenderingLayer renderInContext:ctx];
         
@@ -650,7 +649,7 @@
         [self.circleLayer setPath:[UIBezierPath bezierPathWithRoundedRect:CGRectMake(boundsCenter.x-largeRadius, boundsCenter.y-self.largeCircleMinRadius, largeRadius*2, self.largeCircleMinRadius*2) cornerRadius:self.largeCircleMinRadius].CGPath];
     
         //transform clock path and cut out area below
-        CGFloat verticalTranslation = self.bounds.size.height/2-boundsCenter.y;
+        CGFloat verticalTranslation = clockCenter.y-boundsCenter.y;
         [self.clockLayer setTransform:CATransform3DMakeTranslation(largeCircleIncrement, -verticalTranslation, 1)];
         UIBezierPath *clockCutOut = [[self class] pathForCircleWithRadius:self.clock.radius center:boundsCenter];
         [clockCutOut applyTransform:CGAffineTransformMakeTranslation(largeCircleIncrement, 0)];

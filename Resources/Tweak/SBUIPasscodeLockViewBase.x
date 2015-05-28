@@ -7,7 +7,16 @@
 
 - (void)layoutSubviews {
     %orig;
-    [ALSHideableViewManager addView:self];
+    if(![self isKindOfClass:[%c(SBUIPasscodeLockViewWithKeyboard) class]]) {
+        [ALSHideableViewManager addView:self];
+    }
+    else {
+        for(UIView *subview in self.subviews) {
+            if(![subview isKindOfClass:[%c(SBPasscodeKeyboard) class]]) {
+                [ALSHideableViewManager addView:subview];
+            }
+        }
+    }
     [self setHidden:[self isHidden]];
 }
 
@@ -39,8 +48,19 @@
 }
 
 - (void)setHidden:(BOOL)hidden {
-    [ALSHideableViewManager setViewHidden:hidden forView:self];
-    %orig([ALSHideableViewManager shouldHide]?YES:[ALSHideableViewManager viewHidden:self]);
+    if(![self isKindOfClass:[%c(SBUIPasscodeLockViewWithKeyboard) class]]) {
+        [ALSHideableViewManager setViewHidden:hidden forView:self];
+        %orig([ALSHideableViewManager shouldHide]?YES:[ALSHideableViewManager viewHidden:self]);
+    }
+    else {
+        for(UIView *subview in self.subviews) {
+            if(![subview isKindOfClass:[%c(SBPasscodeKeyboard) class]]) {
+                [ALSHideableViewManager setViewHidden:hidden forView:subview];
+                [subview setHidden:([ALSHideableViewManager shouldHide]?YES:[ALSHideableViewManager viewHidden:subview])];
+            }
+        }
+    }
+        
 }
 
 - (void)updateStatusTextForBioEvent:(unsigned long long)arg1 animated:(bool)arg2 {
