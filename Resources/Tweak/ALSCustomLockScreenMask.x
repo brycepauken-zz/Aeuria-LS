@@ -622,7 +622,7 @@
             CGSize instructionsPathSize = CGPathGetPathBoundingBox(instructionsPath.CGPath).size;
             CGFloat instructionsPathScale = (self.instructionsHeight/instructionsPathSize.height);
             [instructionsPath applyTransform:CGAffineTransformMakeScale(instructionsPathScale, instructionsPathScale)];
-            [instructionsPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-(instructionsPathSize.width*instructionsPathScale)/2, (boundsCenter.y-self.buttonRadius*3-self.buttonPadding)/2-(instructionsPathSize.height*instructionsPathScale)/2)];
+            [instructionsPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-(instructionsPathSize.width*instructionsPathScale)/2, (boundsCenter.y-self.buttonRadius*3-self.buttonPadding)/2-(instructionsPathSize.height*instructionsPathScale)/2-(self.largeCircleMaxRadiusIncrement-largeCircleIncrement)/2)];
             [mask appendPath:instructionsPath];
         }
         
@@ -665,7 +665,7 @@
             CGSize instructionsPathSize = CGPathGetPathBoundingBox(instructionsPath.CGPath).size;
             CGFloat instructionsPathScale = (self.instructionsHeight/instructionsPathSize.height);
             [instructionsPath applyTransform:CGAffineTransformMakeScale(instructionsPathScale, instructionsPathScale)];
-            [instructionsPath applyTransform:CGAffineTransformMakeTranslation(leftEdgeOffset+(rightEdgeOffset-leftEdgeOffset)/2-(instructionsPathSize.width*instructionsPathScale)/2, (self.bounds.size.height-self.keyboardHeight-self.clock.radius-self.textFieldHeight-instructionsPathSize.height*instructionsPathScale)/2+10)];
+            [instructionsPath applyTransform:CGAffineTransformMakeTranslation(boundsCenter.x-(instructionsPathSize.width*instructionsPathScale)/2, (self.bounds.size.height-self.keyboardHeight-self.clock.radius-self.textFieldHeight-instructionsPathSize.height*instructionsPathScale)/2-self.largeCircleMaxRadiusIncrement*(1-percentage)+10)];
             [mask appendPath:instructionsPath];
         }
     }
