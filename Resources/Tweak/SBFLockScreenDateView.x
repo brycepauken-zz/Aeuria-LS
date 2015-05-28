@@ -1,6 +1,8 @@
 #import "SBFLockScreenDateView.h"
 
+#import "ALSCustomLockScreenContainer.h"
 #import "ALSHideableViewManager.h"
+#import "SBLockScreenViewController.h"
 
 /*
  The SBFLockScreenDateView class represents the date and time on the lock screen.
@@ -14,6 +16,11 @@
     %orig;
     [ALSHideableViewManager addView:self];
     [self setHidden:[self isHidden]];
+    
+    NSObject *viewController = [[[[self.window.subviews firstObject] subviews] firstObject] nextResponder];
+    if([viewController isKindOfClass:[%c(SBLockScreenViewController) class]]) {
+        [[(SBLockScreenViewController *)viewController customLockScreenContainer] lockScreenDateViewDidLayoutSubviews:self];
+    }
 }
 
 - (void)setHidden:(BOOL)hidden {

@@ -52,6 +52,8 @@
 		025915751B0156AE00B0FE29 /* ALSProxyObject.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSProxyObject.x; sourceTree = "<group>"; };
 		0260B5F41AF42E51003AE8C5 /* Passcode Page Settings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Passcode Page Settings.plist"; sourceTree = "<group>"; };
 		0260B5F51AF4324A003AE8C5 /* Other Settings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Other Settings.plist"; sourceTree = "<group>"; };
+		02674C531B1681E00075CF8E /* SBLockScreenNowPlayingPluginController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBLockScreenNowPlayingPluginController.h; sourceTree = "<group>"; };
+		02674C541B1681E00075CF8E /* SBLockScreenNowPlayingPluginController.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBLockScreenNowPlayingPluginController.x; sourceTree = "<group>"; };
 		027E66601AF029DF00B77D65 /* ALSPreferencesFontCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesFontCell.h; sourceTree = "<group>"; };
 		027E66611AF029DF00B77D65 /* ALSPreferencesFontCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ALSPreferencesFontCell.m; sourceTree = "<group>"; };
 		027E66641AF02BCC00B77D65 /* ALSPreferencesCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesCell.h; sourceTree = "<group>"; };
@@ -169,6 +171,8 @@
 				0281DD311B0F542B00683910 /* SBLockScreenHintLongPressGestureRecognizer.x */,
 				027FFDAC1AFAEA1200FA1486 /* SBLockScreenNotificationListView.h */,
 				027FFDAD1AFAEA1200FA1486 /* SBLockScreenNotificationListView.x */,
+				02674C531B1681E00075CF8E /* SBLockScreenNowPlayingPluginController.h */,
+				02674C541B1681E00075CF8E /* SBLockScreenNowPlayingPluginController.x */,
 				02A99F1A1AFD1FFF00B197D7 /* SBLockScreenScrollView.h */,
 				02A99F1B1AFD1FFF00B197D7 /* SBLockScreenScrollView.x */,
 				023724221AC25213007FAFC1 /* SBLockScreenViewController.h */,

@@ -10,9 +10,6 @@
 
 @property (nonatomic, strong) ALSCustomLockScreen *customLockScreen;
 @property (nonatomic, strong) UIView *keyboardViewBackground;
-@property (nonatomic) BOOL mediaControlsViewHidden;
-@property (nonatomic) BOOL notificationViewHidden;
-@property (nonatomic) NSInteger passcodeTextFieldCharacterCount;
 @property (nonatomic, strong) ALSCustomLockScreenOverlay *scrollView;
 
 @end
@@ -67,6 +64,15 @@
     
     [self.scrollView setContentSize:CGSizeMake(self.bounds.size.width*2, self.bounds.size.height)];
     [self.keyboardViewBackground setFrame:CGRectMake(0, self.bounds.size.height-self.keyboardView.frame.size.height, self.bounds.size.width, self.keyboardView.frame.size.height)];
+    [self repositionClockIfNeeded];
+}
+
+- (void)lockScreenDateViewDidLayoutSubviews:(UIView *)lockScreenDateView {
+    CGRect relativeFrame = [self convertRect:lockScreenDateView.frame fromView:lockScreenDateView.superview];
+    if(!CGRectIsEmpty(relativeFrame)) {
+        self.lockScreenDateVerticalCenter = (relativeFrame.origin.y+relativeFrame.size.height/2);
+        [self repositionClockIfNeeded];
+    }
 }
 
 - (void)mediaControlsBecameHidden:(BOOL)hidden {
@@ -110,12 +116,11 @@
 }
 
 - (void)repositionClockIfNeeded {
-    if(!self.mediaControlsViewHidden || !self.notificationViewHidden) {
-        [self.customLockScreen setClockToPosition:CGPointMake(0.5, 0.25)];
+    if(!self.notificationViewHidden || self.nowPlayingPluginActive) {
+        [self.customLockScreen setClockToPosition:CGPointMake(0.5, self.lockScreenDateVerticalCenter/self.bounds.size.height)];
     }
     else {
         [self.customLockScreen setClockToDefaultPosition];
-        
     }
 }
 
@@ -184,6 +189,11 @@
 - (void)setNotificationView:(UIView *)notificationView {
     _notificationView = notificationView;
     [self notificationViewChanged];
+}
+
+- (void)setNowPlayingPluginActive:(BOOL)active {
+    _nowPlayingPluginActive = active;
+    [self repositionClockIfNeeded];
 }
 
 - (void)setPasscodeEntered:(void (^)(NSString *passcode))passcodeEntered {

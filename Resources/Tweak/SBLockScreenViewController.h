@@ -23,6 +23,7 @@
 - (void)failedPasscode;
 - (void)resetForScreenOff;
 - (void)setCustomLockScreenHidden:(BOOL)hidden;
+- (void)setNowPlayingPluginActive:(BOOL)active;
 - (void)showEmergencyDialer;
 
 @end

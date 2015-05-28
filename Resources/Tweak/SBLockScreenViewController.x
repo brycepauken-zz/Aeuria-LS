@@ -62,9 +62,14 @@
     }
     
     UIView *keyboardView = [self.customLockScreenContainer keyboardView];
+    CGFloat lockScreenDateVerticalCenter = [self.customLockScreenContainer lockScreenDateVerticalCenter];
     UIView *mediaControlsView = [self.customLockScreenContainer mediaControlsView];
+    BOOL mediaControlsViewHidden = [self.customLockScreenContainer mediaControlsViewHidden];
     UIView *notificationView = [self.customLockScreenContainer notificationView];
+    BOOL notificationViewHidden = [self.customLockScreenContainer notificationViewHidden];
+    BOOL nowPlayingPluginActive = [self.customLockScreenContainer nowPlayingPluginActive];
     UITextField *passcodeTextField = [self.customLockScreenContainer passcodeTextField];
+    NSInteger passcodeTextFieldCharacterCount = [self.customLockScreenContainer passcodeTextFieldCharacterCount];
     
     BOOL shouldHideMediaControls = NO;
     NSNumber *shouldHideMediaControlsNum = [[self customProperties] objectForKey:@"MediaControlsShouldHide"];
@@ -84,10 +89,15 @@
     self.customLockScreenContainer = [[ALSCustomLockScreenContainer alloc] initWithFrame:[[self lockScreenView] bounds]];
     [self.customLockScreenContainer setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
     [self.customLockScreenContainer setKeyboardView:keyboardView];
+    [self.customLockScreenContainer setLockScreenDateVerticalCenter:lockScreenDateVerticalCenter];
     [self.customLockScreenContainer setLockScreenViewController:self];
     [self.customLockScreenContainer setMediaControlsView:mediaControlsView];
+    [self.customLockScreenContainer setMediaControlsViewHidden:mediaControlsViewHidden];
     [self.customLockScreenContainer setNotificationView:notificationView];
+    [self.customLockScreenContainer setNotificationViewHidden:notificationViewHidden];
+    [self.customLockScreenContainer setNowPlayingPluginActive:nowPlayingPluginActive];
     [self.customLockScreenContainer setPasscodeTextField:passcodeTextField];
+    [self.customLockScreenContainer setPasscodeTextFieldCharacterCount:passcodeTextFieldCharacterCount];
     [self.customLockScreenContainer setUserInteractionEnabled:NO];
     [self.customLockScreenContainer setPasscodeEntered:^(NSString *passcode) {
         //create a proxy passcode handler (returns the entered passcode, forwards all other requests)
@@ -249,6 +259,11 @@
         }
         currentView = currentView.superview;
     }
+}
+
+%new
+- (void)setNowPlayingPluginActive:(BOOL)active {
+    [self.customLockScreenContainer setNowPlayingPluginActive:active];
 }
 
 %new
