@@ -88,7 +88,7 @@
         _largeCircleMinRadius = [[preferencesManager preferenceForKey:@"clockRadius"] intValue];
         _pressedButtonAlpha = [[preferencesManager preferenceForKey:@"passcodeButtonPressedAlpha"] floatValue];
         _shouldHideEnterPasscodeText = [[preferencesManager preferenceForKey:@"shouldHideEnterPasscodeText"] boolValue];
-        _shouldMaskEdgesForSymmetry = YES;
+        _shouldMaskEdgesForSymmetry = NO;
         _symmetryEdgePadding = 0;
         _symmetryEdgeSpeed = 1.25;
         _textFieldCornerRadius = [[preferencesManager preferenceForKey:@"passcodeTextFieldCornerRadius"] intValue];
@@ -119,9 +119,11 @@
         [_circleMaskLayer addSublayer:_circleLayer];
         [_internalLayer setMask:_circleMaskLayer];
         
-        _symmetryEdgeMask = [[CAShapeLayer alloc] init];
-        [_symmetryEdgeMask setFillColor:[[UIColor blackColor] CGColor]];
-        [_circleLayer setMask:_symmetryEdgeMask];
+        if(self.shouldMaskEdgesForSymmetry) {
+            _symmetryEdgeMask = [[CAShapeLayer alloc] init];
+            [_symmetryEdgeMask setFillColor:[[UIColor blackColor] CGColor]];
+            [_circleLayer setMask:_symmetryEdgeMask];
+        }
         
         //holds main mask (clock & buttons)
         _maskLayer = [[CAShapeLayer alloc] init];
@@ -131,6 +133,7 @@
         
         _clockLayer = [[CAShapeLayer alloc] init];
         [_clockLayer setFillColor:[[UIColor blackColor] CGColor]];
+        [_clockLayer setFillRule:kCAFillRuleEvenOdd];
         [_internalLayer addSublayer:_clockLayer];
         
         _clockLayerMask = [[CAShapeLayer alloc] init];
@@ -545,54 +548,63 @@
     
     UIBezierPath *clockPath = [self.clock clockPathForHour:self.currentHour minute:self.currentMinute date:self.currentDate];
     if(clockPath != self.lastKnownClockPath) {
-        self.lastKnownClockPath = clockPath;
-        
-        UIBezierPath *newClockPath = [clockPath copy];
-        [newClockPath applyTransform:CGAffineTransformMakeTranslation(self.clockLayer.bounds.size.width/2-self.clock.radius, self.clockLayer.bounds.size.height/2-self.clock.radius)];
-        [self.clockRenderingLayer setPath:newClockPath.CGPath];
-        
-        UIBezierPath *clockRenderingLayerMaskPath = [UIBezierPath bezierPathWithRect:self.clockRenderingLayerMask.bounds];
-        if(self.clockType == ALSClockTypeAnalog && self.clockDotRadius>0) {
-            [clockRenderingLayerMaskPath appendPath:[[self class] pathForCircleWithRadius:self.clockDotRadius center:CGPointMake(self.clockRenderingLayerMask.bounds.size.width/2, self.clockRenderingLayerMask.bounds.size.height/2)]];
-        }
-        [self.clockRenderingLayerMask setPath:clockRenderingLayerMaskPath.CGPath];
-        
-        static const int bytesPerPixel = 4;
-        static const int bitsPerComponent = 8;
-        static CGColorSpaceRef colorSpace;
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            colorSpace = CGColorSpaceCreateDeviceRGB();
-        });
-        
-        //create a data-backed context, and draw the dots layer inside
-        CGFloat screenScale = [UIScreen mainScreen].scale;
-        int width = floor(self.clockLayer.bounds.size.width)*screenScale;
-        int height = floor(self.clockLayer.bounds.size.height)*screenScale;
-        int bytesPerRow = width * bytesPerPixel;
-        unsigned char *data = calloc(width * height * bytesPerPixel, 1);
-        CGContextRef ctx = CGBitmapContextCreate(data, width, height, bitsPerComponent, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast|kCGBitmapByteOrder32Big);
-        CGContextTranslateCTM(ctx, 0, height);
-        CGContextScaleCTM(ctx, screenScale, -screenScale);
-        [self.clockRenderingLayer renderInContext:ctx];
-        
-        //reverse alpha value
-        for(int y=0;y<height;y++) {
-            int yOffset = y*width;
-            for(int x=0;x<width;x++) {
-                int offset = (yOffset+x)*bytesPerPixel;
-                data[offset+3] = 255-data[offset+3];
+        if(self.clockType == ALSClockTypeAnalog) {
+            self.lastKnownClockPath = clockPath;
+            
+            UIBezierPath *newClockPath = [clockPath copy];
+            [newClockPath applyTransform:CGAffineTransformMakeTranslation(self.clockLayer.bounds.size.width/2-self.clock.radius, self.clockLayer.bounds.size.height/2-self.clock.radius)];
+            [self.clockRenderingLayer setPath:newClockPath.CGPath];
+            
+            UIBezierPath *clockRenderingLayerMaskPath = [UIBezierPath bezierPathWithRect:self.clockRenderingLayerMask.bounds];
+            if(self.clockType == ALSClockTypeAnalog && self.clockDotRadius>0) {
+                [clockRenderingLayerMaskPath appendPath:[[self class] pathForCircleWithRadius:self.clockDotRadius center:CGPointMake(self.clockRenderingLayerMask.bounds.size.width/2, self.clockRenderingLayerMask.bounds.size.height/2)]];
             }
+            [self.clockRenderingLayerMask setPath:clockRenderingLayerMaskPath.CGPath];
+            
+            static const int bytesPerPixel = 4;
+            static const int bitsPerComponent = 8;
+            static CGColorSpaceRef colorSpace;
+            static dispatch_once_t onceToken;
+            dispatch_once(&onceToken, ^{
+                colorSpace = CGColorSpaceCreateDeviceRGB();
+            });
+            
+            //create a data-backed context, and draw the dots layer inside
+            CGFloat screenScale = [UIScreen mainScreen].scale;
+            int width = floor(self.clockLayer.bounds.size.width)*screenScale;
+            int height = floor(self.clockLayer.bounds.size.height)*screenScale;
+            int bytesPerRow = width * bytesPerPixel;
+            unsigned char *data = calloc(width * height * bytesPerPixel, 1);
+            CGContextRef ctx = CGBitmapContextCreate(data, width, height, bitsPerComponent, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast|kCGBitmapByteOrder32Big);
+            CGContextTranslateCTM(ctx, 0, height);
+            CGContextScaleCTM(ctx, screenScale, -screenScale);
+            [self.clockRenderingLayer renderInContext:ctx];
+            
+            //reverse alpha value
+            for(int y=0;y<height;y++) {
+                int yOffset = y*width;
+                for(int x=0;x<width;x++) {
+                    int offset = (yOffset+x)*bytesPerPixel;
+                    data[offset+3] = 255-data[offset+3];
+                }
+            }
+            
+            //get image
+            CGImageRef imageRef = CGBitmapContextCreateImage(ctx);
+            UIImage *image = [UIImage imageWithCGImage:imageRef];
+            CGImageRelease(imageRef);
+            CGContextRelease(ctx);
+            free(data);
+            
+            self.clockLayer.contents = (id)image.CGImage;
         }
-        
-        //get image
-        CGImageRef imageRef = CGBitmapContextCreateImage(ctx);
-        UIImage *image = [UIImage imageWithCGImage:imageRef];
-        CGImageRelease(imageRef);
-        CGContextRelease(ctx);
-        free(data);
-        
-        self.clockLayer.contents = (id)image.CGImage;
+        else {
+            UIBezierPath *duplicateClockPath = [UIBezierPath bezierPathWithCGPath:clockPath.CGPath];
+            [duplicateClockPath applyTransform:CGAffineTransformMakeTranslation(self.largeCircleMinRadius-self.clock.radius, self.largeCircleMinRadius-self.clock.radius)];
+            UIBezierPath *invertedClockPath = [UIBezierPath bezierPathWithRect:self.clockLayer.bounds];
+            [invertedClockPath appendPath:duplicateClockPath];
+            [self.clockLayer setPath:invertedClockPath.CGPath];
+        }
     }
     
     CGFloat largeCircleIncrement;
