@@ -324,7 +324,11 @@
     [self.clockCutOutLayer setFrame:self.bounds];
     
     [self.clockLayer setTransform:CATransform3DIdentity];
-    CGRect clockLayerFrame = CGRectMake(self.bounds.size.width*self.horizontalPosition-self.largeCircleMinRadius, self.bounds.size.height*self.verticalPosition-self.largeCircleMinRadius, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2);
+    
+    CGFloat horizontalScreenOffset = (self.bounds.size.width-self.customLockScreen.bounds.size.width)/2;
+    CGFloat verticalScreenOffset = (self.bounds.size.height-self.customLockScreen.bounds.size.height)/2;
+    
+    CGRect clockLayerFrame = CGRectMake(horizontalScreenOffset+self.customLockScreen.bounds.size.width*self.horizontalPosition-self.largeCircleMinRadius, verticalScreenOffset+self.customLockScreen.bounds.size.height*self.verticalPosition-self.largeCircleMinRadius, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2);
     [self.clockLayer setFrame:clockLayerFrame];
     [self.clockLayerMask setFrame:CGRectMake(0, 0, self.largeCircleMinRadius*2, self.largeCircleMinRadius*2)];
     [self.clockLayerMask setPath:[[self class] pathForCircleWithRadius:self.largeCircleMinRadius center:CGPointMake(self.largeCircleMinRadius, self.largeCircleMinRadius)].CGPath];
