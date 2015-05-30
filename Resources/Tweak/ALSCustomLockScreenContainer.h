@@ -17,13 +17,13 @@
 @property (nonatomic) BOOL nowPlayingPluginActive;
 @property (nonatomic, weak) UITextField *passcodeTextField;
 @property (nonatomic) NSInteger passcodeTextFieldCharacterCount;
+@property (nonatomic) CGFloat percentage;
 
 - (ALSCustomLockScreen *)customLockScreen;
 - (void)lockScreenDateViewDidLayoutSubviews:(UIView *)lockScreenDateView;
 - (void)mediaControlsBecameHidden:(BOOL)hidden;
 - (void)notificationViewChanged;
 - (void)resetView;
-- (UIScrollView *)scrollView;
 - (void)setNowPlayingPluginActive:(BOOL)active;
 - (void)setPasscodeEntered:(void (^)(NSString *passcode))passcodeEntered;
 

@@ -9,7 +9,6 @@
 @interface ALSCustomLockScreenContainer()
 
 @property (nonatomic, strong) ALSCustomLockScreen *customLockScreen;
-@property (nonatomic, strong) ALSCustomLockScreenOverlay *scrollView;
 
 @end
 
@@ -36,18 +35,6 @@
         }];
         [self addSubview:_customLockScreen];
         
-        _scrollView = [[ALSCustomLockScreenOverlay alloc] initWithFrame:self.bounds];
-        [_scrollView setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
-        [_scrollView setBounces:NO];
-        [_scrollView setContentSize:CGSizeMake(self.bounds.size.width*2, self.bounds.size.height)];
-        [_scrollView setContentOffset:CGPointMake(self.bounds.size.width, 0)];
-        [_scrollView setDelegate:self];
-        [_scrollView setPagingEnabled:YES];
-        [_scrollView setScrollEnabled:NO];
-        [_scrollView setShowsHorizontalScrollIndicator:NO];
-        [_scrollView setShowsVerticalScrollIndicator:NO];
-        [self addSubview:_scrollView];
-        
         [self repositionClockIfNeeded];
     }
     return self;
@@ -55,13 +42,11 @@
 
 - (void)dealloc {
     [self.passcodeTextField removeTarget:self action:@selector(passcodeTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-    [self.scrollView setDelegate:nil];
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    [self.scrollView setContentSize:CGSizeMake(self.bounds.size.width*2, self.bounds.size.height)];
     [self repositionClockIfNeeded];
 }
 
@@ -125,30 +110,8 @@
 
 - (void)resetView {
     [self.customLockScreen setUserInteractionEnabled:YES];
-    [self.scrollView setContentOffset:CGPointMake(self.bounds.size.width, 0)];
     [self.customLockScreen resetView];
     [self setNeedsLayout];
-}
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    CGFloat percentage = 1-(scrollView.contentOffset.x/self.bounds.size.width);
-    [self.customLockScreen updateScrollPercentage:percentage];
-    [self.notificationView setAlpha:1-percentage];
-    [self.mediaControlsView setAlpha:1-percentage];
-    
-    [self updateCustomLockScreenAlpha];
-    
-    if(percentage==0) {
-        [[self.customLockScreen filledOverlayMask] removeAllDotsAndAnimate:NO withCompletion:nil];
-    }
-}
-
-- (void)setFrame:(CGRect)frame {
-    CGRect prevFrame = self.frame;
-    [super setFrame:frame];
-    if(!CGRectEqualToRect(self.frame, prevFrame)) {
-        [self.scrollView setContentSize:CGSizeMake(self.bounds.size.width*2, self.bounds.size.height)];
-    }
 }
 
 /*
@@ -190,9 +153,22 @@
     self.passcodeTextFieldCharacterCount = passcodeTextField.text.length;
 }
 
+- (void)setPercentage:(CGFloat)percentage {
+    _percentage = MAX(0,MIN(1,percentage));
+    
+    [self.customLockScreen updateScrollPercentage:_percentage];
+    [self.notificationView setAlpha:1-_percentage];
+    [self.mediaControlsView setAlpha:1-_percentage];
+    
+    [self updateCustomLockScreenAlpha];
+    
+    if(percentage==0) {
+        [[self.customLockScreen filledOverlayMask] removeAllDotsAndAnimate:NO withCompletion:nil];
+    }
+}
+
 - (void)updateCustomLockScreenAlpha {
-    CGFloat percentage = 1-(self.scrollView.contentOffset.x/self.bounds.size.width);
-    [self.customLockScreen setAlpha:(self.mediaControlsViewHidden?1:percentage)];
+    [self.customLockScreen setAlpha:(self.mediaControlsViewHidden?1:self.percentage)];
 }
 
 @end

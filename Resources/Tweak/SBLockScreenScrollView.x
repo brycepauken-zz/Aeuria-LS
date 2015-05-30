@@ -207,7 +207,7 @@
         [(UIView *)[[self lockScreenViewController] customLockScreenContainer] setTransform:translation];
     }
     [[[[[self lockScreenViewController] customLockScreenContainer] customLockScreen] layer] removeAnimationForKey:@"ShakeAnimation"];
-    [[[[self lockScreenViewController] customLockScreenContainer] scrollView] setContentOffset:offset];
+    [[[self lockScreenViewController] customLockScreenContainer] setPercentage:1-(offset.x/self.bounds.size.width)];
 };
 
 %new

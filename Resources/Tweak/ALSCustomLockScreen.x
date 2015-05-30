@@ -339,7 +339,7 @@
     if(self.hidden || !self.superview || self.superview.hidden) {
         return;
     }
-    if(true || self.percentage != self.previousPercentage || self.filledOverlayMask.isAnimating || self.needsUpdate || self.filledOverlayMask.needsUpdate) {
+    if(self.percentage != self.previousPercentage || self.filledOverlayMask.isAnimating || self.needsUpdate || self.filledOverlayMask.needsUpdate) {
         self.needsUpdate = NO;
         self.previousPercentage = self.percentage;
         [self.filledOverlayMask updateMaskWithPercentage:self.percentage];
