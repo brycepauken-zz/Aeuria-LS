@@ -113,6 +113,17 @@
 - (void)layoutSubviews {
     %orig;
     
+    if(self.contentSize.width > self.bounds.size.width*2) {
+        CGAffineTransform translation;
+        if(self.contentOffset.x > self.bounds.size.width) {
+            translation = CGAffineTransformMakeTranslation(self.bounds.size.width-self.contentOffset.x, 0);
+        }
+        else {
+            translation = CGAffineTransformIdentity;
+        }
+        [(UIView *)[[self lockScreenViewController] customLockScreenContainer] setTransform:translation];
+    }
+    
     //layoutSubviews is called on scrolling; ignore the other checks if this is the case here
     NSValue *lastKnownOffsetVal = [self.customProperties objectForKey:@"lastKnownOffset"];
     if(lastKnownOffsetVal) {
@@ -196,16 +207,6 @@
 - (void)setContentOffset:(CGPoint)offset {
     offset.x = MAX(0, offset.x);
     %orig;
-    if(self.contentSize.width > self.bounds.size.width*2) {
-        CGAffineTransform translation;
-        if(offset.x > self.bounds.size.width) {
-            translation = CGAffineTransformMakeTranslation(self.bounds.size.width-offset.x, 0);
-        }
-        else {
-            translation = CGAffineTransformIdentity;
-        }
-        [(UIView *)[[self lockScreenViewController] customLockScreenContainer] setTransform:translation];
-    }
     [[[[[self lockScreenViewController] customLockScreenContainer] customLockScreen] layer] removeAnimationForKey:@"ShakeAnimation"];
     [[[self lockScreenViewController] customLockScreenContainer] setPercentage:1-(offset.x/self.bounds.size.width)];
 };
