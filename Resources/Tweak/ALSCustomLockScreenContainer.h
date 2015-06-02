@@ -1,6 +1,7 @@
 #import <UIKit/UIKit.h>
 
 @class ALSCustomLockScreen;
+@class MPUSystemMediaControlsView;
 @class SBLockScreenViewController;
 @class SBUIPasscodeLockViewWithKeypad;
 
@@ -21,7 +22,7 @@
 
 - (ALSCustomLockScreen *)customLockScreen;
 - (void)lockScreenDateViewDidLayoutSubviews:(UIView *)lockScreenDateView;
-- (void)mediaControlsBecameHidden:(BOOL)hidden;
+- (void)mediaControlsDidHideOrShow;
 - (void)notificationViewChanged;
 - (void)resetView;
 - (void)setNowPlayingPluginActive:(BOOL)active;

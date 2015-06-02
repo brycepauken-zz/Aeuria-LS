@@ -14,8 +14,6 @@
 		020532F01AF5761100602F6D /* ALSCustomLockScreenElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSCustomLockScreenElement.h; sourceTree = "<group>"; };
 		020532F11AF5761100602F6D /* ALSCustomLockScreenElement.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALSCustomLockScreenElement.x; sourceTree = "<group>"; };
 		0206009E1AF1946F00F5597A /* Style Settings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Style Settings.plist"; sourceTree = "<group>"; };
-		0206EEBF1B0D1D0C00B1C35D /* MPUSystemMediaControlsView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPUSystemMediaControlsView.h; sourceTree = "<group>"; };
-		0206EEC01B0D1D0C00B1C35D /* MPUSystemMediaControlsView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = MPUSystemMediaControlsView.x; sourceTree = "<group>"; };
 		0206EEC11B0D254E00B1C35D /* SBInteractionPassThroughView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBInteractionPassThroughView.h; sourceTree = "<group>"; };
 		0206EEC21B0D254E00B1C35D /* SBInteractionPassThroughView.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = SBInteractionPassThroughView.x; sourceTree = "<group>"; };
 		022130AA1AE1BDE800054A1A /* ALSPreferencesManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ALSPreferencesManager.h; sourceTree = "<group>"; };
@@ -159,8 +157,6 @@
 				027F9B551AF71C7500180368 /* ALSProxyPasscodeHandler.x */,
 				0298578B1AE859980014B5C2 /* ALSProxyTarget.h */,
 				0298578C1AE859980014B5C2 /* ALSProxyTarget.x */,
-				0206EEBF1B0D1D0C00B1C35D /* MPUSystemMediaControlsView.h */,
-				0206EEC01B0D1D0C00B1C35D /* MPUSystemMediaControlsView.x */,
 				0237241C1AC25213007FAFC1 /* SBChevronView.h */,
 				0237241D1AC25213007FAFC1 /* SBChevronView.x */,
 				0237241E1AC25213007FAFC1 /* SBFLockScreenDateView.h */,

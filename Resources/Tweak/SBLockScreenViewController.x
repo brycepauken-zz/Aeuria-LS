@@ -46,9 +46,7 @@
 - (void)_mediaControlsDidHideOrShow:(id)arg1 {
     %orig;
     
-    BOOL shouldHide = [[arg1 name] hasSuffix:@"Hide"];
-    [[self customProperties] setObject:@(shouldHide) forKey:@"MediaControlsShouldHide"];
-    [self.customLockScreenContainer mediaControlsBecameHidden:shouldHide];
+    [self.customLockScreenContainer mediaControlsDidHideOrShow];
 }
 
 %new
@@ -71,12 +69,6 @@
     BOOL nowPlayingPluginActive = [self.customLockScreenContainer nowPlayingPluginActive];
     UITextField *passcodeTextField = [self.customLockScreenContainer passcodeTextField];
     NSInteger passcodeTextFieldCharacterCount = [self.customLockScreenContainer passcodeTextFieldCharacterCount];
-    
-    BOOL shouldHideMediaControls = NO;
-    NSNumber *shouldHideMediaControlsNum = [[self customProperties] objectForKey:@"MediaControlsShouldHide"];
-    if(shouldHideMediaControlsNum) {
-        shouldHideMediaControls = [shouldHideMediaControlsNum boolValue];
-    }
     
     [self setHintGestureRecognizersEnabled:NO];
     [ALSHideableViewManager setShouldHide:YES];
@@ -109,7 +101,7 @@
         [proxyPasscodeHandler setPasscodeView:passcodeView];
         [weakSelf passcodeLockViewPasscodeEntered:proxyPasscodeHandler];
     }];
-    [self.customLockScreenContainer mediaControlsBecameHidden:shouldHideMediaControls];
+    [self.customLockScreenContainer mediaControlsDidHideOrShow];
     
     UIView *lockScreenSuperview = [[self lockScreenScrollView] superview];
     

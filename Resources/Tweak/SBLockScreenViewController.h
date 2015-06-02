@@ -21,6 +21,7 @@
 - (BOOL)customLockScreenHidden;
 - (void)failedBio;
 - (void)failedPasscode;
+- (BOOL)isShowingMediaControls;
 - (void)resetForScreenOff;
 - (void)setCustomLockScreenHidden:(BOOL)hidden;
 - (void)setNowPlayingPluginActive:(BOOL)active;

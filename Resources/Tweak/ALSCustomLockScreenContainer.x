@@ -58,8 +58,8 @@
     }
 }
 
-- (void)mediaControlsBecameHidden:(BOOL)hidden {
-    self.mediaControlsViewHidden = hidden;
+- (void)mediaControlsDidHideOrShow {
+    self.mediaControlsViewHidden = ![self.lockScreenViewController isShowingMediaControls];
     [self updateCustomLockScreenAlpha];
     [self repositionClockIfNeeded];
 }
@@ -127,7 +127,7 @@
  */
 - (void)setMediaControlsView:(UIView *)mediaControlsView {
     _mediaControlsView = mediaControlsView;
-    [self mediaControlsBecameHidden:YES];
+    [self mediaControlsDidHideOrShow];
 }
 
 /*
