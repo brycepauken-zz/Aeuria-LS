@@ -111,12 +111,14 @@
     }];
     [self.customLockScreenContainer mediaControlsBecameHidden:shouldHideMediaControls];
     
+    UIView *lockScreenSuperview = [[self lockScreenScrollView] superview];
+    
     //check if background color overlay should be added
     if(self.customLockScreenContainer.customLockScreen.shouldColorBackground) {
-        UIView *backgroundColorOverlay = [[UIView alloc] initWithFrame:[[[self lockScreenScrollView] superview] bounds]];
+        UIView *backgroundColorOverlay = [[UIView alloc] initWithFrame:CGRectMake(-lockScreenSuperview.bounds.size.width, -lockScreenSuperview.bounds.size.height, lockScreenSuperview.bounds.size.width*3, lockScreenSuperview.bounds.size.height*3)];
         [backgroundColorOverlay setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
         [backgroundColorOverlay setBackgroundColor:[self.customLockScreenContainer.customLockScreen.backgroundColor colorWithAlphaComponent:self.customLockScreenContainer.customLockScreen.backgroundColorAlpha]];
-        [[[self lockScreenScrollView] superview] insertSubview:backgroundColorOverlay atIndex:0];
+        [lockScreenSuperview insertSubview:backgroundColorOverlay atIndex:0];
         self.backgroundColorOverlay = backgroundColorOverlay;
     }
     
@@ -128,7 +130,7 @@
         [self updateSecurityType];
     });
     
-    [[[self lockScreenScrollView] superview] insertSubview:self.customLockScreenContainer belowSubview:[self lockScreenScrollView]];
+    [lockScreenSuperview insertSubview:self.customLockScreenContainer belowSubview:[self lockScreenScrollView]];
 }
 
 %new
