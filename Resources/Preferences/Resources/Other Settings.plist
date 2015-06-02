@@ -124,6 +124,30 @@
 			<key>defaults</key>
 			<string>com.brycepauken.aeurials</string>
 			<key>label</key>
+			<string>Default Clock Horiz. Position:</string>
+			<key>key</key>
+			<string>defaultClockHorizontalPosition</string>
+			<key>isDecimalPad</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Default Clock Vert. Position:</string>
+			<key>key</key>
+			<string>defaultClockVerticalPosition</string>
+			<key>isDecimalPad</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
 			<string>Enter Passcode Text Height:</string>
 			<key>key</key>
 			<string>enterPasscodeTextHeight</string>
@@ -211,6 +235,16 @@
 			<string>hourTickMarkPadding</string>
 			<key>isNumeric</key>
 			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Mask Edges for Symmetry:</string>
+			<key>key</key>
+			<string>shouldMaskEdgesForSymmetry</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -389,6 +423,30 @@
 			<string>Show Leading Hour Zero:</string>
 			<key>key</key>
 			<string>shouldShowLeadingZero</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Symmetry Edge Padding:</string>
+			<key>key</key>
+			<string>symmetryEdgePadding</string>
+			<key>isNumeric</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>defaults</key>
+			<string>com.brycepauken.aeurials</string>
+			<key>label</key>
+			<string>Symmetry Edge Speed:</string>
+			<key>key</key>
+			<string>symmetryEdgeSpeed</string>
+			<key>isDecimalPad</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>cell</key>

@@ -88,9 +88,9 @@
         _largeCircleMinRadius = [[preferencesManager preferenceForKey:@"clockRadius"] intValue];
         _pressedButtonAlpha = [[preferencesManager preferenceForKey:@"passcodeButtonPressedAlpha"] floatValue];
         _shouldHideEnterPasscodeText = [[preferencesManager preferenceForKey:@"shouldHideEnterPasscodeText"] boolValue];
-        _shouldMaskEdgesForSymmetry = NO;
-        _symmetryEdgePadding = 0;
-        _symmetryEdgeSpeed = 1.25;
+        _shouldMaskEdgesForSymmetry = [[preferencesManager preferenceForKey:@"shouldMaskEdgesForSymmetry"] boolValue];
+        _symmetryEdgePadding = [[preferencesManager preferenceForKey:@"symmetryEdgePadding"] intValue];
+        _symmetryEdgeSpeed = [[preferencesManager preferenceForKey:@"symmetryEdgeSpeed"] floatValue];
         _textFieldCornerRadius = [[preferencesManager preferenceForKey:@"passcodeTextFieldCornerRadius"] intValue];
         _textFieldHeight = [[preferencesManager preferenceForKey:@"passcodeTextFieldHeight"] intValue];
         _textFieldHorizontalPadding = [[preferencesManager preferenceForKey:@"passcodeTextFieldSidePadding"] intValue];

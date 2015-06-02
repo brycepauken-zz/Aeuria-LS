@@ -60,6 +60,10 @@
 	<integer>16</integer>
 	<key>characterDotRadius</key>
 	<integer>8</integer>
+	<key>defaultClockHorizontalPosition</key>
+	<real>0.5</real>
+	<key>defaultClockVerticalPosition</key>
+	<real>0.5</real>
 	<key>enterPasscodeTextHeight</key>
 	<integer>28</integer>
 	<key>shouldHideForNotificationsOrMedia</key>
@@ -104,7 +108,13 @@
 	<integer>50</integer>
 	<key>passcodeTextFieldSidePadding</key>
 	<integer>20</integer>
+	<key>shouldMaskEdgesForSymmetry</key>
+	<false/>
 	<key>shouldShowLeadingZero</key>
 	<false/>
+	<key>symmetryEdgePadding</key>
+	<integer>0</integer>
+	<key>symmetryEdgeSpeed</key>
+	<real>1.25</real>
 </dict>
 </plist>

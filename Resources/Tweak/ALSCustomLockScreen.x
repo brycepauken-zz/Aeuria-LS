@@ -52,8 +52,8 @@
         _buttonDistanceFromEdge = [[_preferencesManager preferenceForKey:@"passcodeButtonDistanceFromEdge"] intValue];
         _buttonPadding = [[_preferencesManager preferenceForKey:@"passcodeButtonPadding"] intValue];
         _buttonRadius = [[_preferencesManager preferenceForKey:@"passcodeButtonRadius"] intValue];
-        _defaultClockHorizontalPosition = 0.5;
-        _defaultClockVerticalPosition = 0.5;
+        _defaultClockHorizontalPosition = [[_preferencesManager preferenceForKey:@"defaultClockHorizontalPosition"] floatValue];
+        _defaultClockVerticalPosition = [[_preferencesManager preferenceForKey:@"defaultClockVerticalPosition"] floatValue];
         _lockScreenBlurType = [[_preferencesManager preferenceForKey:@"lockScreenBlurType"] intValue];
         _lockScreenColor = [_preferencesManager preferenceForKey:@"lockScreenColor"];
         _lockScreenColorAlpha = [[_preferencesManager preferenceForKey:@"lockScreenColorAlpha"] floatValue];
