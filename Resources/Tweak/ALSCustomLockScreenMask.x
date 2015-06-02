@@ -338,8 +338,8 @@
     
     [self updateDotsLayerFrame];
     
-    CGFloat largestHorizontalDistanceToEdge = (0.5+fabs(0.5-self.horizontalPosition))*self.bounds.size.width;
-    CGFloat largestVerticalDistanceToEdge = (0.5+fabs(0.5-self.verticalPosition))*self.bounds.size.height;
+    CGFloat largestHorizontalDistanceToEdge = (0.5+fabs(0.5-self.clockLayer.position.x/self.bounds.size.width))*self.bounds.size.width;
+    CGFloat largestVerticalDistanceToEdge = (0.5+fabs(0.5-self.clockLayer.position.y/self.bounds.size.height))*self.bounds.size.height;
     self.largeCircleMaxRadiusIncrement = sqrt(largestHorizontalDistanceToEdge*largestHorizontalDistanceToEdge+largestVerticalDistanceToEdge*largestVerticalDistanceToEdge)-self.largeCircleMinRadius;
     
     CGFloat clockInvisibleNeededRadiusIncrement = (self.buttonDistanceFromEdge+(self.buttonRadius*2+self.buttonPadding)*M_SQRT2+self.buttonRadius)-self.largeCircleMinRadius;
@@ -538,7 +538,7 @@
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     
-    CGPoint clockCenter = CGPointMake(self.bounds.size.width*self.horizontalPosition, self.bounds.size.height*self.verticalPosition);
+    CGPoint clockCenter = self.clockLayer.position;
     CGPoint boundsCenter;
     if(self.securityType != ALSLockScreenSecurityTypePhrase || !self.keyboardHeight) {
         boundsCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
