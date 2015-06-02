@@ -128,8 +128,7 @@
         [self updateSecurityType];
     });
     
-    [self.customLockScreenContainer.layer setZPosition:MAXFLOAT];
-    [[[self lockScreenScrollView] superview] addSubview:self.customLockScreenContainer];
+    [[[self lockScreenScrollView] superview] insertSubview:self.customLockScreenContainer belowSubview:[self lockScreenScrollView]];
 }
 
 %new

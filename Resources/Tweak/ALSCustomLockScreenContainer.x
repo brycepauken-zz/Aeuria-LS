@@ -162,6 +162,7 @@
     
     [self updateCustomLockScreenAlpha];
     
+    [self.keyboardView setHidden:percentage==0];
     if(percentage==0) {
         [[self.customLockScreen filledOverlayMask] removeAllDotsAndAnimate:NO withCompletion:nil];
     }
