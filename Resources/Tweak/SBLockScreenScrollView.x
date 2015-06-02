@@ -210,7 +210,6 @@
     CGFloat percentage = MAX(0,1-(offset.x/self.bounds.size.width));
     [[[[[self lockScreenViewController] customLockScreenContainer] customLockScreen] layer] removeAnimationForKey:@"ShakeAnimation"];
     [[[self lockScreenViewController] customLockScreenContainer] setPercentage:percentage];
-    [self setAlpha:1-percentage*0.8];
 };
 
 %new
